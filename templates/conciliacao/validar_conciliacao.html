@@ -1,0 +1,56 @@
+{% extends 'conciliacao/conciliacao.html' %}
+{% load static %}
+
+
+ 
+{% block content %}
+
+
+<div class="container">
+  <h1>Batimentos Diários</h1>
+  <p>Batimentos Diários  , Selecione o fundo 
+    e a data para consultar o batimento  
+    do respectivo ativo entre o O2 X JCOT</p>
+
+    <p>O fundo precisa ter o código JCOT cadastrado no O2 , 
+      sem esse cadastro não é possível realizar
+      a consulta do batimento.
+    </p>
+</div>
+
+
+<form action="#" method="post">
+  {% csrf_token %}
+  
+    <div class="input-field col s12">
+      <select name="ativo">
+        <option value="" disabled selected>Selecione o Fundo</option>
+
+        {% for fundo in ativos %}
+
+        <option>{{fundo}}</option>  
+
+        {% endfor %}
+
+    </select>
+      <label>Escolha o ativo</label>
+    </div>
+  
+    <div class="input-field col s12">
+        <input type="text" class="datepicker" name="data">
+        <label>Data Conciliacao</label>
+      </div>  
+
+      
+      <button class="btn waves-effect waves-light" type="submit"
+       name="action">Consultar</button>
+
+</form>
+
+  
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+
+
+{% endblock %}

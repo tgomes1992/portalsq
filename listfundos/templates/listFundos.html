@@ -1,0 +1,63 @@
+
+{% extends 'main_template.html' %}
+{% load static %}
+
+{% block content %}
+
+
+        <div>
+            <h1>Fundos Jcot</h1>
+            <div>
+                <p>Exibe o Papel Cota no JCOT e a sua respectiva data no sistema de Passivo</p>
+            </div>
+        <div>
+            <form action="/download">
+                <label for="filtropapelcota">Filtro</label>
+                <input type="text" class="filtropapelcota" id="filtropapelcota" />
+                <button type="submit">Baixar Arquivo</button>
+            </form>
+        </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>razaoSocial</th>
+                        <th>cnpj</th>
+                        <th>codigo</th>
+                        <th>tipoFundo</th>
+                        <th>dataPosicao</th>
+                        <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for fundo in fundos %}
+
+                    <tr class="detalhes">
+                        <td>{{ fundo.razaoSocial }}</td>
+                        <td>{{ fundo.cnpj }}</td>
+                        <td>{{ fundo.codigo }}</td>
+                        <td>{{ fundo.tipoFundo }}</td>
+                        <td>{{ fundo.dataPosicao }}</td>
+                        <td>{{ fundo.status }}</td>
+                    </tr>
+
+
+                    {% endfor %}
+
+                  </tbody>
+
+
+
+
+            </table>
+
+
+        </div>
+
+
+
+<script src="{% static 'app.js' %}"></script>
+
+
+{% endblock %}
+

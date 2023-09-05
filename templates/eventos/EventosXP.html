@@ -1,0 +1,60 @@
+
+{% extends "eventos/main_eventos.html" %}
+
+
+
+{% block content %}
+
+<h1>Eventos XP</h1>
+<h4>{{hoje }}</h4>
+<h4>Dia Util : {{ diautil }}°</h4>
+
+
+<form class="col s12" action="/eventosXPCriar" method="POST">
+    <div class="row">
+        <div class="col s6">
+            <input placeholder="Fundo" name="fundo" id="fundo" type="text" class="validate">
+            <label for="fundo">Fundo</label>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col s6">
+            <select name="diautil">
+            <option value="1">Primeiro dia útil</option>
+            <option value="5">Quinto dia útil</option>
+            <option value="10">Décimo dia útil</option>
+            <option value="15">Décimo-quinto dia útil</option>
+            <option value="20">Vigésimo dia útil</option>
+            </select>
+            <label>Materialize Select</label>
+        </div>
+    </div>
+
+    <button type="submit">Cadastrar</button>
+    
+</form>
+
+
+
+<table class="striped">
+    <thead>
+        <th> Fundo </th>
+        <th> Dia útil </th>
+
+    </thead>
+
+
+</table>
+
+
+</h2>
+</div> 
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'jcothelper/home_jcot_helper.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1>Fundos Jcot</h1>
+
+<p>Exibe o Papel Cota no JCOT e a sua respectiva data no sistema de Passivo</p>
+
+
+<form action="{% url 'downloadfundos' %}">
+  <label for="filtropapelcota">Filtro</label>
+
+  <input type="text" class="filtropapelcota" id="filtropapelcota" />
+  <button type="submit">Baixar Arquivo</button>
+
+</form>
+
+<table>
+  <tr>
+    <th>Fundo</th>
+    <th>CNPJ</th>
+    <th>Codigo</th>
+    <th>Tipo Fundo</th>
+    <th>Data Posição</th>
+  </tr>
+
+  {% for fundo in fundos %}
+
+
+  <tr class="detalhes">
+    <td>{{fundo.razaoSocial}}</td>
+    <td>{{fundo.cnpj}}</td>
+    <td>{{fundo.codigo}}</td>
+    <td>{{fundo.tipoFundo}}</td>
+    <td>{{fundo.dataPosicao}}</td>
+  </tr>
+
+
+  
+  {% endfor %}
+
+
+
+</table>
+
+
+
+
+
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+<script src="{% static 'app.js' %}"></script>
+
+
+{% endblock %}
+
+
+

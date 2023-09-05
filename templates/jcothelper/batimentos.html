@@ -1,0 +1,46 @@
+{% extends 'jcothelper/home_jcot_helper.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1>Batimentos - Consulta de Posições Jcot</h1>
+
+
+
+<div>
+  <table>
+    <tr>
+        <th>Codigo</th>
+        <th>Fundo</th>
+        <th>Quantidade Jcot</th>
+        <th>Quantidade Maps</th>
+    </tr>
+
+<!--  Incluir aqui o loop para ler os fundos-->
+
+     {% for fundo in posicoes %}
+      <tr>
+        <td>{{fundo.cd_fundo}}</td>
+        <td>{{fundo.descricao}}</td>
+        <td>{{fundo.quantidade}}</td>
+        <td>{{fundo.quantidade_maps}}</td>
+        <td><a class="btn">Posição Jcot </a></td>
+    </tr>
+
+      {% endfor %}
+
+
+  </table>
+</div>
+
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+{% endblock %}
+
+
+

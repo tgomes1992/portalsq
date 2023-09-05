@@ -1,0 +1,61 @@
+{% load static %}
+
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/materialize/css/materialize.css">
+    </head>
+    <body>
+
+        <h1 class="center">Saldo Diário Emissores ZAP</h1>
+      
+
+            <div class="container"> 
+                <form action=# method="post">
+                    {% csrf_token %}
+                    <input type="date" name="datasaldo" id="datasaldo">
+                    <input type="submit" name="buscar">
+                    <button  name="get_excel" id="getexcel" value="Download Excel">
+                        <a href="#">Buscar Excel</a>
+                </input>
+                </form>
+            </div>
+    
+        
+        <table class="striped">
+            <tr>
+                <th>Cpf Cnpj</th>
+                <th>Data</th>
+                <th>Nome Titular</th>                  
+                <th>Valor Saldo Total</th>
+                <th>Valor Saldo Disponível</th>
+                <th>Valor Saldo Bloqueado</th>
+                <th>Conta Corrente</th>
+            </tr>
+
+
+            {% for emissor in emissores %}
+            <tr>
+                <td>{{emissor.CPFCNPJFormatado}}</td>
+                <td>{{emissor.Data}}</td>
+                <td>{{emissor.NomeTitular}}</td>                    
+                <td>{{emissor.ValorSaldoTotal}}</td>
+                <td>{{emissor.ValorSaldoDisponivel}}</td>
+                <td>{{emissor.ValorSaldoBloqueado}}</td>
+                <td>{{emissor.ContaCorrente}}</td>
+            </tr>
+
+                
+            {% endfor %}
+
+
+          
+        </table>
+
+
+
+
+
+
+    </body>
+    <script src="static/app.js"></script>
+</html>

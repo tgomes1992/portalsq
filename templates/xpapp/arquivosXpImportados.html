@@ -1,0 +1,45 @@
+{% extends 'xpapp/home_xp_app.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1>Arquivos Importados</h1>
+
+
+<div class="container">
+
+  <table>
+    <tr>
+      <th>Nome Arquivo</th>
+      <th>Dia do Arquivo</th>
+    </tr>
+
+    {% for arquivo in arquivos %}
+
+    <tr>
+      <td>{{arquivo.filename}}</td>
+      <td>{{arquivo.filedate}}</td>
+      <td><a class="btn">Estatísticas</a></td>
+
+    </tr>
+
+    {% endfor %}
+
+
+  </table>
+
+
+
+</div>
+
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+{% endblock %}
+
+
+

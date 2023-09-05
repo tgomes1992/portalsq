@@ -1,0 +1,37 @@
+{% extends 'emissores/home_emissores_app.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+<h1>Emissores Cadastrados</h1>
+
+<div class="row">
+    <div class="input-field col s6">
+      <input placeholder="Digite o nome do Emissor" id="busca" type="text" class="validate">
+      <label for="busca">Buscar Emissor</label>
+    </div>
+</div>
+
+
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Cnpj</th>
+    </tr>
+
+    {% for emissor in emissores %}
+
+    <tr>
+        <td>{{emissor.name}}</td>
+        <td>{{emissor.cnpj}}</td>
+        <td><a class="btn">Detalhes</a></td>
+    </tr>
+
+
+    {% endfor %}
+</table>
+
+{% endblock %}

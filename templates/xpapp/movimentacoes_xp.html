@@ -1,0 +1,49 @@
+{% extends 'xpapp/home_xp_app.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1>Movimentações XP</h1>
+
+<form>
+    <a class="btn" href="{% url 'processar_movimentacoes' %}">Lançar Movimentações</a>
+</form>
+
+<table>
+    <tr>
+       <th>Investidor</th>
+       <th>Tipo Movimentação</th>
+        <th>Fundo</th>
+        <th>Valor</th>
+        <th>ARQUIVO</th>
+    </tr>
+
+    {% for movimento in movimentos %}
+
+    <tr>
+        <td>{{movimento.cd_investidor}}</td>
+        <td>{{movimento.tipo_movimentacao}}</td>
+        <td>{{movimento.cd_fundo}}</td>
+        <td>{{movimento.valor}}</td>
+        <td>{{movimento.filename}}</td>
+    </tr>
+
+    {% endfor %}
+
+
+</table>
+
+
+
+
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+{% endblock %}
+
+
+

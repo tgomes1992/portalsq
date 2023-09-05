@@ -1,0 +1,57 @@
+{% extends "eventos/main_eventos.html" %}
+
+{% block content %}
+    <h1>Eventos Diários - Outros Ativos</h1>
+    <h3> Dia Atual : {{ dia }}</h3>
+
+
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="date" name="data">
+        <input type="submit" value="Periodo Especifico">
+    </form>
+
+
+
+    <h2 class="box">Eventos Hoje</h2>
+
+
+    <table class="striped">
+        <thead>
+            <th> Data da Original </th>
+            <th> Data de Efetivação </th>
+            <th> Data de Liquidação </th>
+            <th> Título </th>
+
+        </thead>
+
+        {% for evento in eventos %}
+        <tr>
+
+            <td>{{evento.dtOriginal}}</td>
+
+            <td>{{evento.dtEfetivacao}}</td>
+
+            <td>{{evento.dtEfetivacao}}</td>
+
+
+            <td>{{evento.titulo}}</td>
+
+        </tr>
+
+        {% endfor %}
+    </table>
+
+
+
+
+    </h2>
+    </div>
+
+
+
+
+{% endblock %}
+
+

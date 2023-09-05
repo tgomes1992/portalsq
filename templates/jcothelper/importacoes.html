@@ -1,0 +1,42 @@
+{% extends 'jcothelper/home_jcot_helper.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1>Importação de Arquivos</h1>
+
+<form action="#">
+  <div class="file-field input-field">
+    <div class="btn">
+      <span>Selecione o Arquivo: </span>
+      <input type="file">
+    </div>
+    <div class="file-path-wrapper">
+      <input class="file-path validate" type="text">
+    </div>
+  </div>
+
+  <div class="input-field col s12">
+    <select>
+      <option value="" disabled selected>Selecione o tipo de importacao</option>
+      <option value="1">Cadastro Cliente</option>
+      <option value="2">Cadastro Cotistas</option>
+      <option value="3">Movimentações</option>
+    </select>
+    <label>Tipo de Importação</label>
+  </div>
+
+
+
+</form>
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+{% endblock %}
+
+
+

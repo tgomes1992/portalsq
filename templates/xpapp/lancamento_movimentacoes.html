@@ -1,0 +1,94 @@
+{% extends 'xpapp/home_xp_app.html' %}
+{% load static %}
+
+{% block content %}
+
+<h1>Lançamento de Movimentações</h1>
+
+<form action="#" method="post" >
+  {% csrf_token %}
+  <div class="input-field col s12">
+    <select name="fundo">
+      <option value="" disabled selected>Selecione o fundo que deseja importar as movimentações</option>
+
+
+      {% for fundo in fundos %}
+
+        <option value="{{fundo.cnpj}}">{{fundo.nome}}</option>
+
+
+      {% endfor %}
+
+
+
+    
+    
+    
+    
+    </select>
+    <label>Selecione o Fundo</label>
+    <input type="date" name="dataMovimentacoes"/>
+  </div>
+
+  <input type="submit" class="btn" value="Buscar Movimentações"/>
+
+
+</form>
+
+
+
+{% if movimentos  %}
+
+<div class="container">
+
+  <table>
+    <tr>
+      <th>Fundo</th>
+      <th>Data Movimentação</th>
+      <th>Tipo de Movimentação</th>
+      <th>Cotista</th>
+      <th>Valor</th>
+    </tr>
+
+    {% for movimento in movimentos %}
+
+    <tr>
+      <td>{{movimento.cd_fundo}}</td>
+      <td>{{movimento.data_movimentacao}}</td>
+      <td>{{movimento.tipo_movimentacao}}</td>
+      <td>{{movimento.cd_investidor}}</td>
+      <td>{{movimento.valor}}</td>
+    </tr>
+
+
+    {% endfor %}
+
+    <tr>
+
+    </tr>
+
+
+
+  </table>
+
+ <a  class="btn" href="{% url 'sincronizar_lancamentos' %}" name="sincronizar_movimentacoes">Sincronizar Movimentações</a>
+
+
+</div>
+
+
+
+{% else %}
+
+<div class="container">
+
+</div>
+
+
+{% endif %}
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+{% endblock %}
+

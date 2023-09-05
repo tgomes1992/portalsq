@@ -1,0 +1,12 @@
+*.sqlite3*
+*env*
+*.cal*
+*__pycache__*
+*.pyc*
+*.txt*
+movimentacoes_xp
+*.xlsx*
+*.xls*
+output
+*.exe*
+*.xml*

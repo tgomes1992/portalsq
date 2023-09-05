@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'materialize/css/materialize.css' %}" media="screen" />
+    <script src="{% static 'jquery.js' %}"></script>
+    <script src="{% static 'materialize/js/materialize.js' %}"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper">
+          <a href="/emissores" class="brand-logo">Controle de Emissores</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li> <a a href="{% url 'emailemissores'%}">Cadastro E-mails</a> </li>
+            <li> <a a href="{% url 'o2sinc'%}">Sincronizar O2</a></li>
+
+          </ul>
+        </div>
+      </nav>
+
+    <div class="container">
+
+      {% block content %}
+
+
+      {% endblock %}
+
+
+    </div>
+
+
+</body>
+
+
+</html>

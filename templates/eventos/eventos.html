@@ -1,0 +1,41 @@
+
+{% extends "main_template.html" %}
+
+
+
+{% block content %}
+
+
+
+    <h1>Eventos Ativo -  {{dados['ativo']}}</h1>
+    <h3> Dia Atual : {{dados['dia']}}</h3>
+
+    <h2 class="box">Eventos Hoje</h2>
+
+
+    <table class="striped">
+        <thead>
+            <th> Data da Original </th>
+            <th> Data de Efetivação </th>
+            <th> Data de Liquidação </th>
+            <th> Título </th>
+
+        </thead>
+
+        {% for evento in dados['eventos'] %}
+        <tr>
+            <td>{{evento['Data Original']}}</td>
+            <td>{{evento['Data da Efetivação']}}</td>
+            <td>{{evento['Data de Liquidação']}}</td>
+            <td>{{evento['Título']}}</td>
+        </tr>
+
+        {% endfor %}
+    </table>
+
+
+    </h2>
+    </div>
+
+
+{% endblock %}
