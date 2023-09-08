@@ -32,7 +32,8 @@
           <p>Para mais detalhes desse ativo , clique no link abaixo.</p>
         </div>
         <div class="card-action">
-          <a href="consulta/{{ativo}}">Detalhes</a>
+          <a href="{% url 'consulta_ativo' %}?ativo={{ativo}}">Detalhes</a>
+          <a href="{% url 'excluir_ativo' %}?ativo={{ativo}}" > Excluir Ativo </a>
         </div>
       </div>
     </div>

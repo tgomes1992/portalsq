@@ -10,7 +10,8 @@
 <h4>Dia Util : {{ diautil }}°</h4>
 
 
-<form class="col s12" action="/eventosXPCriar" method="POST">
+<form class="col s12" action="#" method="POST">
+    {% csrf_token %}
     <div class="row">
         <div class="col s6">
             <input placeholder="Fundo" name="fundo" id="fundo" type="text" class="validate">
@@ -44,6 +45,22 @@
         <th> Dia útil </th>
 
     </thead>
+
+    <tbody>
+
+        {% for evento in eventosXp %}
+
+
+        <tr>
+          <td>{{evento.fundo}}</td>
+          <td>{{evento.diaUtil}}</td>
+          <td><a class='btn'  href={% url 'excluir_eventos'%}?id={{evento.id}}>Remover</a>
+        </tr>
+
+
+        {% endfor %}
+
+      </tbody>
 
 
 </table>

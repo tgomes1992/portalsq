@@ -9,7 +9,9 @@
     <form method="post" action="">
         {% csrf_token %}
         <input type="date" name="data">
-        <input type="submit" value="Periodo Especifico">
+        <input type="submit" class='btn' value="Periodo Especifico">
+ 
+        <a href="{% url 'eventos_diarios' %}"  class="btn">Baixar Relatório em Excel</a>
     </form>
 
 
@@ -23,6 +25,8 @@
             <th> Data de Efetivação </th>
             <th> Data de Liquidação </th>
             <th> Título </th>
+            <th> Emissor </th>
+            <th> Data Fim Relacionamento O2 </th>
 
         </thead>
 
@@ -30,13 +34,11 @@
         <tr>
 
             <td>{{evento.dtOriginal}}</td>
-
             <td>{{evento.dtEfetivacao}}</td>
-
             <td>{{evento.dtEfetivacao}}</td>
-
-
             <td>{{evento.titulo}}</td>
+            <td>{{evento.emissor}}</td>
+            <td> {{evento.dtfim}} </td>
 
         </tr>
 

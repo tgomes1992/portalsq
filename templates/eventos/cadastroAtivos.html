@@ -1,4 +1,4 @@
-{% extends "main_template.html" %}
+{% extends "eventos/main_eventos.html" %}
 
 
 
@@ -6,11 +6,32 @@
 
 
 
+    <h3>Eventos Ativo -  {{ativo}}</h3>
+
+
+    <table class="striped">
+        <thead>
+            <th> Data da Original </th>
+            <th> Data de Efetivação </th>
+            <th> Data de Liquidação </th>
+            <th> Título </th>
+        </thead>
+
+        {% for evento in eventos %}
+        <tr>
+            <td>{{evento.dtOriginal}}</td>
+            <td>{{evento.dtEfetivacao}}</td>
+            <td>{{evento.dtEfetivacao}}</td>
+            <td>{{evento.titulo}}</td>
+        </tr>
+
+        {% endfor %}
+    </table>
 
 
 
 
-{% endfor %}
+
 
 
 

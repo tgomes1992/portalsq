@@ -14,7 +14,7 @@ import pickle
 import os
 from datetime import datetime, date
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine , text
 import numpy as np
 import warnings
 
@@ -68,7 +68,8 @@ def get_all_events_ativo(ativo):
     filtrado = pmts[(pmts['Título'] == ativo) & (pmts['Data de Liquidação'] >= datetime.today())]
     df_final = filtrado[['Data Original', 'Data da Efetivação', 'Data de Liquidação', 'Título']]
     df_final['Data de Liquidação'] = df_final['Data de Liquidação'].dt.strftime("%d/%m/%Y")
-    return df_final.drop_duplicates()
+    df_final.columns = ['dtOriginal',  "dtEfetivacao",  "dtLiquidacao" , "titulo"]
+    return df_final.drop_duplicates().to_dict("records")
 
 
 def get_all_ifs():
