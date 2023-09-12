@@ -10,26 +10,30 @@ class Ativoso2Sinc():
 
     api =  o2Api("thiago.conceicao","DBCE0923-9CE3-4597-9E9A-9EAE7479D897")
 
-    def get_cd_jcot( self,base_dict):
-        if base_dict['origemCodigoInstrumentoFinanceiro'] == "JCOT":
+    def get_cd_origem_instrumento_financeiro( self,base_dict , tipo):
+        if base_dict['nomeOrigemCodigoInstrumentoFinanceiro'] == tipo:
             return base_dict['descricao']
         else:
             return  False
+        
 
-    def get_cd_jcot_lista(self,lista_base_dict):
+
+
+    def get_cd_jcot_lista(self,lista_base_dict ,  tipo):
         cd_jcot = []
         for item in lista_base_dict:
-            teste =  self.get_cd_jcot(item)
+            teste =  self.get_cd_origem_instrumento_financeiro(item , tipo)
             if teste:
                 cd_jcot.append(teste)
         try:
             return cd_jcot[0]
         except Exception as e:
-            return "Sem Código Jcot"
+            return "Sem Código"
         
     def get_ativos_extracao(self):       
 
         ativos = self.api.get_ativos()
+
 
         db = self.engine.connect()
         db.execute(text("delete from ativos_o2"))
@@ -37,7 +41,11 @@ class Ativoso2Sinc():
   
 
         ativos.dropna(subset = ['dataFimRelacionamento'], inplace=True)
-        ativos['cd_jcot'] =  ativos['codigosInstrumentosFinanceiros'].apply(self.get_cd_jcot_lista)
+        ativos['cd_jcot'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'JCOT'))
+        ativos['cd_cetip'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'CETIP'))
+        ativos['cd_bolsa'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'BOLSA'))
+        ativos['cd_escritural'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'ESCRITURAL'))
+
         ativos['dataFimRelacionamento'] =  ativos['dataFimRelacionamento'].apply(lambda x: datetime.strptime(x[0:10],"%Y-%m-%d"))
         
         nativo = ativos.drop(['codigosInstrumentosFinanceiros'] , axis="columns").to_sql("ativos_o2", con=self.engine , if_exists="append")
