@@ -1,0 +1,45 @@
+{% extends 'xpapp/home_xp_app.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<h1>Resumo</h1>
+
+
+<h2>Movimentações</h2>
+
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>cd_investidor</th>
+                <th>Fundo CNPJ</th>
+                <th>status</th>
+                <th>valor</th>
+                <!-- Add more table headers as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movimentacoes %}
+                <tr>
+                    <td>{{ item.cd_investidor }}</td>
+                    <td>{{ item.cd_fundo }}</td>
+                    <td>{{ item.statusJcot }}</td>
+                    <td>{{ item.valor }}</td>
+                    <!-- Add more table cells for other fields as needed -->
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No data available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+
+
+
+
+{% endblock %}

@@ -30,10 +30,24 @@ class Ativoso2Sinc():
         except Exception as e:
             return "Sem Código"
         
+
+    def get_emissor(self , emissor_dict):
+        try:
+            return {
+                "cnpj": emissor_dict['cnpj'] , 
+                'nome': emissor_dict['nome']
+            }
+        except Exception as e: 
+            return {
+                "cnpj": "0000000000" , 
+                "nome": "Sem Emissor Associado"
+            }
+        
     def get_ativos_extracao(self):       
 
         ativos = self.api.get_ativos()
 
+  
 
         db = self.engine.connect()
         db.execute(text("delete from ativos_o2"))
@@ -41,6 +55,9 @@ class Ativoso2Sinc():
   
 
         ativos.dropna(subset = ['dataFimRelacionamento'], inplace=True)
+        ativos['cnpjEmissor'] =  ativos['emissor'].apply(lambda x : self.get_emissor(x)['cnpj'])
+        ativos['nomeEmissor'] =  ativos['emissor'].apply(lambda x : self.get_emissor(x)['nome'])
+
         ativos['cd_jcot'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'JCOT'))
         ativos['cd_cetip'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'CETIP'))
         ativos['cd_bolsa'] =  ativos['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'BOLSA'))
@@ -48,7 +65,7 @@ class Ativoso2Sinc():
 
         ativos['dataFimRelacionamento'] =  ativos['dataFimRelacionamento'].apply(lambda x: datetime.strptime(x[0:10],"%Y-%m-%d"))
         
-        nativo = ativos.drop(['codigosInstrumentosFinanceiros'] , axis="columns").to_sql("ativos_o2", con=self.engine , if_exists="append")
+        nativo = ativos.drop(['codigosInstrumentosFinanceiros' , "emissor"] , axis="columns").to_sql("ativos_o2", con=self.engine , if_exists="append")
         
         return nativo
     

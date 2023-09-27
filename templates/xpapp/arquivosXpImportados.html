@@ -5,6 +5,8 @@
 {% block content %}
 
 
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <h1>Arquivos Importados</h1>
 
 
@@ -21,7 +23,7 @@
     <tr>
       <td>{{arquivo.filename}}</td>
       <td>{{arquivo.filedate}}</td>
-      <td><a class="btn">Estatísticas</a></td>
+      <td><a class="btn" href="{% url 'dados_arquivos' %}?id={{arquivo.id}}">Estatísticas</a></td>
 
     </tr>
 
@@ -30,9 +32,23 @@
 
   </table>
 
+  <ul class="pagination">
+    {% if arquivos.has_previous %}
+      <li class="waves-effect"><a href="?page=1"><i class="material-icons">first_page</i></a></li>
+      <li class="waves-effect"><a href="?page={{ arquivos.previous_page_number }}"><i class="material-icons">chevron_left</i></a></li>
+    {% endif %}
 
+    {% if arquivos.has_next %}
+      <li class="waves-effect"><a href="?page={{ arquivos.next_page_number }}"><i class="material-icons">chevron_right</i></a></li>
+      <li class="waves-effect"><a href="?page={{ arquivos.paginator.num_pages }}"><i class="material-icons">last_page</i></a></li>
+    {% endif %}
+  </ul>
 
 </div>
+
+
+
+
 
 
 

@@ -30,6 +30,7 @@ urlpatterns = [
     path("fundos_xp", controle_fundos_xp, name="cadastro_fundos_xp"),
     path("processar_movimentacoes", sincronizar_lancamentos, name="processar_movimentacoes"),
     path("arquivos_importados", arquivos_importados_view, name="arquivos_importados_xp"),
+    path("dados_arquivos", arquivos_estatisticas_view, name="dados_arquivos"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
