@@ -74,8 +74,6 @@ class MovimentoResumidoService(COTSERVICE):
         }
 
 
-
-
     def movimentoResumidoRequest(self , dados):
         base_request = requests.post(self.url, self.movimentoResumidoRequestBody(dados))
         return self.formatar_resposta(base_request.content)

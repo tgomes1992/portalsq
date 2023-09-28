@@ -8,13 +8,13 @@
 <h1>Relatórios Diários XP</h1>
 
 <div>
-
-    <form>
-        <input type="date"/>
-          <input placeholder="Código do Fundo" id="fundo" type="text" class="validate"/>
-            <a class="btn" href="#">Pack de Relatórios</a>
-            <a class="btn" href="#">Arquivo Retorno</a>
-            <a class="btn" href="#">Relatório Posição</a>
+    <form action="{% url 'relatorio_movimentacao_xp' %}" method="POST">
+          {% csrf_token %}
+        <div class="input-field col s12">
+          <input type="text" class="datepicker" name='data' id="datepicker">
+          <label for="datepicker">Selecione uma data</label>
+        </div>
+            <button type="submit" class='btn' >Arquivo Retorno</button>
     </form>
 
 

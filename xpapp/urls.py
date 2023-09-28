@@ -31,6 +31,7 @@ urlpatterns = [
     path("processar_movimentacoes", sincronizar_lancamentos, name="processar_movimentacoes"),
     path("arquivos_importados", arquivos_importados_view, name="arquivos_importados_xp"),
     path("dados_arquivos", arquivos_estatisticas_view, name="dados_arquivos"),
+    path("relatorio_movimentacao" , relatorio_movimentacao , name="relatorio_movimentacao_xp")
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

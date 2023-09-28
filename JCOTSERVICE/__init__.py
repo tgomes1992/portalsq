@@ -12,7 +12,7 @@ from .ProcessamentoService import ProcessamentoService
 from .ManClienteService import ManClienteService
 from .ManCotistaV2Service import Mancotistav2Service
 from .ManEnderecoService import ManEnderecoService
-
+from .ConsultaMovimentoPeriodoV2Service import ConsultaMovimentoPeriodoV2Service
 
 
 

@@ -12,6 +12,13 @@ class FundoXP(models.Model):
 
     def __str__(self):
         return self.nome
+    
+    def gerar_movimentos(self, data):
+        return [{"cd_fundo": self.cd_jcot ,  "data": data.strftime("%Y-%m-%d") , "movimento": "A"} , 
+                 {"cd_fundo": self.cd_jcot , "data": data.strftime("%Y-%m-%d") ,  "movimento": "R"}]
+
+
+
 
 class InvestidoresXp(models.Model):
     NO_CGC = models.CharField(max_length=15 , default=0)
