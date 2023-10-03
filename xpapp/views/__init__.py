@@ -4,3 +4,4 @@ from .cadastroViews import *
 from .movimentacoesViews import *
 from .reportViews import *
 from .views import *
+from .DownloadZipView import DownloadZipView

@@ -6,6 +6,8 @@ from .models import PosicaoFundoJcot
 from JCOTSERVICE import ListFundosService
 import pandas as pd
 import csv
+from io import BytesIO
+from datetime import datetime
 # Create your views here.
 
 def homejcothelper(request):
@@ -22,17 +24,20 @@ def listfundosjcot(request):
    fundos = ListFundosService("roboescritura" , "Senh@123").listFundoRequest().to_dict("records")
    return render(request , 'jcothelper/list_fundos.html' , {"fundos": fundos})
    
+
 def download(request):
     fundos = ListFundosService("roboescritura" , "Senh@123").listFundoRequest()
-    response = HttpResponse(
-        content_type='text/csv',
-        headers={'Content-Disposition': 'attachment; filename="fundos.csv"'},
-      )
-    writer = csv.writer(response , delimiter=";" )
-    writer.writerow(fundos.columns)
-    for item in fundos.iterrows():
-       writer.writerow(item[1].to_list())
-    return response
+    fundos['dataPosicao'] = fundos['dataPosicao'].apply(lambda x : datetime.strptime(x , "%Y-%m-%d"))
+    filename = f"fundos.xlsx"
+    with BytesIO() as b:
+        res = HttpResponse(
+            b.getvalue(),  # Gives the Byte string of the Byte Buffer object
+            content_type="application/xlsx",
+            headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+        )
+        with pd.ExcelWriter(res) as writer:
+            fundos.to_excel(writer, sheet_name="fundos", index=False)
+            return res
 
 
 

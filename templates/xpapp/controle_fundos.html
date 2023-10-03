@@ -8,7 +8,7 @@
 <h1>Cadastro de Fundos Xp</h1>
 
 <div class="row">
-    <form class="col s12" method="post">
+    <form class="col s12"  method="post">
       {% csrf_token %}
       <div class="row">
         <div class="input-field col s4">
@@ -23,10 +23,17 @@
           <input placeholder="Código Jcot" id="cd_jcot" type="text" name="cd_jcot" class="validate">
           <label for="cd_jcot">Código Jcot</label>
       </div>
+      <div class="input-field col s4">
+        <select name="filename">
+          <option value="" disabled selected>Selecione o Arquivo</option>
+          <option value="OT_ORDENS_RETORNO">OT ORDENS RETORNO</option>
+          <option value="XP_OT_ORDENS_ENVIO_FD_PASSIVO">XP OT ORDENS ENVIO FD PASSIVO</option>
+        </select>
+        <label>Arquivo retorno</label>
+      </div>
         <div class="input-field col s4">
           <input  id="enviar" class="btn" type="submit" name="Salvar" />
       </div>
-
       </div>
     </form>
 </div>
@@ -46,7 +53,7 @@
     <tr>
       <td>{{fundo.nome}}</td>
       <td>{{fundo.cd_jcot}}</td>
-      <td><a class="btn">Editar</a></td>
+      <td><a class="btn" href="{% url 'editar_fundos_xp'%}?id={{fundo.cd_jcot}}">Editar</a></td>
 
     </tr>
 

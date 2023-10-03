@@ -9,13 +9,14 @@ class FundoXP(models.Model):
     cd_jcot = models.CharField(max_length=15 , primary_key=True)
     cnpj = models.CharField(max_length=14)
     categoria =  models.CharField(max_length=200 , default="catxp")
+    filename = models.CharField(max_length=200 , default="XP")
 
     def __str__(self):
         return self.nome
     
     def gerar_movimentos(self, data):
-        return [{"cd_fundo": self.cd_jcot ,  "data": data.strftime("%Y-%m-%d") , "movimento": "A"} , 
-                 {"cd_fundo": self.cd_jcot , "data": data.strftime("%Y-%m-%d") ,  "movimento": "R"}]
+        return [{"cd_fundo": self.cd_jcot ,  "data": data.strftime("%Y-%m-%d") , "movimento": "A" ,  "cnpj_fundo": self.cnpj} , 
+                 {"cd_fundo": self.cd_jcot , "data": data.strftime("%Y-%m-%d") ,  "movimento": "R" , "cnpj_fundo": self.cnpj}]
 
 
 

@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 import xml.etree.ElementTree as ET
+pd.options.display.float_format = '{:,.2f}'.format
 
 class ConsultaMovimentoPeriodoV2Service(COTSERVICE):
 
@@ -44,31 +45,28 @@ class ConsultaMovimentoPeriodoV2Service(COTSERVICE):
       return base
 
 
-    def formatar_resposta(self , xml_content):
+    def formatar_resposta(self , xml_content , cnpj_fundo):
 
             movimentos = []
 
             xml_element = ET.fromstring(xml_content)
 
 
-
-
             for movimento in xml_element.iter("{http://totvs.cot.webservices}movimento"):
-                print (movimento)
                 item = {}
-                item['nota'] = movimento.find("{http://totvs.cot.webservices}idNota").text
-                item['investidor'] =  movimento.find("{http://totvs.cot.webservices}nmCotista").text
-                item["fundo"] = movimento.find("{http://totvs.cot.webservices}nmFundo").text
-                item['operacao'] = movimento.find("{http://totvs.cot.webservices}dsTipoMov").text
-                item['data_operacao'] =  movimento.find("{http://totvs.cot.webservices}dtMov").text
-                item['dt_liq_fisica'] =  movimento.find("{http://totvs.cot.webservices}dtLiqFisica").text
-                item['dt_liq_financeira'] = movimento.find("{http://totvs.cot.webservices}dtLiqFinanceira").text
-                item['valor'] = movimento.find("{http://totvs.cot.webservices}vlBruto").text
-                item['status'] = "Batido"
-                item['status_conversao'] = "Não Efetivado"
-                item['data_fundo_movimentacao'] =  movimento.find("{http://totvs.cot.webservices}dtMov").text
+                item['Numero Operacao'] = movimento.find("{http://totvs.cot.webservices}idNota").text
+                item['Investidor'] =  movimento.find("{http://totvs.cot.webservices}nmCotista").text
+                item["Papel Cota"] = movimento.find("{http://totvs.cot.webservices}nmFundo").text.strip()
+                item['Tipo Operacao'] = movimento.find("{http://totvs.cot.webservices}dsTipoMov").text.replace("Ç" , "C").replace("Ã" , "A")
+                item['Data Operacao'] =  datetime.strptime(movimento.find("{http://totvs.cot.webservices}dtMov").text , "%Y-%m-%d").strftime("%d/%m/%Y")
+                item['Data Conversao'] =  datetime.strptime(movimento.find("{http://totvs.cot.webservices}dtLiqFisica").text  , "%Y-%m-%d").strftime("%d/%m/%Y")
+                item['Data Liquidacao'] = datetime.strptime(movimento.find("{http://totvs.cot.webservices}dtLiqFinanceira").text , "%Y-%m-%d").strftime("%d/%m/%Y")
+                item['Valor'] =  movimento.find("{http://totvs.cot.webservices}vlBruto").text
+                item['Status'] = "Batido"
+                item['Status Conversao'] = "Nao Efetivado"
+                item['Data do Fundo na Movimentacao'] =  datetime.strptime(movimento.find("{http://totvs.cot.webservices}dtMov").text ,"%Y-%m-%d").strftime("%d/%m/%Y")
                 movimentos.append(item)
-               #  item['cnpj_fundo'] =  
+                item["CNPJ do fundo"] = cnpj_fundo
 
             return movimentos
         
@@ -76,7 +74,7 @@ class ConsultaMovimentoPeriodoV2Service(COTSERVICE):
 
     def get_movimento_request(self , dados):
         base_request = requests.post(self.url, self.movimento_body(dados))
-        return self.formatar_resposta(base_request.content.decode('utf-8'))
+        return self.formatar_resposta(base_request.content.decode('utf-8') ,  dados['cnpj_fundo'])
 
 
     def montar_retorno_xp(self, lista_de_fundos):
