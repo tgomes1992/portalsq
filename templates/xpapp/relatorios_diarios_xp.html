@@ -14,7 +14,15 @@
           <input type="text" class="datepicker" name='data' id="datepicker">
           <label for="datepicker">Selecione uma data</label>
         </div>
-            <button type="submit" class='btn' >Arquivo Retorno</button>
+        <div class="input-field col s12">
+          <select name="tipoarquivo">
+            <option value="" disabled selected>Selecione o tipo de arquivo: </option>
+            <option value="movimentacao">Arquivo de Movimentação</option>
+            <option value="posicao">Arquivo de Posição</option>
+          </select>
+          <label>Tipo de Arquivo</label>
+        </div>
+            <button type="submit" class='btn' >Gerar Arquivo Retorno</button>
        
     </form>
 

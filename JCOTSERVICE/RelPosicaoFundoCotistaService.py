@@ -2,6 +2,7 @@ from .CotService import COTSERVICE
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import xml.etree.ElementTree as ET
 
 
 class RelPosicaoFundoCotistaService(COTSERVICE):
@@ -43,9 +44,8 @@ class RelPosicaoFundoCotistaService(COTSERVICE):
 
     def RelPosicaoFundoCotistaServiceRequest(self, fundo):
         base_request = requests.post(self.url, self.relPosicaoFundoCotistaBody(fundo))
-        print(fundo)
         #   print (base_request.content)
-        return base_request.content
+        return base_request.content.decode("utf-8")
 
     def get_status(self, fundo):
         xml = self.RelPosicaoFundoCotistaServiceRequest(fundo)
@@ -59,14 +59,23 @@ class RelPosicaoFundoCotistaService(COTSERVICE):
     def get_cotistas(self, xml_part):
         cotistas = xml_part.find_all("ns2:cotista")
         return cotistas
+    
+    def get_cotistas_ET(self, xml_part):
+        cotistas = xml_part.find_all("ns2:cotista")
+        return cotistas
+
 
     def get_posicoes_cotistas(self, xml_part):
+
+
         total_cotistas = xml_part.find("ns2:totalCotista")
+        for item in xml_part:
+            print (item)
 
         posicao = {
             "cd_cotista": xml_part.find("ns2:cdCotista").text,
             "nmCotista": xml_part.find("ns2:nmCotista").text,
-            "cpfcnpjCotista": xml_part.find("ns2:cpfcnpjCotista").text,
+            # "cpfcnpjCotista": xml_part.find("ns2:cpfcnpjCotista").text,
             "qtCotas": float(total_cotistas.find("ns2:qtCotas").text),
             "vlAplicacao": float(total_cotistas.find("ns2:vlAplicacao").text),
             "vlCorrigido": float(total_cotistas.find("ns2:vlCorrigido").text),
@@ -77,6 +86,33 @@ class RelPosicaoFundoCotistaService(COTSERVICE):
         }
 
         return posicao
+    
+    def get_posicoes_cotistas_ET(self, xml_part , fundo ,  cota):
+        total_cotista = xml_part.find('{http://totvs.cot.webservices}totalCotista')
+        try:
+            retorno_cotista = {       
+            "cd_cotista": xml_part.find("{http://totvs.cot.webservices}cdCotista").text,
+            "nmCotista": xml_part.find("{http://totvs.cot.webservices}nmCotista").text,
+            "cpfcnpjCotista": xml_part.find("{http://totvs.cot.webservices}cpfcnpjCotista").text
+            }
+        except Exception as e:
+            
+            retorno_cotista = {       
+            "cd_cotista": xml_part.find("{http://totvs.cot.webservices}cdCotista").text,
+            "nmCotista": xml_part.find("{http://totvs.cot.webservices}nmCotista").text,
+            "cpfcnpjCotista": "2332886000104"
+            }
+
+
+        for item in total_cotista.iter():
+            retorno_cotista[item.tag.replace("{http://totvs.cot.webservices}" , "")] =  item.text
+
+        
+        retorno_cotista['fundo'] = fundo['codigo']
+        retorno_cotista['data'] = fundo['dataPosicao']
+        retorno_cotista['valor_cota'] = cota
+ 
+        return retorno_cotista
 
     def get_cd_cotistas(self, xml):
         cd_cotista = xml.find("ns2:cdCotista").text.strip()
@@ -93,7 +129,18 @@ class RelPosicaoFundoCotistaService(COTSERVICE):
         xml = self.RelPosicaoFundoCotistaServiceRequest(fundo)
         soup = BeautifulSoup(xml, "xml")
         cotistas = self.get_cotistas(soup)
-        posicoes = [self.get_posicoes_cotistas(item) for item in cotistas]
+        posicoes = [self.get_posicoes_cotistas_ET(item) for item in cotistas]
+        return posicoes
+    
+    def get_posicoes_ET(self, fundo):
+        xml = self.RelPosicaoFundoCotistaServiceRequest(fundo)
+        element = ET.fromstring(xml)
+        valor_cota = ""
+        for valor in element.iter("{http://totvs.cot.webservices}fundo"):
+            valor_cota = valor.find("{http://totvs.cot.webservices}vlCota").text
+
+        cotistas = [item for item in element.iter('{http://totvs.cot.webservices}cotista')]       
+        posicoes = [self.get_posicoes_cotistas_ET(cotista , fundo ,  valor_cota) for cotista in cotistas] 
         return posicoes
 
     def get_posicoes_table(self, fundo):
@@ -102,7 +149,7 @@ class RelPosicaoFundoCotistaService(COTSERVICE):
         return df
 
     def get_posicoes_json(self, fundo):
-        return self.get_posicoes(fundo)
+        return self.get_posicoes_ET(fundo)
 
     def get_posicao_fundo(self, fundo):
         xml = self.RelPosicaoFundoCotistaServiceRequest(fundo)
@@ -113,7 +160,7 @@ class RelPosicaoFundoCotistaService(COTSERVICE):
                 "fundo": fundo['codigo'],
                 "valor": float(total_fundo.find("ns2:qtCotas").text)
             }
-        except:
+        except :
             valor = {
                 "fundo":  fundo['codigo'],
                 "valor":  0

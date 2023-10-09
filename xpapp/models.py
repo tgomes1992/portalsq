@@ -18,7 +18,8 @@ class FundoXP(models.Model):
         return [{"cd_fundo": self.cd_jcot ,  "data": data.strftime("%Y-%m-%d") , "movimento": "A" ,  "cnpj_fundo": self.cnpj} , 
                  {"cd_fundo": self.cd_jcot , "data": data.strftime("%Y-%m-%d") ,  "movimento": "R" , "cnpj_fundo": self.cnpj}]
 
-
+    def gerar_posicao(self, data):
+        return {"codigo": self.cd_jcot ,  "dataPosicao":  data.strftime("%Y-%m-%d")}
 
 
 class InvestidoresXp(models.Model):

@@ -10,6 +10,8 @@ from io import BytesIO
 from datetime import datetime
 # Create your views here.
 
+
+
 def homejcothelper(request):
    return render(request, "jcothelper/home_jcot_helper.html" )
 
