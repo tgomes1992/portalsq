@@ -12,9 +12,16 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import pandas as pd
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+path  = r"\\Scototrj01\h\CUSTODIA\7 Escrituração de Ativos\7 - Scripts, Macros e Automações\env_excel.xlsx"
+
+variaveis_sq = pd.read_excel(path)
+
 
 
 # Quick-start development settings - unsuitable for production

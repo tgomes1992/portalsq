@@ -43,18 +43,26 @@ class ListFundosService(COTSERVICE):
          fundos = response.find_all("ns2:fundo")
          for i in fundos:
             formata_data = datetime.strptime(i.find('ns2:dataPosicao').text[0:10],'%Y-%m-%d')
-            base_formatacao['ns2:razaoSocial'].append(i.find('ns2:razaoSocial').text)
-            base_formatacao['ns2:cnpj'].append(i.find('ns2:cnpj').text)
-            base_formatacao['ns2:codigo'].append(i.find('ns2:codigo').text) 
-            base_formatacao['ns2:custodiante'].append(i.find('ns2:custodiante').text)
-            base_formatacao['ns2:gestorPrincipal'].append(i.find('ns2:gestorPrincipal').text)
-            base_formatacao['ns2:administrador'].append(i.find('ns2:administrador').text)
-            base_formatacao['ns2:empresa'].append(i.find('ns2:empresa').text)
-            base_formatacao['ns2:tipoFundo'].append(i.find('ns2:tipoFundo').text )
+            base_formatacao['ns2:razaoSocial'].append(self.get_bs4_tag_text(i.find('ns2:razaoSocial')))
+            base_formatacao['ns2:cnpj'].append(self.get_bs4_tag_text(i.find('ns2:cnpj')))
+            base_formatacao['ns2:codigo'].append(self.get_bs4_tag_text(i.find('ns2:codigo'))) 
+            base_formatacao['ns2:custodiante'].append(self.get_bs4_tag_text(i.find('ns2:custodiante')))
+            base_formatacao['ns2:gestorPrincipal'].append(self.get_bs4_tag_text(i.find('ns2:gestorPrincipal')))
+            base_formatacao['ns2:administrador'].append(self.get_bs4_tag_text(i.find('ns2:administrador')))
+            base_formatacao['ns2:empresa'].append(self.get_bs4_tag_text(i.find('ns2:empresa')))
+            base_formatacao['ns2:tipoFundo'].append(self.get_bs4_tag_text(i.find('ns2:tipoFundo')))
             base_formatacao['ns2:dataPosicao'].append(i.find('ns2:dataPosicao').text[0:10])
          df = pd.DataFrame.from_dict(base_formatacao)
-         df.columns = ["razaoSocial",'cnpj','codigo','custodiante','gestorPrincipal',"administrador",'empresa',"tipoFundo","dataPosicao" ]
+         df.columns = ["razaoSocial",'cnpj' , 'codigo','custodiante','gestorPrincipal',"administrador",'empresa',"tipoFundo","dataPosicao" ]
          return df 
+    
+
+    def get_bs4_tag_text(self , tag_name ):
+        try:
+            return tag_name.text
+        except:
+            return "na"
+        
 
 
 

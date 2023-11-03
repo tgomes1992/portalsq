@@ -29,7 +29,7 @@ from conciliacao.urls import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("listar" , listarfundos ) ,
-    path("" , homepage  ) ,
+    path("" , homepage ,  name = "pagina_inicial" ) ,
     path("eventos/" , include("eventosapp.urls") ) , 
     path("jcothelper/" , include("jcothelper.urls") ) , 
     path("zapemissores/" , include("zapemissoresApp.urls")) , 

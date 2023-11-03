@@ -21,6 +21,7 @@ from dj_static import Cling
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'portalescrituracao.settings')
 
+
 # os.environ['DJANGO_SETTINGS_MODULE'] = 'portalescrituracao.settings'
 
 # application = get_wsgi_application()
