@@ -20,7 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 path  = r"\\Scototrj01\h\CUSTODIA\7 Escrituração de Ativos\7 - Scripts, Macros e Automações\env_excel.xlsx"
 
-variaveis_sq = pd.read_excel(path)
 
 
 

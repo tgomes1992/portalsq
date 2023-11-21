@@ -33,7 +33,8 @@ urlpatterns = [
     path("dados_arquivos", arquivos_estatisticas_view, name="dados_arquivos"),
     path("relatorio_movimentacao" , relatorio_movimentacao , name="relatorio_movimentacao_xp") , 
     path("editar_fundos_xp" , editar_fundos_xp , name="editar_fundos_xp") , 
-    path("get_arquivo_retorno" , DownloadZipView.as_view() , name="arquivo_retorno") 
+    path("get_arquivo_retorno" , DownloadZipView.as_view() , name="arquivo_retorno") ,
+    path("pcos_em_lote" , pcos_em_lote , name="lote_pcos") 
 
 
 

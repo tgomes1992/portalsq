@@ -1,0 +1,42 @@
+{% extends 'xpapp/home_xp_app.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1>Importar Pcos em Lote</h1>
+
+<form action="#" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="file-field input-field">
+    <div class="btn">
+      <span>Selecione o Arquivo: </span>
+      <input type="file" name="arquivo">
+    </div>
+    <div class="file-path-wrapper">
+      <input class="file-path validate" type="text">
+    </div>
+  </div>
+
+  <div class="input-field col s12">
+    <select name="tipoarquivo">
+      <option value="" disabled selected>Selecione o tipo de importacao</option>
+      <option value="diariopco">Pcos em Lote</option>
+    </select>
+    <label>Tipo de Importação</label>
+  </div>
+
+  <input type="submit"/>
+
+
+</form>
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+{% endblock %}
+
+
+

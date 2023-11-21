@@ -95,6 +95,44 @@ class ManClienteService(COTSERVICE):
 </soapenv:Envelope>'''
         return cadastro_clientes
 
+
+    def body_cadastrar_cliente_pco_xp(self,codigo , nome ):
+        cadastro_clientes = f'''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tot="http://totvs.cot.webservices" xmlns:glob="http://totvs.cot.webservices/global">
+    <soapenv:Header>
+            {self.header_login()}
+   	</soapenv:Header>
+   <soapenv:Body>
+      <tot:cadastrarClienteRequest>
+         <tot:cliente>             
+            <tot:cdCliente>{codigo}</tot:cdCliente>
+            <tot:icFjPessoa>J</tot:icFjPessoa>
+            <tot:idEstadoCivil>0</tot:idEstadoCivil>
+            <tot:idConstituicao>0</tot:idConstituicao>
+            <tot:idRegimeCasamento>0</tot:idRegimeCasamento>
+            <tot:idEscolaridade>0</tot:idEscolaridade>
+            <tot:nmCliente>{nome}</tot:nmCliente>
+            <tot:nmAbreviado>{nome[0:19]}</tot:nmAbreviado>
+            <tot:icSnBrasileiro>S</tot:icSnBrasileiro>
+            <tot:noCgc>2332886000104</tot:noCgc>
+            <tot:dsDomicilio>BRASIL</tot:dsDomicilio>
+            <tot:nmContato>{nome[0:19]}</tot:nmContato>
+            <tot:cdUsuarioInclusao>{self.user}</tot:cdUsuarioInclusao>
+            <tot:dtInclusao>{self.data}</tot:dtInclusao>
+            <tot:icSnExposta>N</tot:icSnExposta>
+            <tot:dtUltRenovacao>{self.data}</tot:dtUltRenovacao>
+            <tot:icSnOrigemBvmf>N</tot:icSnOrigemBvmf>
+         </tot:cliente>
+         <!--Optional:-->
+         <glob:messageControl>
+            <glob:user>{self.user}</glob:user>
+         </glob:messageControl>
+      </tot:cadastrarClienteRequest>
+   </soapenv:Body>
+</soapenv:Envelope>'''
+        return cadastro_clientes
+
+
+
     def consultaCliente(self,cd_cliente):
         '''base para o cadastro dos clientes'''
         consulta_clientes = f'''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tot="http://totvs.cot.webservices" xmlns:glob="http://totvs.cot.webservices/global">
@@ -171,6 +209,10 @@ class ManClienteService(COTSERVICE):
 
     def request_cadastrar_clientes(self,dados):
         base_request = requests.post(self.url, self.body_cadastrar_cliente(dados))
+        return base_request.content
+    
+    def request_cadastrar_clientes_pco_xp(self,codigo ,  nome):
+        base_request = requests.post(self.url, self.body_cadastrar_cliente_pco_xp(codigo, nome ))
         return base_request.content
 
 

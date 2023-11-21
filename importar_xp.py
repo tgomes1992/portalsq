@@ -13,7 +13,6 @@ arquivos_passivo = os.listdir('movimentacoes_xp\PASSIVO')
 
 
 for file in arquivos_passivo:
-
     try:
         path_file = os.path.join('movimentacoes_xp\PASSIVO' , file)
         arquivo = ControleImportacaoArquivoDiario(path_file ,  file)

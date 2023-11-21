@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from io import BytesIO
 import pandas as pd
 from ..models import FundoXP
+from JCOTSERVICE import Mancotistav2Service , ManClienteService
 
 
 def importacao_arquivo_diario(request):
@@ -12,6 +13,21 @@ def importacao_arquivo_diario(request):
 
         ControleImportacaoArquivoDiario(request.FILES['arquivo'] , str(request.FILES['arquivo'])).get_file_data()
     return render(request,"xpapp/importacao_xp.html")
+
+
+def pcos_em_lote(request):
+    cotista_service =  Mancotistav2Service("roboescritura","Senh@123")
+    cliente_service = ManClienteService("roboescritura","Senh@123")
+    if request.method == "POST":
+        df = pd.read_excel(request.FILES['arquivo'])
+        for investidor in df.to_dict("records"):
+            cliente_service.request_cadastrar_clientes_pco_xp(investidor['codigo'] ,  investidor['nome'])
+            cotista_service.request_habilitar_pco_xp_v2(investidor['codigo'])
+
+        print ("Importação Iniciada")
+
+    return render(request,"xpapp/importacao_lote_pco.html")
+
 
 
 
