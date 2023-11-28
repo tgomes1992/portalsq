@@ -1,0 +1,41 @@
+{% extends 'sqdados/home_sq_dados.html' %}
+
+
+{% block content %}
+
+<h1>Quantitativo</h1>
+
+
+
+
+<div class="row">
+    <form action="#" method="POST">
+          {% csrf_token %}
+        <div class="input-field col s12">
+          <input type="text" class="datepicker" name='data' id="datepicker">
+          <label for="datepicker">Selecione uma data</label>
+        </div>
+        <div class="input-field col s12">
+          <select name="tipoarquivo">
+            <option value="" disabled selected>Selecione o quantitativo </option>
+            <option value="movimentacao">Quantitativo Fundos</option>
+            <option value="posicao">Quantitativo Renda Fixa</option>
+            <option value="qtd_posicao">Quantitativo Geral</option>
+          </select>
+          <label>Tipo de Arquivo</label>
+        </div>
+            <button type="submit" class='btn'>Consultar</button>
+    </form>
+</div>
+
+
+<div class="row">
+    <button class="btn">Processar Quantitativo</button>
+</div>
+
+
+
+
+
+
+{% endblock %}

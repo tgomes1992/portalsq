@@ -14,29 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path , include
+from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
-from listfundos.views import  *
-from eventosapp.urls import *
-from jcothelper.urls import *
-from zapemissoresApp.urls import *
-from emissoresapp.urls import *
-from .views import homepage
-from conciliacao.urls import *
+
+from sqdados.views import *
+
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("listar" , listarfundos ) ,
-    path("" , homepage ,  name = "pagina_inicial" ) ,
-    path("eventos/" , include("eventosapp.urls") ) , 
-    path("jcothelper/" , include("jcothelper.urls") ) , 
-    path("zapemissores/" , include("zapemissoresApp.urls")) , 
-    path("emissores/" , include("emissoresapp.urls")) ,
-    path("xpapp/" , include("xpapp.urls")) ,  
-    path("conciliacao/" , include("conciliacao.urls")) ,
-    path("sqdados/" , include("sqdados.urls"))
+    path("",  home_sq_dados , name="sqdados") ,
+    path("float" , home_float , name="calculo_float") ,
+    path("quantitativo" , home_quantitativo , name="quantitativo") ,
+    path("volumes" , home_volumes , name='volumes') , 
+    path("remunera" , home_remuneracao , name="remuneracao")  , 
 
+    # path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
