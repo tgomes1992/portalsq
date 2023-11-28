@@ -100,10 +100,10 @@ WSGI_APPLICATION = 'portalescrituracao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
-        'NAME': 'portal_escrituracao',  # <-- UPDATED line
-        'USER': 'conciliacao',  # <-- UPDATED line
-        'PASSWORD': '4/jdv)sg',  # <-- UPDATED line
-        'HOST': 'OTAPLICRJ04',  # <-- UPDATED line
+        'NAME': os.environ.get("API_OTESCRITURACAO_DB_DATABASE"),  # <-- UPDATED line
+        'USER': os.environ.get("API_OTESCRITURACAO_DB_USERNAME"),  # <-- UPDATED line
+        'PASSWORD':  os.environ.get("API_OTESCRITURACAO_DB_PASSWORD"),  # <-- UPDATED line
+        'HOST':  os.environ.get("API_OTESCRITURACAO_DB_HOST"),  # <-- UPDATED line
         'PORT': '3306',
     }
 }
