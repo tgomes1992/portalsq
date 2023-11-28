@@ -12,7 +12,14 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-import pandas as pd
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,15 +96,6 @@ WSGI_APPLICATION = 'portalescrituracao.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    #  'default': {
-    #     'ENGINE'  : 'django.db.backends.mysql', # <-- UPDATED line
-    #     'NAME'    : 'portalteste',                 # <-- UPDATED line
-    #     'USER'    : 'root',                     # <-- UPDATED line
-    #     'PASSWORD': 'tAman1993**',              # <-- UPDATED line
-    #     'HOST'    : 'localhost',                # <-- UPDATED line
-    #     'PORT'    : '3306',
-    # }
-
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
         'NAME': 'portal_escrituracao',  # <-- UPDATED line
