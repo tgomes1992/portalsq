@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'jcothelper' ,  
     'emissoresapp' ,
     'xpapp' , 
-    "conciliacao"
+    "conciliacao" ,  
+    "sqdados"
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,8 @@
 from .DiUpdate import DiCetip
 from sqlalchemy import create_engine
 import pandas as pd
-from db_conection import *
-
+from .db_conection import *
+from datetime import datetime
 
 
 
@@ -15,14 +15,14 @@ class ArquivoFloatDiario():
          pass
 
 
-    def importar_arquivo_float(excel_file):
+    def importar_arquivo_float(self,excel_file):
         file = pd.read_excel(excel_file)
         file['VALOR'] =  file['VALOR'].apply(float)
         df_final = file[['ATIVO' ,  "DATA" , "VALOR"]]
-        df_final.to_sql("FLOAT_ORIGINAL" , con=DASHBOARD_ENGINE.begin() , index=False , if_exists="append")
-        dataInicial = df_final['DATA'].values[0] 
+        df_final['DATA'] = df_final['DATA'].apply(lambda x : datetime.strptime(str(x)[0:10] , "%Y-%m-%d").strftime("%Y-%m-%d"))
+        # df_final.to_sql("FLOAT_ORIGINAL" , con=DASHBOARD_ENGINE.begin() , index=False , if_exists="append")
+        dataInicial = df_final['DATA'].values[0]
         dataFinal  =  df_final['DATA'].values[-1]
-
 
         return {
             "dados" : df_final , 
@@ -33,6 +33,6 @@ class ArquivoFloatDiario():
 
     def ImportarDi(self , excel_file):
         dados_importacao = self.importar_arquivo_float(excel_file)
-        buscar_di = DiCetip(dados_importacao['data_inicial'] , dados_importacao['data_final'])
+        buscar_di = DiCetip(datetime.strptime(dados_importacao['data_inicial'] ,  "%Y-%m-%d").strftime("%d/%m/%Y") , datetime.strptime(dados_importacao['data_final'] ,  "%Y-%m-%d").strftime("%d/%m/%Y"))
         di  =  buscar_di.Ditodf()
         di.to_sql("float_di" , con=DASHBOARD_ENGINE , if_exists="append" , index=False)
