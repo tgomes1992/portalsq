@@ -36,8 +36,6 @@ urlpatterns = [
     path("get_arquivo_retorno" , DownloadZipView.as_view() , name="arquivo_retorno") ,
     path("pcos_em_lote" , pcos_em_lote , name="lote_pcos") 
 
-
-
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

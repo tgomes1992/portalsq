@@ -47,7 +47,7 @@ def sincronizar_lancamentos(request):
         fundo = request.POST['fundo']
         data_movimentos = request.POST['dataMovimentacoes']
         print (request.POST)
-        movimentos_sinc = MovimentosSinc()
+        movimentos_sinc = MovimentosSinc()  
         filename = f"lancamentos.xlsx"
         dataframes = movimentos_sinc.sincronizar_movimentos(fundo , data_movimentos)
         with BytesIO() as b:
