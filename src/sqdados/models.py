@@ -10,3 +10,10 @@ class DiFator(Model):
     data = models.DateTimeField()
     fator = models.FloatField()
     selic = models.FloatField()
+
+
+
+class FloatDiario(Model):
+    ativo = models.CharField(max_length=250)
+    data = models.DateTimeField()
+    valor = models.FloatField()

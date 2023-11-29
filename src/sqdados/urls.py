@@ -25,6 +25,8 @@ from sqdados.views import *
 urlpatterns = [
     path("",  home_sq_dados , name="sqdados") ,
     path("float" , home_float , name="calculo_float") ,
+    path("float_mensal" , get_relatorio_float_mensal , name="float_mensal") , 
+    path("float_geral" , get_relatorio_float_geral , name="float_geral") , 
     path("quantitativo" , home_quantitativo , name="quantitativo") ,
     path("volumes" , home_volumes , name='volumes') , 
     path("remunera" , home_remuneracao , name="remuneracao")  , 

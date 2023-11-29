@@ -5,7 +5,7 @@
 
 <h1>Importação Float</h1>
 
-<form action="#" method="post" enctype="multipart/form-data">
+<form class="row" action="#" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="file-field input-field">
     <div class="btn">
@@ -13,7 +13,7 @@
       <input type="file" name="arquivo">
     </div>
     <div class="file-path-wrapper">
-      <input class="file-path validate" type="text">
+      <input class="file-path validate" type="text"  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     </div>
   </div>
 
@@ -31,7 +31,13 @@
 </form>
 
 
+<div class="row"> 
 
+    <a class="btn" href="{% url 'float_geral' %}"> Float Geral</a>
+    <a class="btn" href="{% url 'float_mensal' %}"> Float Mensal</a>
+
+
+</div>
 
 
 

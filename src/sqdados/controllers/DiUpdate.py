@@ -3,6 +3,8 @@ from datetime import *
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+from io import BytesIO ,  StringIO
+
 
 class DiCetip():
 
@@ -95,7 +97,14 @@ class DiCetip():
                     filename = link['href'].split("/")[-1]
             get_xls = f"http://estatisticas.cetip.com.br/astec/temp/{filename}"
             r = s.get(get_xls)
-            open("temp.txt", 'wb+').write(r.content)
+            df =  pd.read_table(BytesIO(r.content) ,  skiprows=6 , encoding="ANSI" ,  sep="\t")
+            print (df.head())
+            df.columns = [ 'data' , 'n_operacaoes', 'volume' ,  'selic_f' , 
+                           'fator' , 'minima' , 'maxima' ,  'dsv' , 
+                            'Pdr',  'selic', ]
+            return df[['data' ,  'fator' ,  'selic']]
+      
+
 
     def retornar_di(self):
         base =  []
@@ -113,9 +122,10 @@ class DiCetip():
         return resultado
 
     def Ditodf(self):
-        self.extrair_di()
-        df = self.retornar_di()
-        os.remove("temp.txt")
+        df = self.extrair_di()
+        # df = self.retornar_di()
+
+        # os.remove("temp.txt")
         return df
 
 
