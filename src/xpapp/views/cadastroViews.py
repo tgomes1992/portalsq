@@ -25,6 +25,7 @@ def editar_fundos_xp(request):
      if request.method == "GET":
             cd_jcot = request.GET.get('id')
             fundo = FundoXP.objects.filter(cd_jcot=cd_jcot).first()
+            print(fundo.nome)
             return  render(request , "xpapp/editar_fundos.html" , {"fundo":  fundo})
      else:
             

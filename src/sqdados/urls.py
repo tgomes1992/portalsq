@@ -27,7 +27,9 @@ urlpatterns = [
     path("float" , home_float , name="calculo_float") ,
     path("float_mensal" , get_relatorio_float_mensal , name="float_mensal") , 
     path("float_geral" , get_relatorio_float_geral , name="float_geral") , 
-    path("quantitativo" , home_quantitativo , name="quantitativo") ,
+    path("quantitativo" , home_quantitativo , name="quantitativo") , 
+    path('fundos_ativos' , list_fundos_ativos , name="fundos_ativos") , 
+    path('outros_ativos' , list_outros_ativos , name="outros_ativos") , 
     path("volumes" , home_volumes , name='volumes') , 
     path("remunera" , home_remuneracao , name="remuneracao")  , 
 

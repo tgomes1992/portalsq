@@ -11,19 +11,19 @@
     <form class="col s12"  method="post">
       {% csrf_token %}
       <div class="row">
-        <div class="input-field col s4">
+        <div class="input-field col s3">
           <input placeholder="Nome do Fundo" id="fundo" type="text" name="fundo_nome" class="validate">
           <label for="fundo">Fundo</label>
         </div>
-        <div class="input-field col s4">
+        <div class="input-field col s3">
           <input placeholder="Cnpj do Fundo" id="cnpj_fundo" type="text" name="fundo_cnpj" class="validate">
           <label for="cnpj_fundo">Cnpj do Fundo</label>
       </div>
-        <div class="input-field col s4">
+        <div class="input-field col s3">
           <input placeholder="Código Jcot" id="cd_jcot" type="text" name="cd_jcot" class="validate">
           <label for="cd_jcot">Código Jcot</label>
       </div>
-      <div class="input-field col s4">
+      <div class="input-field col s3">
         <select name="filename">
           <option value="" disabled selected>Selecione o Arquivo</option>
           <option value="OT_ORDENS_RETORNO">OT ORDENS RETORNO</option>
@@ -31,7 +31,7 @@
         </select>
         <label>Arquivo retorno</label>
       </div>
-        <div class="input-field col s4">
+        <div class="input-field col s3">
           <input  id="enviar" class="btn" type="submit" name="Salvar" />
       </div>
       </div>
@@ -40,7 +40,7 @@
 
 
 
-<div class="container">
+<div>
 
   <table>
     <tr>
