@@ -11,6 +11,7 @@ from datetime import date ,  datetime
 from ..models import FundoXP
 import csv
 from pymongo import MongoClient
+import os
 
 client = MongoClient('mongodb://Thiago.Conceicao:PZV%7BTaKR1j8n@OTAPLICRJ04/')
 
@@ -122,7 +123,8 @@ class DownloadZipView(View):
 
         
     def gerar_csv_movimentacao(self, data ):
-        service_movimentos = ConsultaMovimentoPeriodoV2Service("roboescritura" , "Senh@123")
+        service_movimentos = ConsultaMovimentoPeriodoV2Service(os.environ.get("JCOT_USER") , 
+                                                               os.environ.get("JCOT_PASSWORD"))
         fundos = FundoXP.objects.all() 
         data = datetime.strptime(data , "%d/%m/%Y")
         JOBS = [item.gerar_movimentos(data) for item in fundos]

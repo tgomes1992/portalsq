@@ -9,8 +9,8 @@ class Cotista():
 
 class Mancotistav2Service(COTSERVICE):
 
-    url = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/ManCotistaV2Service"
-    url_pp = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ManCotistaV2Service"
+   #  url = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/ManCotistaV2Service"
+    url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ManCotistaV2Service"
 
     def body_habilitar_cotista_pco_xp(self , dados):
         '''Os dados são considerados um dicionário que realiza a habilitação do cotista PCO'''

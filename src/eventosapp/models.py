@@ -10,7 +10,7 @@ class FundoXP(models.Model):
 
 
 class EventosDiarios(models.Model):
-    ativo = models.CharField(max=200)
+    ativo = models.CharField(max_length=200)
     emissor = models.CharField(max_length=250)
     data_base = models.DateTimeField()
     data_liquidacao = models.DateTimeField()

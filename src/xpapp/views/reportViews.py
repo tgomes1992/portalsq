@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from ..models import FundoXP
 from datetime import datetime
 from JCOTSERVICE import ConsultaMovimentoPeriodoV2Service
+import os
 
 
 
@@ -14,7 +15,7 @@ def relatorios_diarios_xp(request):
 
 def relatorio_movimentacao(request):
     if request.method == 'POST':
-        service_movimentos = ConsultaMovimentoPeriodoV2Service("roboescritura" , "Senh@123")
+        service_movimentos = ConsultaMovimentoPeriodoV2Service(os.environ.get("JCOT_USER") , os.environ.get("JCOT_PASSWORD") )
         fundos = FundoXP.objects.all() 
         data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
         JOBS = [item.gerar_movimentos(data) for item in fundos]

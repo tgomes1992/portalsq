@@ -9,7 +9,7 @@ pd.options.display.float_format = '{:,.2f}'.format
 class ConsultaMovimentoPeriodoV2Service(COTSERVICE):
 
 
-    url = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/ConsultaMovimentoPeriodoV2Service"
+    url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ConsultaMovimentoPeriodoV2Service"
 
 
 
@@ -74,6 +74,7 @@ class ConsultaMovimentoPeriodoV2Service(COTSERVICE):
 
     def get_movimento_request(self , dados):
         base_request = requests.post(self.url, self.movimento_body(dados))
+        print (self.user)
         return self.formatar_resposta(base_request.content.decode('utf-8') ,  dados['cnpj_fundo'])
 
 

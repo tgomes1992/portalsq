@@ -17,3 +17,15 @@ class FloatDiario(Model):
     ativo = models.CharField(max_length=250)
     data = models.DateTimeField()
     valor = models.FloatField()
+
+
+
+
+class CDOT(Model):
+    cd_ot = models.CharField(max_length=10)
+    tipo_ativo = models.CharField(max_length=20)
+    
+
+
+# class Remunera(Model):
+#     pass

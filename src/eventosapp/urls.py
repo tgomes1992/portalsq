@@ -27,6 +27,7 @@ urlpatterns = [
     path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,
     path ("eventosXp" ,  eventosXp , name="eventosxp") , 
     path("eventos_diarios" , baixar_eventos_excel ,  name="eventos_diarios") ,  
+    path("adicionar_eventos" , AdicionarEventosDiarios ,  name="adicionar_eventos") , 
     path("eventosxpexcluir" ,  remover_eventos_xp ,  name="excluir_eventos") , 
     path ("downloadativos" , download_ativos ,  name="downloadativoseventos") , 
     path ("excluir_ativo_pmt", excluir_ativo ,  name="excluir_ativo" ) , 

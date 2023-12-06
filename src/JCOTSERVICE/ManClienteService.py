@@ -33,8 +33,8 @@ class Cliente():
 
 class ManClienteService(COTSERVICE):
 
-    url  = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
-    url_pp = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
+   #  url  = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
+    url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
     data = date.today().strftime("%Y-%m-%d")
 
     def consultar_body(self , codigo_cliente):

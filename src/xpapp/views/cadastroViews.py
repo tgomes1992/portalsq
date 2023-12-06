@@ -30,6 +30,7 @@ def editar_fundos_xp(request):
      else:
             
             dados_request = request.POST
+            print (dados_request)
             fundo = FundoXP(nome = dados_request['fundo_nome'] ,
                         cd_jcot=dados_request['cd_jcot'] ,
                         cnpj = dados_request['fundo_cnpj'] , 
