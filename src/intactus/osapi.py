@@ -198,5 +198,5 @@ class o2Api():
         
         df['cnpjEmissor'] = df['cnpjEmissor'].apply(str)
 
-        return df.to_dict("records")
+        return df
 

@@ -16,6 +16,7 @@ from django.db.models.functions import ExtractDay , ExtractHour , ExtractMinute 
 from django.db import models
 from django.db.models import DateTimeField , IntegerField
 from django.db.models import CharField, Value as V
+import os
 
 def homeEventos(request):
     hoje = datetime.today()
@@ -26,9 +27,10 @@ def homeEventos(request):
 
 
     eventos = EventosDiarios.objects.annotate(month = ExtractMonth('data_liquidacao') ,
-                                               year=ExtractYear("data_liquidacao"))\
+                                               year=ExtractYear("data_liquidacao") , 
+                                               day = ExtractDay("data_liquidacao"))\
                                     .values("month" , "year" , "ativo" , "emissor" , "data_liquidacao")\
-                                    .filter(month = hoje.month , year=hoje.year)
+                                    .filter(month = hoje.month , year=hoje.year , day__gte = hoje.day).order_by('data_liquidacao')
 
 
     dados  = {
@@ -37,6 +39,31 @@ def homeEventos(request):
 
     }
     return render(request , "eventos/home.html" , dados)
+
+
+def get_emissor(ativos_o2 , codigo):
+
+    try:
+        return ativos_o2[ativos_o2['codigo'] == codigo ].to_dict("records")[0]['nomeEmissor']
+    except Exception as e:
+        return {
+            "nomeEmissor": 'na' , 
+            "dataFimRelacionamento": "na"
+        }
+
+
+
+
+def atualizar_emissores(request):
+    api =  o2Api(os.environ.get("INTACTUS_LOGIN"),
+                 os.environ.get("INTACTUS_PASSWORD"))
+    ativos_o2 = api.get_ativos()
+    ativos_o2.to_excel("ativos_o2.xlsx")
+    eventos = EventosDiarios.objects.all()
+    for evento in eventos:
+        evento.emissor = get_emissor(ativos_o2 , evento.ativo)
+        evento.save()
+    return HttpResponse("Emissores Atualizados")
 
 
 
@@ -49,7 +76,7 @@ def baixar_eventos_excel(request):
                                                year=ExtractYear("data_liquidacao") ,
                                                day = ExtractDay("data_liquidacao") )\
                                     .values("day" , "month" , "year" , "ativo" , "emissor" )\
-                                    .filter(month = hoje.month , year=hoje.year)
+                                    .filter(month = hoje.month , year=hoje.year , day__gte= hoje.day)
 
  
 

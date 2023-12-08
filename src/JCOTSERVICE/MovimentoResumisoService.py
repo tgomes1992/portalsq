@@ -15,9 +15,9 @@ class MovimentoJcot():
 class MovimentoResumidoService(COTSERVICE):
 
 
-   #  url = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
+    url = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
    
-    url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
+   #  url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
 
        
     def movimentoResumidoRequestBody(self,dados):

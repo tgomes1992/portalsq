@@ -31,5 +31,6 @@ urlpatterns = [
     path("eventosxpexcluir" ,  remover_eventos_xp ,  name="excluir_eventos") , 
     path ("downloadativos" , download_ativos ,  name="downloadativoseventos") , 
     path ("excluir_ativo_pmt", excluir_ativo ,  name="excluir_ativo" ) , 
-    path ("consulta_ativo" , detalhe_ativos , name="consulta_ativo")
+    path ("consulta_ativo" , detalhe_ativos , name="consulta_ativo") , 
+    path ("atualizar_emissores" , atualizar_emissores ,  name="atualizar_emissores")
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
