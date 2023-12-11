@@ -19,7 +19,7 @@ class FloatDiario(Model):
 
 class CDOT(Model):
     cd_ot = models.CharField(max_length=10)
-    tipo_ativo = models.CharField(max_length=20)
+    tipo_ativo = models.CharField(max_length=200)
     
 
 class ArquivoDconciliacao(Model):

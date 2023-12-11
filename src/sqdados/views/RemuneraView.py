@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
+from ..controllers.RemuneraController import RemuneraController
+
 
 # Create your views here.
 
@@ -9,3 +11,8 @@ from django.shortcuts import render
 
 def home_remuneracao(request):
     return render(request, "sqdados/remuneracao.html")
+
+
+def atualizar_codigos_ot(request):
+    RemuneraController().get_cds_ot()
+    return redirect('remuneracao')

@@ -35,6 +35,7 @@ urlpatterns = [
     path("importar_arquivo_security_list" , importar_arquivo_securityList , name="arquivo_security_list") ,
     path("processar_volumes" , processar_volumes , name="processar_volumes") ,
     path("remunera" , home_remuneracao , name="remuneracao")  , 
+    path("atualizar_codigos_ot" , atualizar_codigos_ot , name="get_cd_ot")  , 
 
     # path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,
 
