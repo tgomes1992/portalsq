@@ -31,6 +31,9 @@ urlpatterns = [
     path('fundos_ativos' , list_fundos_ativos , name="fundos_ativos") , 
     path('outros_ativos' , list_outros_ativos , name="outros_ativos") , 
     path("volumes" , home_volumes , name='volumes') , 
+    path("importacao_d_conciliacao" , importacao_arquivo_dconciliacao , name="importacao_d_dconciliacao") ,
+    path("importar_arquivo_security_list" , importar_arquivo_securityList , name="arquivo_security_list") ,
+    path("processar_volumes" , processar_volumes , name="processar_volumes") ,
     path("remunera" , home_remuneracao , name="remuneracao")  , 
 
     # path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,
