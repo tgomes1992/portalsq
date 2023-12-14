@@ -1,5 +1,5 @@
 from django.shortcuts import render , redirect
-from django.http import request , HttpRequest , HttpResponse
+from django.http import request , HttpRequest , HttpResponse , JsonResponse
 from ..models import EventosDiarios
 import json
 from intactus import o2Api
@@ -42,6 +42,6 @@ def AdicionarEventosDiarios(request):
 
     # print (eventos)
 
-    return HttpResponse("ok")
+    return JsonResponse({"message": "Eventos Importados com sucesso"})
 
 

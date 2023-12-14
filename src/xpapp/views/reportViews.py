@@ -15,7 +15,7 @@ def relatorios_diarios_xp(request):
 
 def relatorio_movimentacao(request):
     if request.method == 'POST':
-        service_movimentos = ConsultaMovimentoPeriodoV2Service(os.environ.get("JCOT_USER") , os.environ.get("JCOT_PASSWORD") )
+        service_movimentos = ConsultaMovimentoPeriodoV2Service('roboescritura', "Senh@123" )
         fundos = FundoXP.objects.all() 
         data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
         JOBS = [item.gerar_movimentos(data) for item in fundos]

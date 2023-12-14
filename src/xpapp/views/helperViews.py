@@ -21,6 +21,7 @@ def pcos_em_lote(request):
     if request.method == "POST":
         df = pd.read_excel(request.FILES['arquivo'])
         for investidor in df.to_dict("records"):
+            print (investidor)
             cliente_service.request_cadastrar_clientes_pco_xp(investidor['codigo'] ,  investidor['nome'])
             cotista_service.request_habilitar_pco_xp_v2(investidor['codigo'])
 

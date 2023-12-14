@@ -13,7 +13,7 @@ class CalculoQuantitativoO2:
 
     def __init__(self , data ):
         '''A data precisa ser um objeto datetime '''
-        self.o2api = o2Api(os.environ.get('INTACTUS_LOGIN'),os.environ.get('INTACTUS_PASSWORD'))
+        self.o2api = o2Api("thiago.conceicao","DBCE0923-9CE3-4597-9E9A-9EAE7479D897")
         self.data = data
         self.ativos_renda_fixa = ['DEB' , 'AÇÃO'  , 'CRA' , 'CRI'  , 'NC'  , 'LF']
 

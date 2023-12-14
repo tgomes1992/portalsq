@@ -12,8 +12,8 @@ class RemuneraController:
         pass
 
     def getApiO2(self):
-        api = o2Api(os.environ.get("INTACTUS_LOGIN") , 
-                    os.environ.get("INTACTUS_PASSWORD"))
+        api = o2Api("thiago.conceicao", 
+                    "DBCE0923-9CE3-4597-9E9A-9EAE7479D897")
         return api
     
     
@@ -41,11 +41,3 @@ class RemuneraController:
                 pass
 
  
-                
-              
-        pass
-
-
-
-
-

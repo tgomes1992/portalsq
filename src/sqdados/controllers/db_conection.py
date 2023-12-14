@@ -5,4 +5,11 @@ from sqlalchemy import create_engine
 
 
 
+# DASHBOARD_ENGINE = create_engine(f"mysql+pymysql://conciliacao:4/jdv)sg@OTAPLICRJ04/portal_escrituracao")
+
+
+
+
+
+
 DASHBOARD_ENGINE = create_engine(f"mysql+pymysql://{os.environ.get('API_OTESCRITURACAO_DB_USERNAME')}:{os.environ.get('API_OTESCRITURACAO_DB_PASSWORD')}@{os.environ.get('API_OTESCRITURACAO_DB_HOST')}/{os.environ.get('API_OTESCRITURACAO_DB_DATABASE')}")

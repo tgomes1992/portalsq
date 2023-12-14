@@ -18,6 +18,33 @@ from django.db.models import DateTimeField , IntegerField
 from django.db.models import CharField, Value as V
 import os
 
+
+
+def importar_dagenda(request):
+    if request.method  == 'POST':
+        arquivo = request.FILES['arquivo']
+        df = pd.read_csv(arquivo,delimiter=";" , encoding="utf-8", encoding_errors='ignore')
+        columns = ['ativo' ,  'tipo_emissao' ,  'dt_original' , 'dt_liquidacao' ,  'tp_evento' , 'incorpora' ,  'spread' ,  'obs' ,  'obs2']
+        df.columns = columns
+  
+        for item in df.to_dict("records"):
+            evento = EventosDiarios(ativo = item['ativo'] ,  
+                                    data_base = datetime.strptime( str(item['dt_original']),"%Y%m%d" ) , 
+                                    data_liquidacao  =  datetime.strptime( str(item['dt_liquidacao']),"%Y%m%d") )
+            
+            
+            trava_salvamento = EventosDiarios.objects.filter(ativo = evento.ativo , 
+                                                           data_base = evento.data_base ,  
+                                                           data_liquidacao = evento.data_liquidacao).first()
+            
+            if not trava_salvamento:
+                evento.save()
+
+    return render(request , "eventos/dagenda.html" )
+
+
+
+
 def homeEventos(request):
     hoje = datetime.today()
   
@@ -55,10 +82,8 @@ def get_emissor(ativos_o2 , codigo):
 
 
 def atualizar_emissores(request):
-    api =  o2Api(os.environ.get("INTACTUS_LOGIN"),
-                 os.environ.get("INTACTUS_PASSWORD"))
+    api =  o2Api("thiago.conceicao","DBCE0923-9CE3-4597-9E9A-9EAE7479D897")
     ativos_o2 = api.get_ativos()
-    ativos_o2.to_excel("ativos_o2.xlsx")
     eventos = EventosDiarios.objects.all()
     for evento in eventos:
         evento.emissor = get_emissor(ativos_o2 , evento.ativo)

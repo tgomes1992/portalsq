@@ -123,8 +123,7 @@ class DownloadZipView(View):
 
         
     def gerar_csv_movimentacao(self, data ):
-        service_movimentos = ConsultaMovimentoPeriodoV2Service(os.environ.get("JCOT_USER") , 
-                                                               os.environ.get("JCOT_PASSWORD"))
+        service_movimentos = ConsultaMovimentoPeriodoV2Service("roboescritura", "Senh@123")
         fundos = FundoXP.objects.all() 
         data = datetime.strptime(data , "%d/%m/%Y")
         JOBS = [item.gerar_movimentos(data) for item in fundos]

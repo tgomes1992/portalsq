@@ -7,8 +7,7 @@ import os
 class MovimentosSinc():
 
     def get_movimento_service(self):
-        movimento_service = MovimentoResumidoService(os.environ.get('JCOT_USER'),
-                                                      os.environ.get('JCOT_PASSWORD'))
+        movimento_service = MovimentoResumidoService("roboescritura","Senh@123")
         return movimento_service
 
     def get_movimentacoes_sinc(self ,fundo , data):
