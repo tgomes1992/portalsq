@@ -6,8 +6,6 @@
 <h1>Quantitativo</h1>
 
 
-
-
 <div class="row">
     <form action="#" method="POST">
           {% csrf_token %}
@@ -18,22 +16,15 @@
         <div class="input-field col s12">
           <select name="tipoarquivo">
             <option value="" disabled selected>Selecione o quantitativo </option>
-            <option value="movimentacao">Quantitativo Fundos</option>
-            <option value="posicao">Quantitativo Renda Fixa</option>
+            <option value="fundos">Quantitativo Fundos</option>
+            <option value="quantitativo_rf">Quantitativo Renda Fixa</option>
             <option value="qtd_posicao">Quantitativo Geral</option>
           </select>
           <label>Tipo de Arquivo</label>
         </div>
-            <button type="submit" class='btn'>Consultar</button>
+            <button type="submit" class='btn'>Buscar</button>
     </form>
 </div>
-
-
-<div class="row">
-    <button class="btn">Processar Quantitativo</button>
-</div>
-
-
 
 
 
