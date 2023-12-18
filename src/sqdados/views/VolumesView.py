@@ -84,9 +84,29 @@ def importacao_arquivo_dconciliacao(request):
 
 def importar_arquivo_securityList(request):
     if request.method ==  'POST':
-        arquivo = request.FILES['arquivo']
-        secure_client_importacao = ImportacaoSecureClient()
-        secure_client_importacao.importar_arquivo(arquivo)       
+
+        file = request.FILES['arquivo']
+
+        if ".zip" in file.name:
+            with open(os.path.join('upload', file.name), 'wb') as destination:
+                # Iterate over the uploaded file in chunks
+                for chunk in file.chunks():
+                    destination.write(chunk)
+
+            unzip_file(os.path.join('upload', file.name))
+
+        for arquivo in os.listdir('upload/imports'):
+            secure_client_importacao = ImportacaoSecureClient()
+            secure_client_importacao.importar_arquivo(os.path.join( 'upload/imports', arquivo))
+            os.remove(os.path.join( 'upload/imports', arquivo))      
+
+
+        else:
+            arquivo = request.FILES['arquivo']
+            secure_client_importacao = ImportacaoSecureClient()
+            secure_client_importacao.importar_arquivo(arquivo)       
+    
+    
     return redirect('volumes')
 
 

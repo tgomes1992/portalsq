@@ -3,7 +3,6 @@
 *.cal*
 *__pycache__*
 *.pyc*
-*.txt*
 movimentacoes_xp
 *.xlsx*
 *.xls*
