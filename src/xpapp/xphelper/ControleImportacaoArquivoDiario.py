@@ -94,7 +94,6 @@ class ControleImportacaoArquivoDiario():
 
 
     def get_file_data(self):
-        print ("Importação iniciada")
         df = pd.read_csv(self.file ,  delimiter=";" ,  decimal=",")
 
         #ajuste das colunas por conta do arquivo do xpce
@@ -110,8 +109,7 @@ class ControleImportacaoArquivoDiario():
 
         df['VALOR'] = df['VALOR'].fillna(0)
 
-        if  self.rotina_criar_arquivo_diario(self.filename):
-            print (f"{self.filename} - arquivo importado")            
+        if  self.rotina_criar_arquivo_diario(self.filename):        
             investidores = [self.criar_investidor_xp(nome['NOME'] , nome['CPF_CNPJ']) for nome in df.to_dict("records")]
             self.rotina_investidores(investidores) #executa  o processo referente aos investidores
             movimentos =  df.to_dict("records")

@@ -9,7 +9,6 @@ from JCOTSERVICE import Mancotistav2Service , ManClienteService
 
 def importacao_arquivo_diario(request):
     if request.method == "POST":
-        print ("Importação Iniciada")
 
         ControleImportacaoArquivoDiario(request.FILES['arquivo'] , str(request.FILES['arquivo'])).get_file_data()
     return render(request,"xpapp/importacao_xp.html")
@@ -21,11 +20,9 @@ def pcos_em_lote(request):
     if request.method == "POST":
         df = pd.read_excel(request.FILES['arquivo'])
         for investidor in df.to_dict("records"):
-            print (investidor)
             cliente_service.request_cadastrar_clientes_pco_xp(investidor['codigo'] ,  investidor['nome'])
             cotista_service.request_habilitar_pco_xp_v2(investidor['codigo'])
 
-        print ("Importação Iniciada")
 
     return render(request,"xpapp/importacao_lote_pco.html")
 
