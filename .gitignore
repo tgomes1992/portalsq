@@ -1,5 +1,4 @@
 *.sqlite3*
-*env*
 *.cal*
 *__pycache__*
 *.pyc*
@@ -11,6 +10,8 @@ output
 *.xml*
 *.json*
 *.csv*
+env
+.env
 src/uploads
 # These are some examples of commonly ignored file patterns.
 # You should customize this list as applicable to your project.
