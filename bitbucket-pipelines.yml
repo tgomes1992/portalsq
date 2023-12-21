@@ -22,6 +22,7 @@ definitions:
             export BITBUCKET_BRANCH=$BITBUCKET_TAG
           fi
           
+          $SSH_CONNECT "service cron stop"
           $SSH_CONNECT "rm -Rf $PROJECT_PATH/$BITBUCKET_REPO_SLUG"
           $SSH_CONNECT "virtualenv $PROJECT_PATH/$BITBUCKET_REPO_SLUG"
           $SSH_CONNECT "git clone --single-branch -b $BITBUCKET_BRANCH $BITBUCKET_GIT_SSH_ORIGIN $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest"
@@ -30,15 +31,14 @@ definitions:
         # Realizando a virada repositorio antigo para o novo.
         - |
           $SSH_CONNECT "chmod 777 $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/kill.sh"
+          $SSH_CONNECT "chmod 777 $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/deploy.sh"
           $SSH_CONNECT "$PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/kill.sh"
           $SSH_CONNECT "source $PROJECT_PATH/$BITBUCKET_REPO_SLUG/bin/activate \
             && pip install --upgrade pip \
-            && pip install -r $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/requirements.txt --ignore-installed \
+            && pip install -r $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/requirements.txt --ignore-installed \
             && sed -i 's/PASSDB/$PASSDB/g' $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/.env \
-            && $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/manage.py migrate \
-            && $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/kill.sh \
-            && python $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/app.py & "
-
+            && python $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/manage.py migrate"
+          $SSH_CONNECT "service cron start"
 
 pipelines:
   branches:
