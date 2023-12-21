@@ -19,6 +19,7 @@ def pcos_em_lote(request):
     cliente_service = ManClienteService("roboescritura","Senh@123")
     if request.method == "POST":
         df = pd.read_excel(request.FILES['arquivo'])
+        print (df.head())
         for investidor in df.to_dict("records"):
             cliente_service.request_cadastrar_clientes_pco_xp(investidor['codigo'] ,  investidor['nome'])
             cotista_service.request_habilitar_pco_xp_v2(investidor['codigo'])

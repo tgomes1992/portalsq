@@ -91,10 +91,10 @@ class Mancotistav2Service(COTSERVICE):
            <soapenv:Body>
               <tot:cadastrarCotistaV2Request>
                  <tot:cotista>         
-        		      <tot:cdCotista>{dados['codigo']}</tot:cdCotista>
-                    <tot:cdOperador>{dados['cnpj_distribuidor']}</tot:cdOperador>
-                    <tot:cdDistribuidor>{dados['cnpj_distribuidor']}</tot:cdDistribuidor>
-                    <tot:cdCliente>{dados['codigo']}</tot:cdCliente>
+        		      <tot:cdCotista>{dados}</tot:cdCotista>
+                    <tot:cdOperador>2332886000104</tot:cdOperador>
+                    <tot:cdDistribuidor>2332886000104</tot:cdDistribuidor>
+                    <tot:cdCliente>{dados}</tot:cdCliente>
                     <tot:idTipoCotista>14</tot:idTipoCotista>
                     <tot:pcDevolucaoTxAdm>0.0</tot:pcDevolucaoTxAdm>
                     <tot:pcDevolucaoPerformance>0.0</tot:pcDevolucaoPerformance>
@@ -248,6 +248,7 @@ class Mancotistav2Service(COTSERVICE):
         return self.formatar_resposta(base_request.content ,  "ns2:code")
     
     def request_habilitar_pco_xp_v2(self , dados):
+        print (dados)
         base_request = requests.post(self.url, self.body_habilitar_cotista_pco_xp_v2(dados))
         return self.formatar_resposta(base_request.content ,  "ns2:code")
 
