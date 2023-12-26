@@ -1,0 +1,141 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/app.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": true
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "embed_manifest",
+   "value": true
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/.env;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/manage.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/conciliacao;conciliacao/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/emissoresapp;emissoresapp/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/eventosapp;eventosapp/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/intactus;intactus/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/jcothelper;jcothelper/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/JCOTSERVICE;JCOTSERVICE/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/listfundos;listfundos/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/MAPS_MODULE;MAPS_MODULE/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/portalescrituracao;portalescrituracao/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/sqdados;sqdados/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/sqprojetos;sqprojetos/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/STATIC;STATIC/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/templates;templates/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/xpapp;xpapp/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/thiago.conceicao/Documents/portalescrituracao/src/zapemissoresApp;zapemissoresApp/"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}
