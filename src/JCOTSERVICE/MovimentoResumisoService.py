@@ -17,7 +17,7 @@ class MovimentoResumidoService(COTSERVICE):
 
     url = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
    
-    url_pp = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
+   #  url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/MovimentoResumidoService"
 
        
     def movimentoResumidoRequestBody(self,dados):
@@ -67,6 +67,8 @@ class MovimentoResumidoService(COTSERVICE):
 
     def formatar_resposta(self ,  xml_resposta):
         soup = BeautifulSoup(xml_resposta, 'xml')
+        print (self.user ,  self.password)
+        print (soup)
         return  {
             "codigo_respossta" : soup.find('ns3:code').text ,
             "descricao" : soup.find('ns3:desc').text ,

@@ -24,7 +24,7 @@ from xpapp.views import *
 urlpatterns = [
     path("",  home_page_xp_app , name="home_xp_app") ,
     path("importacao_arquivo_diario", importacao_arquivo_diario, name="importar_arquivo_diario") ,
-    path("movimentacoes_xp", movimentacoes_xp, name="movimentacoes_xp") ,
+    path("movimentacoes_xp", sincronizar_lancamentos, name="movimentacoes_xp") ,
     path("relatorios_diarios_xp", relatorios_diarios_xp, name="relatorios_diarios") ,
     path("sincronizar_clientes", clientes_sinc , name="sincronizar_clientes") ,
     path("fundos_xp", controle_fundos_xp, name="cadastro_fundos_xp"),

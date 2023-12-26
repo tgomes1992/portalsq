@@ -3,7 +3,6 @@ from .models import PosicaoFundoJcot
 import requests
 import pandas as pd
 import json
-from MAPS_MODULE.extracoes import MapsCentaurus
 from datetime import datetime
 
 
@@ -14,7 +13,7 @@ class BuscarPosicaoJcot():
         self.password = "Senh@123"
         self.ListFundosService = ListFundosService(self.user , self.password)
         self.posicaoService = RelPosicaoFundoCotistaService(self.user,  self.password)
-        self.MapsCentaurus = MapsCentaurus("marcella.rodrigues" , "!Mdetrano16")
+        # self.MapsCentaurus = MapsCentaurus("marcella.rodrigues" , "!Mdetrano16")
 
     def get_fundos_processamento_auto(self):
         consulta = requests.get("http://otaplicrj04:5004/get_ativos_cadastrados")

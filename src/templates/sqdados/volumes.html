@@ -1,0 +1,80 @@
+{% extends 'sqdados/home_sq_dados.html' %}
+
+
+{% block content %}
+
+<h1>Volumes</h1>
+
+<a class="btn" href={% url 'processar_volumes'  %}>Processar Volumes</a>
+
+
+<div class="container">
+
+
+
+    <h2>Importação Arquivo DConciliação</h2>
+
+
+    <form class="row" action={% url 'importacao_d_dconciliacao'  %} method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Selecione o Arquivo: </span>
+            <input type="file" name="arquivo">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text"  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+          </div>
+        </div>
+      
+        <div class="input-field col s12">
+          <select name="tipoarquivo">
+            <option value="" disabled selected>Selecione o tipo de importacao</option>
+            <option value="arquivodconciliacao">Arquivo D Conciliação</option>
+          </select>
+          <label>Tipo de Importação</label>
+        </div>
+        <input type="submit" class="btn"/>  
+      </form>
+      
+
+</div>
+
+
+
+
+<div class="container">
+
+
+
+  <h2>Importação Arquivo B3_up_to_data </h2>
+
+
+  <form class="row" action={% url 'arquivo_security_list'  %} method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="file-field input-field">
+        <div class="btn">
+          <span>Selecione o Arquivo: </span>
+          <input type="file" name="arquivo">
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text"  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        </div>
+      </div>
+    
+      <div class="input-field col s12">
+        <select name="tipoarquivo">
+          <option value="" disabled selected>Selecione o tipo de importacao</option>
+          <option value="arquivodconciliacao">Arquivo B3</option>
+        </select>
+        <label>Tipo de Importação</label>
+      </div>
+      <input type="submit" class="btn"/>  
+    </form>
+
+</div>
+
+
+
+
+{% endblock %}

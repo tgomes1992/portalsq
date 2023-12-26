@@ -16,11 +16,12 @@ from .login import get_login
 
 
 
-
-form = {
-    'username':  get_login()['user'],
-    'password':  get_login()['senha']
-}
+def login_maps():
+    form = {
+        'username':  get_login()['user'],
+        'password':  get_login()['senha']
+    }
+    return form
 
 
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0'}

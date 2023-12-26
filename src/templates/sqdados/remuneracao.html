@@ -1,0 +1,55 @@
+{% extends 'sqdados/home_sq_dados.html' %}
+
+
+{% block content %}
+
+<h1 class="center">Controles Remuneração</h1>
+
+<div class="center">
+    <a class="btn" href={% url 'get_cd_ot' %} >Atualizar base Códigos OT </a>
+    <a class="btn">Consulta Receita/Código OT </a>
+</div>
+
+
+
+
+<div>
+
+<h3 class="center">Importar Arquivo Remunera</h3>
+
+ <form action={% url "importar_arquivo_remunera" %} method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="file-field input-field">
+    <div class="btn">
+      <span>Selecione o Arquivo: </span>
+      <input type="file" name="arquivo">
+    </div>
+    <div class="file-path-wrapper">
+      <input class="file-path validate" type="text">
+    </div>
+  </div>
+
+  <div class="input-field col s12">
+    <select name="tipoarquivo">
+      <option value="" disabled selected>Selecione o tipo de importacao</option>
+      <option value="diariopco">Arquivo Remunera</option>
+    </select>
+    <label>Tipo de Importação</label>
+  </div>
+
+  <input type="submit" class="btn"/>
+
+
+</form>
+
+
+
+
+
+
+
+</div>
+
+
+
+{% endblock %}

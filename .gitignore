@@ -1,16 +1,17 @@
 *.sqlite3*
-*env*
 *.cal*
 *__pycache__*
 *.pyc*
-*.txt*
 movimentacoes_xp
 *.xlsx*
 *.xls*
 output
 *.exe*
 *.xml*
-
+*.json*
+*.csv*
+env
+src/uploads
 # These are some examples of commonly ignored file patterns.
 # You should customize this list as applicable to your project.
 # Learn more about .gitignore:

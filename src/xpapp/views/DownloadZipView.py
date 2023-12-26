@@ -11,6 +11,7 @@ from datetime import date ,  datetime
 from ..models import FundoXP
 import csv
 from pymongo import MongoClient
+import os
 
 client = MongoClient('mongodb://Thiago.Conceicao:PZV%7BTaKR1j8n@OTAPLICRJ04/')
 
@@ -122,7 +123,7 @@ class DownloadZipView(View):
 
         
     def gerar_csv_movimentacao(self, data ):
-        service_movimentos = ConsultaMovimentoPeriodoV2Service("roboescritura" , "Senh@123")
+        service_movimentos = ConsultaMovimentoPeriodoV2Service("roboescritura", "Senh@123")
         fundos = FundoXP.objects.all() 
         data = datetime.strptime(data , "%d/%m/%Y")
         JOBS = [item.gerar_movimentos(data) for item in fundos]
@@ -133,6 +134,7 @@ class DownloadZipView(View):
         df = service_movimentos.montar_retorno_xp(extracao)
         df["Conta Corrente"] = ""
         df['Ponto Venda'] = ""
+        print (df)
         # Write the DataFrame to the response
         formato = ["Numero Operacao","Investidor" , "Conta Corrente" , "Papel Cota","Ponto Venda","Tipo Operacao","Data Operacao","Data Conversao","Data Liquidacao",
     "Data do Fundo na Movimentacao","Valor","Status","Status Conversao",   "CNPJ do fundo" ]

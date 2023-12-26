@@ -8,20 +8,22 @@
 
 <h1>Editar Fundos XP</h1>
 
+
+
 <div class="row">
-    <form class="col s12"  method="post">
+    <form class="col s12"  method="post" action="#">
       {% csrf_token %}
       <div class="row">
         <div class="input-field col s4">
-          <input required placeholder="Nome do Fundo" id="fundo" type="text" name="fundo_nome" value={{fundo.nome}} class="validate">
+          <input required placeholder="Nome do Fundo" id="fundo" type="text" name="fundo_nome" value="{{fundo.nome}}" class="validate">
           <label for="fundo">Fundo</label>
         </div>
         <div class="input-field col s4">
-          <input required placeholder="Cnpj do Fundo" id="cnpj_fundo" type="text"  value={{fundo.cnpj}}  name="fundo_cnpj" class="validate">
+          <input required placeholder="Cnpj do Fundo" id="cnpj_fundo" type="text"  value="{{fundo.cnpj}}""  name="fundo_cnpj" class="validate">
           <label for="cnpj_fundo">Cnpj do Fundo</label>
       </div>
         <div class="input-field col s4">
-          <input required placeholder="Código Jcot" id="cd_jcot" type="text"  value={{fundo.cd_jcot}} name="cd_jcot" class="validate">
+          <input required placeholder="Código Jcot" id="cd_jcot" type="text"  value="{{fundo.cd_jcot}}" name="cd_jcot" class="validate">
           <label for="cd_jcot">Código Jcot</label>
       </div>
       <div class="input-field col s4">

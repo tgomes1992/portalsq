@@ -11,22 +11,24 @@
 
     <table class="striped">
         <thead>
-            <th> Data da Original </th>
-            <th> Data de Efetivação </th>
             <th> Data de Liquidação </th>
             <th> Título </th>
-        </thead>
+            <th> Emissor </th>
+          </thead>
 
         {% for evento in eventos %}
         <tr>
-            <td>{{evento.dtOriginal}}</td>
-            <td>{{evento.dtEfetivacao}}</td>
-            <td>{{evento.dtEfetivacao}}</td>
-            <td>{{evento.titulo}}</td>
+
+            <td>{{evento.data_liquidacao | date:"d/m/Y" }}</td>
+            <td>{{evento.ativo}}</td>
+            <td>{{evento.emissor}}</td>
+
+
         </tr>
 
         {% endfor %}
     </table>
+
 
 
 

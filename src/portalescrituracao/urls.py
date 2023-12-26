@@ -35,8 +35,8 @@ urlpatterns = [
     path("zapemissores/" , include("zapemissoresApp.urls")) , 
     path("emissores/" , include("emissoresapp.urls")) ,
     path("xpapp/" , include("xpapp.urls")) ,  
-    path("conciliacao/" , include("conciliacao.urls"))
-    # path("sqdados/" , include("sqdados.urls"))
+    path("conciliacao/" , include("conciliacao.urls")) ,
+    path("sqdados/" , include("sqdados.urls"))
 
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

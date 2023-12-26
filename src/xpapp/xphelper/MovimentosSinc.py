@@ -2,11 +2,12 @@ from JCOTSERVICE import MovimentoResumidoService
 from xpapp.models import MovimentacoesXP
 import pandas as pd
 from datetime import datetime
+import os
 
 class MovimentosSinc():
 
     def get_movimento_service(self):
-        movimento_service = MovimentoResumidoService("roboescritura", "Senh@123")
+        movimento_service = MovimentoResumidoService("roboescritura","Senh@123")
         return movimento_service
 
     def get_movimentacoes_sinc(self ,fundo , data):

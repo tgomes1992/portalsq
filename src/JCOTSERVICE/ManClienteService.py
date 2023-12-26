@@ -34,7 +34,7 @@ class Cliente():
 class ManClienteService(COTSERVICE):
 
     url  = "https://oliveiratrust.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
-    url_pp = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
+   #  url = "https://oliveiratrust-pp.totvs.amplis.com.br:443/jcotserver/services/ManClienteService"
     data = date.today().strftime("%Y-%m-%d")
 
     def consultar_body(self , codigo_cliente):
@@ -132,6 +132,40 @@ class ManClienteService(COTSERVICE):
         return cadastro_clientes
 
 
+    def body_cadastrar_cliente_pco(self,dados):
+        cadastro_clientes = f'''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tot="http://totvs.cot.webservices" xmlns:glob="http://totvs.cot.webservices/global">
+    <soapenv:Header>
+            {self.header_login()}
+   	</soapenv:Header>
+   <soapenv:Body>
+      <tot:cadastrarClienteRequest>
+         <tot:cliente>             
+            <tot:cdCliente>{dados['codigo']}</tot:cdCliente>
+            <tot:icFjPessoa>J</tot:icFjPessoa>
+            <tot:idEstadoCivil>0</tot:idEstadoCivil>
+            <tot:idConstituicao>0</tot:idConstituicao>
+            <tot:idRegimeCasamento>0</tot:idRegimeCasamento>
+            <tot:idEscolaridade>0</tot:idEscolaridade>
+            <tot:nmCliente>{dados['nome']}</tot:nmCliente>
+            <tot:nmAbreviado>{dados['nome'][0:19]}</tot:nmAbreviado>
+            <tot:icSnBrasileiro>S</tot:icSnBrasileiro>
+            <tot:noCgc>{dados['cnpj_distribuidor']}</tot:noCgc>
+            <tot:dsDomicilio>BRASIL</tot:dsDomicilio>
+            <tot:nmContato>{dados['nome'][0:19]}</tot:nmContato>
+            <tot:cdUsuarioInclusao>{self.user}</tot:cdUsuarioInclusao>
+            <tot:dtInclusao>{self.data}</tot:dtInclusao>
+            <tot:icSnExposta>N</tot:icSnExposta>
+            <tot:dtUltRenovacao>{self.data}</tot:dtUltRenovacao>
+            <tot:icSnOrigemBvmf>N</tot:icSnOrigemBvmf>
+         </tot:cliente>
+         <!--Optional:-->
+         <glob:messageControl>
+            <glob:user>{self.user}</glob:user>
+         </glob:messageControl>
+      </tot:cadastrarClienteRequest>
+   </soapenv:Body>
+</soapenv:Envelope>'''
+        return cadastro_clientes
 
     def consultaCliente(self,cd_cliente):
         '''base para o cadastro dos clientes'''

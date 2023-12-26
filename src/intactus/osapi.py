@@ -195,6 +195,7 @@ class o2Api():
         retorno = json.loads(request.content)['dados']
 
         df = pd.DataFrame.from_dict(retorno)
+        
         df['cnpjEmissor'] = df['cnpjEmissor'].apply(str)
 
         return df

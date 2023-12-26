@@ -13,7 +13,7 @@
             <div class="col s6">
               <input id="ativo" type="text" class="validate"/>
               <label for="ativo">Ativo</label>
-              <button type="submit">Baixar Excel</button>
+              <button type="submit" class='btn'>Baixar Excel</button>
             </div>
         </form>
 
@@ -33,7 +33,7 @@
         </div>
         <div class="card-action">
           <a href="{% url 'consulta_ativo' %}?ativo={{ativo}}">Detalhes</a>
-          <a href="{% url 'excluir_ativo' %}?ativo={{ativo}}" > Excluir Ativo </a>
+          {% comment %} <a href="{% url 'excluir_ativo' %}?ativo={{ativo}}" > Excluir Ativo </a> {% endcomment %}
         </div>
       </div>
     </div>
