@@ -1,0 +1,50 @@
+definitions:
+    build-deploy: &build-deploy
+      name: Build and Deploy
+      image: cwkd/k8s-pipeline:latest
+      script:
+        # Instalação do Rsync | FUNCIONANDO
+        - apk update && apk add rsync
+
+        # ================ BUILD ============== #
+        # Convertendo SSH KEY
+        - echo $PRIVATE_ONPREMISES_SSH_KEY_64 | base64 -d > ./PRIVATE_ONPREMISES_SSH_KEY
+        - chmod 400 ./PRIVATE_ONPREMISES_SSH_KEY
+
+        # Variáveis de conexão
+        - export SSH_CONNECT="ssh root@$RUN_IP01 -o StrictHostKeyChecking=no -i ./PRIVATE_ONPREMISES_SSH_KEY"
+        - export RSYNC_PARAN="ssh -i ./PRIVATE_ONPREMISES_SSH_KEY -o StrictHostKeyChecking=no"
+        - export ENV_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT
+
+        # Realizando Clone do repositório e também já cria os diretórios de storage
+        - |
+          if [ "$BITBUCKET_DEPLOYMENT_ENVIRONMENT" == "Production" ]; then
+            export BITBUCKET_BRANCH=$BITBUCKET_TAG
+          fi
+          
+          $SSH_CONNECT "rm -Rf $PROJECT_PATH/$BITBUCKET_REPO_SLUG"
+          $SSH_CONNECT "virtualenv $PROJECT_PATH/$BITBUCKET_REPO_SLUG"
+          $SSH_CONNECT "git clone --single-branch -b $BITBUCKET_BRANCH $BITBUCKET_GIT_SSH_ORIGIN $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest"
+          
+
+        # Realizando a virada repositorio antigo para o novo.
+        - |
+          $SSH_CONNECT "chmod 777 $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/kill.sh"
+          $SSH_CONNECT "$PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/kill.sh"
+          $SSH_CONNECT "source $PROJECT_PATH/$BITBUCKET_REPO_SLUG/bin/activate \
+            && pip install --upgrade pip \
+            && pip install -r $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/requirements.txt --ignore-installed \
+            && sed -i 's/PASSDB/$PASSDB/g' $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/.env \
+            && $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/manage.py migrate \
+            && $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/kill.sh \
+            && python $PROJECT_PATH/$BITBUCKET_REPO_SLUG/latest/src/app.py & "
+
+
+pipelines:
+  branches:
+    main:
+      - step:
+          runs-on: runner01bitbucket
+          <<: *build-deploy
+          name: Build and Deploy
+          deployment: Production
