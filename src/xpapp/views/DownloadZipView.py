@@ -12,8 +12,26 @@ from ..models import FundoXP
 import csv
 from pymongo import MongoClient
 import os
+from urllib.parse import quote_plus
 
-client = MongoClient('mongodb://Thiago.Conceicao:PZV%7BTaKR1j8n@OTAPLICRJ04/')
+
+username = 'thiago.conceicao'
+password = 'Th1@ll2023trust'
+host = '172.20.1.127'
+port = '27017'
+
+
+# Escape the username and password
+escaped_username = quote_plus(username)
+escaped_password = quote_plus(password)
+escaped_host = quote_plus(host)
+
+# Construct the MongoDB URI
+uri = f"mongodb://{escaped_username}:{escaped_password}@[{escaped_host}]:{port}"
+
+# Connect to MongoDB
+client = MongoClient(uri)
+
 
 jcot_posicoes = client['jcot_posicoes']
 colection = jcot_posicoes['posicoes']
@@ -80,7 +98,7 @@ class DownloadZipView(View):
         if "XP " in investidor:
             return "PCO"
         else:
-            return "IDENTIFICADO"
+            return "IDENT"
         
 
 
@@ -108,7 +126,7 @@ class DownloadZipView(View):
         df = pd.DataFrame.from_dict(dados)
         df['tipo_investidor'] =  df['cd_cotista'].apply(self.classificar_tipo_investidor)
         df['tipo_fundo'] = df['fundo'].apply(lambda x :self.classificar_tipo_de_fundo(fundos_list , x))
-        df['tipo_arquivo'] =  pd.concat([df['tipo_fundo'], df['tipo_investidor']], axis=1).apply(lambda x: '_'.join(x), axis=1)
+        df['tipo_arquivo'] =  pd.concat([df['tipo_fundo'], df['tipo_investidor']], axis=1).apply(lambda x: ''.join(x), axis=1)
         df_base_extracao = df[['nmCotista' , 'nmCotista' ,  'cpfcnpjCotista' , 'data' , 'fundo' , 'fundo'  ,  'qtCotas'  , 'vlCorrigido'  , 'valor_cota' ,  'tipo_arquivo' ]]
         df_base_extracao.columns = cabecalho_posicao
         df_base_extracao['CPF/CNPJ Investidor'] = df_base_extracao['CPF/CNPJ Investidor'].apply(self.format_brazilian_cnpj)
@@ -118,7 +136,7 @@ class DownloadZipView(View):
         df_base_extracao['Data Referência'] = df_base_extracao['Data Referência'].apply(lambda x : datetime.strptime(x ,"%Y-%m-%d").strftime("%d/%m/%Y"))
         df_base_extracao['CNPJ Fundo'] =  df_base_extracao['CNPJ Fundo'].apply(lambda x: self.get_cnpj_fundos(fundos_list , x))
         df_base_extracao['Papel Cota'] =  df_base_extracao['Papel Cota'].apply(lambda x: self.get_razao_fundos(fundos_list , x))
-        df_arquivo = df_base_extracao[df_base_extracao['tipo_arquivo'] != "CFF_IDENTIFICADO"]
+        df_arquivo = df_base_extracao[df_base_extracao['tipo_arquivo'] != "CFFIDENT"]
         return df_arquivo
 
         
@@ -154,6 +172,7 @@ class DownloadZipView(View):
         if request.POST['tipoarquivo'] ==  'movimentacao':
             request_base = str(request.POST['data'])    
             data = datetime.strptime(request_base , "%d/%m/%Y")
+          
             df = self.gerar_csv_movimentacao(request_base)    
 
             files = df['filename'].drop_duplicates().values
@@ -172,6 +191,7 @@ class DownloadZipView(View):
             return response
         else:
             data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
+            hoje = datetime.today()
             self.extrair_posicoes_jcot(data)
             valores = ['Mnemônico Investidor' , 	'Investidor'	, 'CPF/CNPJ Investidor' , 	'Data Referência' ,  
                    	'Papel Cota' , 	'CNPJ Fundo' , 	'Quantidade Total' , 'Valor Bruto'	 , 'Cota']
@@ -181,7 +201,7 @@ class DownloadZipView(View):
             with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 for file in files:                             
                     filename = df[df["tipo_arquivo"] == file]
-                    df_name = f"{file}_{data.strftime('%Y')}_{data.strftime('%m')}_{data.strftime('%d')}.csv"           
+                    df_name = f"OT_POSICAO_{data.strftime('%Y%m%d')}_{file.replace('_','')}_{hoje.strftime('%Y%m%d')}.csv"           
                     zipf.writestr(df_name, filename[valores].to_csv(index=False , sep=";" ,  quoting = csv.QUOTE_NONE , quotechar= ""  ,  escapechar = ";"))
 
             buffer.seek(0)
