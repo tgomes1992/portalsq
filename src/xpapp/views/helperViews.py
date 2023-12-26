@@ -5,6 +5,7 @@ from io import BytesIO
 import pandas as pd
 from ..models import FundoXP
 from JCOTSERVICE import Mancotistav2Service , ManClienteService
+from datetime import datetime
 
 
 def importacao_arquivo_diario(request):
@@ -19,7 +20,6 @@ def pcos_em_lote(request):
     cliente_service = ManClienteService("roboescritura","Senh@123")
     if request.method == "POST":
         df = pd.read_excel(request.FILES['arquivo'])
-        print (df.head())
         for investidor in df.to_dict("records"):
             cliente_service.request_cadastrar_clientes_pco_xp(investidor['codigo'] ,  investidor['nome'])
             cotista_service.request_habilitar_pco_xp_v2(investidor['codigo'])
@@ -44,7 +44,7 @@ def sincronizar_lancamentos(request):
         }
     if request.method == "POST":
         fundo = request.POST['fundo']
-        data_movimentos = request.POST['dataMovimentacoes']
+        data_movimentos = datetime.strptime( request.POST['dataMovimentacoes'] , "%d/%m/%Y").strftime("%Y-%m-%d")
         print (request.POST)
         movimentos_sinc = MovimentosSinc()  
         filename = f"lancamentos.xlsx"

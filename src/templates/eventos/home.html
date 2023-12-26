@@ -8,7 +8,10 @@
 
     <form method="post" action="">
         {% csrf_token %}
-        <input type="date" name="data">
+        <div class="input-field col s12">
+            <input type="text" class="datepicker" name='data' id="datepicker">
+            <label for="datepicker">Selecione uma data</label>
+          </div>
         <input type="submit" class='btn' value="Periodo Especifico">
  
         <a href="{% url 'eventos_diarios' %}"  class="btn">Baixar Relatório em Excel</a>

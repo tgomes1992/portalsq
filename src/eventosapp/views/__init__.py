@@ -50,7 +50,7 @@ def homeEventos(request):
   
 
     if request.method == "POST":
-        hoje = datetime.strptime(request.POST['data'], "%Y-%m-%d")
+        hoje = datetime.strptime(request.POST['data'], "%d/%m/%Y")
 
 
     eventos = EventosDiarios.objects.annotate(month = ExtractMonth('data_liquidacao') ,
