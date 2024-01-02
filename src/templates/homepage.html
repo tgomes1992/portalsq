@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -6,24 +7,73 @@
     <link rel="stylesheet" type="text/css" href="{% static 'materialize/css/materialize.css' %}" media="screen" />
     <script src="{% static 'jquery.js' %}"></script>
     <script src="{% static 'materialize/js/materialize.js' %}"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
     <nav>
         <div class="nav-wrapper">
-          <a href="#" class="brand-logo">Home - Portal Escrituração</a>
+          <a href="{% url 'pagina_inicial' %}" class="brand-logo">Portal Escrituração</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-
-            <li> <a href="/jcothelper"> JCOT HELPER </a></li>
-            <li> <a href="/zapemissores"> ZAPEMISSORES </a></li>
-            <li> <a href="/eventos"> EVENTOS </a></li>
-            <li> <a href="/emissores"> EMISSORES </a></li>
-            <li> <a href="/xpapp">CONTROLES XP </a></li>
-            <li> <a href="/conciliacao">CONCILIAÇÃO</a></li>
-            <li> <a href="/sqdados">SQDADOS</a></li>
+            <li> <a class="dropdown-trigger" data-target="dropdown_jcot_helper" href="#"> Jcot Simplificado <i class="material-icons right">arrow_drop_down</i> </a></li>
+            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_eventos"> Eventos <i class="material-icons right">arrow_drop_down</i>  </a></li>
+            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_xp_app">CONTROLES XP <i class="material-icons right">arrow_drop_down</i>  </a></li>
+            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_conciliacao"> <i class="material-icons right">arrow_drop_down</i>CONCILIAÇÃO</a></li>
+            <li> <a href="#"  class="dropdown-trigger" data-target="dropdown_sq_dados">SQDADOS <i class="material-icons right">arrow_drop_down</i></a></li>
+           <li> <a href="/zapemissores"> Consulta Emissores Zap </a></li>
           </ul>
         </div>
       </nav>
+
+
+<!-- Dropdown Structure -->
+<ul id="dropdown_jcot_helper" class="dropdown-content">
+    <li> <a href="{% url 'listfundos' %}">Fundos Jcot </a>  </li>
+</ul>
+
+<ul id="dropdown_xp_app" class="dropdown-content">
+    <li><a href="{% url 'cadastro_fundos_xp' %}">Fundos Abertos XP</a></li>
+    <li><a href="{% url 'importar_arquivo_diario' %}">Importar Arquivo Diário</a></li>
+    <li><a href="{% url 'sincronizar_clientes' %}">Sincronizar Investidores </a></li>
+    <li><a href="{% url 'movimentacoes_xp' %}">Processar Movimentações</a></li>
+    <li><a href="{% url 'relatorios_diarios' %}">Gerar Relatórios Diários</a></li>
+    <li><a href="{% url 'arquivos_importados_xp' %}">Arquivos Importados</a></li>
+    <li><a href="{% url 'lote_pcos' %}">Importar Pco´s em Lote</a></li>
+</ul>
+
+
+<ul id="dropdown_sq_dados" class="dropdown-content">
+
+<li><a href="{% url 'calculo_float' %}">Importação Float Diário</a></li>
+<li><a href="{% url 'quantitativo' %}">Quantitativo</a></li>
+<li><a href="{% url 'volumes' %}">Volumes</a></li>
+<li><a href="{% url 'remuneracao' %}">Remuneração</a></li>
+
+</ul>
+
+<ul id="dropdown_eventos" class="dropdown-content">
+
+<li> <a href="{% url 'eventosdiarios'%}">Eventos Diários</a> </li>
+<li> <a href="{% url 'ativoscomeventos'%}">Ativos Cadastrados</a> </li>
+<li> <a href="{% url 'eventosxp'%}">Eventos XP</a> </li>
+<li> <a href="{% url 'dagenda' %}">Importar Dagenda Cetip</a> </li>
+
+</ul>
+
+
+<ul id="dropdown_conciliacao" class="dropdown-content">
+
+    <li> <a href="{% url 'validar_conciliacao_diaria'%}">Batimentos Diários</a> </li>
+    <li> <a href="{% url 'sinc_ativos_o2'%}">Sincronizar Ativos O2</a></li>
+    <li> <a href="{% url 'lista_ativos'%}">Listar Ativos O2</a></li>
+
+
+</ul>
+
+
+
+
+
 
     <div class="container">
 
@@ -37,6 +87,12 @@
 
 
 </body>
+
+<script>
+    $(document).ready(function(){
+        $('.dropdown-trigger').dropdown();
+    });
+</script>
 
 
 </html>
