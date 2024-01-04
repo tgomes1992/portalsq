@@ -1,6 +1,6 @@
 import pandas as pd 
 from datetime import date , datetime
-
+from ..models import ReceitaMensal
 
 
 
@@ -24,6 +24,17 @@ class CalculoRemunera():
         pass
 
     def read_file(self):
-        df = pd.read_csv(self.file , delimiter=";")
-        df['tipo_parcela'] = df['descricao'].apply(lambda x: "anual" if "anual" in x.lower() else "mensal")
-        df.to_excel("dados.xlsx")
+        df = pd.read_excel(self.file)
+        for remuneracao in df.to_dict('records'):
+            receita = ReceitaMensal(
+                    cd_ot =  remuneracao['cod_operacao'] , 
+                    periodicidade = remuneracao['periodicidade'],
+                    valor_remuneracao = remuneracao['valor_base'],
+                    emissor = remuneracao['razao_social'],
+                    emissor_cnpj = remuneracao['cnpj_sacado'],
+                    resumo_contrato = remuneracao['descricao'],
+                    data_inicio = remuneracao['data_inicio'], 
+                    data_fim = remuneracao['data_fim'],
+                    tipo_ativo = remuneracao['tipo_ativo'],
+            )
+            receita.save()

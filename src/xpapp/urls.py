@@ -34,7 +34,8 @@ urlpatterns = [
     path("relatorio_movimentacao" , relatorio_movimentacao , name="relatorio_movimentacao_xp") , 
     path("editar_fundos_xp" , editar_fundos_xp , name="editar_fundos_xp") , 
     path("get_arquivo_retorno" , DownloadZipView.as_view() , name="arquivo_retorno") ,
-    path("pcos_em_lote" , pcos_em_lote , name="lote_pcos") 
+    path("pcos_em_lote" , pcos_em_lote , name="lote_pcos")  ,
+    path("liberar_lancamento/<int:id>" , liberar_lancamento , name="liberar_lancamento")
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

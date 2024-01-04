@@ -1,5 +1,5 @@
 import pandas as pd
-from ..models import CDOT
+from ..models import CDOT , ReceitaMensal
 from intactus.osapi import o2Api
 import os
 

@@ -27,6 +27,7 @@
                     <td>{{ item.cd_fundo }}</td>
                     <td>{{ item.statusJcot }}</td>
                     <td>{{ item.valor }}</td>
+                    <td><a class="btn" href="{% url 'liberar_lancamento' id=item.id %}">Liberar Lançamento</a></td>
                     <!-- Add more table cells for other fields as needed -->
                 </tr>
             {% empty %}

@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render ,get_object_or_404
+from django.http import HttpResponse , JsonResponse
 from ..models import MovimentacoesXP , FundoXP
 
 
@@ -22,6 +22,16 @@ def movimentacoes_xp(request):
 
     }
     return render(request,"xpapp/movimentacoes_xp.html" ,  dados)
+
+
+def liberar_lancamento(request , id) :
+    ajustado = int(id)
+    movimento = MovimentacoesXP.objects.filter(id = ajustado).first()
+    movimento.statusJcot = False
+    movimento.save()
+    return  JsonResponse({"message": "movimento reabilitado"})
+
+
 
 
 
