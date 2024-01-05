@@ -13,7 +13,8 @@ import csv
 from pymongo import MongoClient
 import os
 from urllib.parse import quote_plus
-
+from concurrent.futures import ThreadPoolExecutor
+import multiprocessing
 
 username = 'thiago.conceicao'
 password = 'Th1@ll2023trust'
@@ -40,6 +41,7 @@ colection = jcot_posicoes['posicoes']
 
 class DownloadZipView(View):
 
+    service_posicao = RelPosicaoFundoCotistaService("roboescritura", "Senh@123")
     def get_fundos_list(self):
         list_fundos_service = ListFundosService("roboescritura" , "Senh@123")
         return list_fundos_service.listFundoRequest()
@@ -89,10 +91,24 @@ class DownloadZipView(View):
                 for item in df_xp.to_dict("records")]
             
         # JOBS_posicao =  [item.gerar_posicao(data) for item in fundos]
-        for job in JOBS_posicao:
-            dados  = service_posicao.get_posicoes_json(job)
-            if len(dados) != 0: 
-                colection.insert_many(dados)
+        # for job in JOBS_posicao:
+        #     dados = service_posicao.get_posicoes_json(job)
+        #     if len(dados) != 0:
+        #         colection.insert_many(dados)
+
+
+        with ThreadPoolExecutor() as executor:
+            # Use the map function to apply the process_job function to each job in parallel
+            executor.map(self.process_job, JOBS_posicao)
+
+
+
+
+    def process_job(self,job):
+        dados = self.service_posicao.get_posicoes_json(job)
+        print (dados)
+        if len(dados) != 0:
+            colection.insert_many(dados)
 
     def classificar_tipo_investidor(self, investidor):
         if "XP " in investidor:

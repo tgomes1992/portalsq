@@ -8,6 +8,8 @@ class FundoXP(models.Model):
     nome = models.CharField(max_length=200)
     cd_jcot = models.CharField(max_length=15 , primary_key=True)
     cnpj = models.CharField(max_length=14)
+    descricao_o2 = models.CharField(max_length=400, default=" ")
+    tipo_fundo = models.CharField(max_length=25 , default=" ")
     categoria =  models.CharField(max_length=200 , default="catxp")
     filename = models.CharField(max_length=200 , default="XP")
 

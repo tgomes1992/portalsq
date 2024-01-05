@@ -3,6 +3,19 @@ from django.shortcuts import render ,  redirect
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from ..models import MovimentacoesXP , FundoXP ,  ArquivosXp
+from ..xphelper import CadastroFundosXP
+
+
+
+
+def fundos_xp_atualizados(request):
+    controle = CadastroFundosXP()
+    controle.atualizar_cadastros()
+    controle.atualizar_dados_o2()
+
+    return HttpResponse("done")
+
+
 
 
 
@@ -25,12 +38,9 @@ def editar_fundos_xp(request):
      if request.method == "GET":
             cd_jcot = request.GET.get('id')
             fundo = FundoXP.objects.filter(cd_jcot=cd_jcot).first()
-            print(fundo.nome)
             return  render(request , "xpapp/editar_fundos.html" , {"fundo":  fundo})
      else:
-            
             dados_request = request.POST
-            print (dados_request)
             fundo = FundoXP(nome = dados_request['fundo_nome'] ,
                         cd_jcot=dados_request['cd_jcot'] ,
                         cnpj = dados_request['fundo_cnpj'] , 
@@ -38,11 +48,6 @@ def editar_fundos_xp(request):
 
             fundo.save()
             return redirect('cadastro_fundos_xp')
-
-          
-     
-
-
 
 
 def arquivos_importados_view(request):
