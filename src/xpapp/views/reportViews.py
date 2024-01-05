@@ -55,13 +55,13 @@ class ProcessJobsView(View):
     def get_posicoes_o2(self , data):
         jcot_posicoes['posicoeso2'].delete_many({})
         fundosXP = FundoXP.objects.all()
-        jobs = [{'DescricaoSelecao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
-                 "engine": jcot_posicoes} for fundo in fundosXP]
-        job_split  = np.array_split(jobs, 6)
+        jobs = [{'descricao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
+                 "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP]
+        job_split = np.array_split(jobs, 6)
         with ThreadPoolExecutor(max_workers=6) as executor:
             # Use the map function to apply the process_job function to each job in parallel
             for lista in job_split:
-                executor.submit(self.api.get_posicao_list_mongo, lista)
+                executor.submit(self.api.get_posicao_list_fintools, lista)
 
     def get_posicoes_jcot(self , data):
         jcot_posicoes['jcot_relatorio'].delete_many({})
@@ -91,13 +91,13 @@ class ProcessJobsView(View):
             jcot_posicoes['jcot_relatorio'].insert_many(dados)  # Replace with your actual model and insert logic
 
 
+    #todo lógica para a geração do novo arquivo da XP
     def construcao_relatorio_consolidado(self):
         fundos = FundoXP.objects.all()
         for fundo in fundos:
             jcot_posicoes['posicoeso2'].find({})
 
         pass
-
 
 
 

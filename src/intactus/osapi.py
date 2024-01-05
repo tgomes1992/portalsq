@@ -15,6 +15,10 @@ class o2Api():
     def __init__(self ,  client_id , client_secret):
         self.client_id = client_id
         self.client_secret = client_secret
+        # self.headers = {
+        #         'Authorization': f'Bearer {self.get_token()}',
+        #         'Content-Type': 'application/json'
+        # }
 
     def _get_token_form(self):
         return {
@@ -134,20 +138,46 @@ class o2Api():
         return df
 
 
+    def get_posicao_mongo(self, codigoInstrumentoFinanceiro , headers ):
+        url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/Posicao/obterpordatainvestidorinstrumentofinanceiro?codigoInstrumentoFinanceiro={ codigoInstrumentoFinanceiro['DescricaoSelecao'] }&data={codigoInstrumentoFinanceiro['data'] }"
 
-    def get_posicao_mongo(self, data,  codigoInstrumentoFinanceiro  ,  header):
-        url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/Posicao/obterpordatainvestidorinstrumentofinanceiro?codigoInstrumentoFinanceiro={ codigoInstrumentoFinanceiro['DescricaoSelecao'] }&data={data}"
-        
-        request =  requests.get(url,headers=header)
+        request = requests.get(url,headers=headers)
 
-        retorno = json.loads(json.loads(request.content)['jsonRetorno'])
+        retorno = request.json()['dados']
 
         if len(retorno) > 0:
+            print (len(retorno))
             for item in retorno:
-                item['dataconsulta'] = data
-                item["ativoID"] = codigoInstrumentoFinanceiro['InstrumentoFinanceiroID']
-
+                item['dataconsulta'] = codigoInstrumentoFinanceiro['data']
         return retorno
+
+
+    def get_posicao_fintools(self, data,  codigoInstrumentoFinanceiro ,  cd_jcot ,   headers ):
+        url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/fintools/investidor/posicao/obterpordatainstrumentofinanceiro?codigoInstrumentoFinanceiro={codigoInstrumentoFinanceiro}&data={data}"
+        request =  requests.get(url,headers=headers)
+        retorno = json.loads(request.content)['dados']
+        posicoes = retorno['posicoes']
+        cnpj_emissor = retorno['instrumentoFinanceiro']['cnpjEmissor']
+        df = pd.DataFrame.from_dict(posicoes)
+        df['investidor'] = df['investidor'].apply(lambda x: str(x['cpfcnpj']))
+        df["cnpj_emissor"] = cnpj_emissor
+        df['nomeEmissor'] = retorno['instrumentoFinanceiro']['nomeEmissor']
+        df['cd_escritural'] = codigoInstrumentoFinanceiro
+        df['cd_jcot'] = cd_jcot
+        return df
+
+    def get_posicao_list_fintools(self, items):
+        headers = {
+                'Authorization': f'Bearer {self.get_token()}',
+                'Content-Type': 'application/json'
+        }
+        for item in items:
+            try:
+                print(item['descricao'])
+                df = self.get_posicao_fintools(item['data'] , item['descricao'] , item['cd_jcot'] , headers)
+                item['engine']['posicoeso2'].insert_many(df.to_dict('records'))
+            except Exception as e:
+                print (e)
 
 
     def get_posicao_list(self, listaAtivos,data,engine):
@@ -158,28 +188,45 @@ class o2Api():
         for item in listaAtivos:
             try:
                 print (item['DescricaoSelecao'])
-                df =  self.get_posicao(data,item,headers)
+                df = self.get_posicao(data,item,headers)
                 if not df.empty:
-                    df['dataconsulta'] =  data
-                    df.to_sql("posicoeso2",con=engine , if_exists="append")
+                    df['dataconsulta'] = data
+                    df.to_sql("posicoeso2",con=engine, if_exists="append")
             except Exception as e:
                 print (e)
 
 
-    def get_posicao_list_mongo(self, listaAtivos,data,engine):
+    def get_posicao_list_mongo(self, listaAtivos):
         headers = {
-                'Authorization': f'Bearer {self.get_token()}' ,
+                'Authorization': f'Bearer {self.get_token()}',
                 'Content-Type': 'application/json'
         }
         for item in listaAtivos:
             try:
-                print (item['DescricaoSelecao'])
-                df =  self.get_posicao_mongo(data,item,headers)
-                engine['posicoeso2'].insert_many(df)      
-                engine['extracao_ok'].insert_one({"ativo":item["DescricaoSelecao"]})                   
+                print(item['DescricaoSelecao'])
+                df = self.get_posicao_mongo(item, headers)
+                item['engine']['posicoeso2'].insert_many(df)
+                item['engine']['extracao_ok'].insert_one({"ativo":item["DescricaoSelecao"]})
             except Exception as e:
-                engine['extracao_com_erro'].insert_one({"ativo":item['DescricaoSelecao']})   
-                print (e)
+                item['engine']['extracao_com_erro'].insert_one({"ativo":item['DescricaoSelecao']})
+                print(e)
+
+    def get_cd_origem_instrumento_financeiro(self, base_dict, tipo):
+        if base_dict['nomeOrigemCodigoInstrumentoFinanceiro'] == tipo:
+            return base_dict['descricao']
+        else:
+            return False
+
+    def get_cd_jcot_lista(self, lista_base_dict, tipo):
+        cd_jcot = []
+        for item in lista_base_dict:
+            teste = self.get_cd_origem_instrumento_financeiro(item, tipo)
+            if teste:
+                cd_jcot.append(teste)
+        try:
+            return cd_jcot[0]
+        except Exception as e:
+            return "Sem Código"
 
 
     def get_ativos(self):
@@ -197,6 +244,11 @@ class o2Api():
         df = pd.DataFrame.from_dict(retorno)
         
         df['cnpjEmissor'] = df['cnpjEmissor'].apply(str)
+        df['cd_jcot'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'JCOT'))
+        df['cd_cetip'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'CETIP'))
+        df['cd_bolsa'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'BOLSA'))
+        df['cd_escritural'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'ESCRITURAL'))
+        nativo = df.drop(['codigosInstrumentosFinanceiros', "emissor"], axis="columns")
 
-        return df
+        return nativo
 
