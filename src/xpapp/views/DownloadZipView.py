@@ -11,10 +11,10 @@ from datetime import date ,  datetime
 from ..models import FundoXP
 import csv
 from pymongo import MongoClient
-import os
+
 from urllib.parse import quote_plus
 from concurrent.futures import ThreadPoolExecutor
-import multiprocessing
+from django.urls import reverse
 
 username = 'thiago.conceicao'
 password = 'Th1@ll2023trust'
@@ -102,11 +102,8 @@ class DownloadZipView(View):
             executor.map(self.process_job, JOBS_posicao)
 
 
-
-
     def process_job(self,job):
         dados = self.service_posicao.get_posicoes_json(job)
-        print (dados)
         if len(dados) != 0:
             colection.insert_many(dados)
 
@@ -161,6 +158,7 @@ class DownloadZipView(View):
         fundos = FundoXP.objects.all() 
         data = datetime.strptime(data , "%d/%m/%Y")
         JOBS = [item.gerar_movimentos(data) for item in fundos]
+
         extracao = []
         for item in JOBS:
             for linha in item:
@@ -168,7 +166,6 @@ class DownloadZipView(View):
         df = service_movimentos.montar_retorno_xp(extracao)
         df["Conta Corrente"] = ""
         df['Ponto Venda'] = ""
-        print (df)
         # Write the DataFrame to the response
         formato = ["Numero Operacao","Investidor" , "Conta Corrente" , "Papel Cota","Ponto Venda","Tipo Operacao","Data Operacao","Data Conversao","Data Liquidacao",
     "Data do Fundo na Movimentacao","Valor","Status","Status Conversao",   "CNPJ do fundo" ]
@@ -184,7 +181,7 @@ class DownloadZipView(View):
     def post(self, request):
         formato = ["Numero Operacao","Investidor" , "Conta Corrente" , "Papel Cota","Ponto Venda","Tipo Operacao","Data Operacao","Data Conversao","Data Liquidacao",
              "Data do Fundo na Movimentacao","Valor","Status","Status Conversao",   "CNPJ do fundo" ]
-    
+
         if request.POST['tipoarquivo'] ==  'movimentacao':
             request_base = str(request.POST['data'])    
             data = datetime.strptime(request_base , "%d/%m/%Y")
@@ -205,7 +202,7 @@ class DownloadZipView(View):
             response = HttpResponse(buffer.read(), content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename=retornoxp.zip'
             return response
-        else:
+        elif request.POST['tipoarquivo'] ==  'posicao':
             data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
             hoje = datetime.today()
             self.extrair_posicoes_jcot(data)
@@ -224,5 +221,19 @@ class DownloadZipView(View):
             response = HttpResponse(buffer.read(), content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename=retorno_posicao.zip'
             return response
+
+        else:
+            # request.POST['tipoarquivo'] == 'posicao_geral':
+
+            data = datetime.strptime(request.POST['data'], "%d/%m/%Y")
+
+            redirect_url = reverse("processar_jobs" , kwargs={'data_ajustada': data.strftime("%Y-%m-%d")})
+
+            return redirect(redirect_url)
+
+
+
+
+
         
 

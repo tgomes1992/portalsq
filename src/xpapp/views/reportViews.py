@@ -12,6 +12,8 @@ import os
 from ..models import FundoXP
 import numpy as np
 import pandas as pd
+from io import BytesIO
+
 
 def relatorios_diarios_xp(request):
     return render(request,"xpapp/relatorios_diarios_xp.html" )
@@ -41,9 +43,8 @@ def relatorio_movimentacao(request):
         return response
 
 
-
 class ProcessJobsView(View):
-    template_name = 'process_jobs.html'
+
 
     service_posicao = RelPosicaoFundoCotistaService(os.environ.get("JCOT_USER"), os.environ.get("JCOT_PASSWORD"))
     service_list_fundos = ListFundosService(os.environ.get("JCOT_USER"), os.environ.get("JCOT_PASSWORD"))
@@ -58,6 +59,7 @@ class ProcessJobsView(View):
         jobs = [{'descricao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
                  "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP]
         job_split = np.array_split(jobs, 6)
+
         with ThreadPoolExecutor(max_workers=6) as executor:
             # Use the map function to apply the process_job function to each job in parallel
             for lista in job_split:
@@ -70,6 +72,10 @@ class ProcessJobsView(View):
 
         JOBS_posicao = [{"codigo": item['codigo'],  "dataPosicao":  data.strftime("%Y-%m-%d")}
                 for item in df_xp.to_dict("records")]
+
+        for item in JOBS_posicao:
+            print(item)
+
         # Assuming JOBS_posicao is a list of jobs
 
         # Process jobs
@@ -77,28 +83,122 @@ class ProcessJobsView(View):
             # Use the map function to apply the process_job function to each job in parallel
             executor.map(self.process_job, JOBS_posicao)
 
-    def get(self, request, *args, **kwargs):
 
-        data = datetime(2023,12,29)
-        self.get_posicoes_o2(data)
-        self.get_posicoes_jcot(data)
+    # def post(self):
+    #     return HttpResponse("teste")
+
+    def get(self, request, data_ajustada):
+
+
+        data = datetime.strptime(data_ajustada , "%Y-%m-%d" )
+        # data = datetime(2023,12,29)
+        # self.get_posicoes_o2(data)
+        # self.get_posicoes_jcot(data)
+
+
+        # self.construcao_relatorio_consolidado()
+        # df = self.gerar_relatorio(data)
+        # output = BytesIO()
         #
-        return HttpResponse("Jobs processed successfully.")
+        # chunk_size = 10000
+        #
+        # with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        #     for i in range(0, len(df), chunk_size):
+        #         df_chunk = df.iloc[i:i + chunk_size]
+        #         df_chunk.to_excel(writer, sheet_name='Sheet1', startrow=i, index=False, header=(i == 0))
+        #     writer.save()
+        #
+        #     # df.to_excel(writer, index=False, sheet_name='Sheet1')
+        #
+        # # Set the buffer's cursor position to the beginning
+        # output.seek(0)
+        #
+        # # Create a Django response with the Excel file
+        # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response['Content-Disposition'] = f'attachment; filename=xp.xlsx'
+        # response.write(output.getvalue())
+        #
+        # return response
+        return HttpResponse("teste")
 
     def process_job(self, job):
         dados = self.service_posicao.get_posicoes_json(job)
+        print (job)
         if len(dados) != 0:
             jcot_posicoes['jcot_relatorio'].insert_many(dados)  # Replace with your actual model and insert logic
 
+    def formatar_pcos(self ,pco_lista, ativo,  emissor):
+        formatado = []
+        for pco in pco_lista:
+            try:
+                BASE = {
+                    "depositaria": 'PCO' ,
+                    "cpf_cnpj": pco['cpfcnpjCotista'].strip() ,
+                    "investidor":  pco['nmCotista'].strip(),
+                    'cnpj_emissor': str(emissor['cnpj']) ,
+                    'nomeEmissor': emissor['nome'] ,
+                    "ativo": ativo,
+                    "quantidadeTotal": pco['qtCotas'],
+                    'cd_jcot':  pco['fundo'] ,
+                    'perfil_tributario': "NÃO CLASSIFICADO"
+                }
+                formatado.append(BASE)
+            except Exception as e:
+                print (e)
+        return formatado
 
-    #todo lógica para a geração do novo arquivo da XP
+    def job_consulta_arquivo(self , fundo):
+        final_df = []
+        print (fundo.descricao_o2)
+        posicao_o2 = jcot_posicoes['posicoeso2'].find({"cd_escritural": fundo.descricao_o2})
+        for linha in posicao_o2:
+            if linha['investidor'] == '2332886000104':
+                # todo lógica para buscar os pcos
+                pco_base = jcot_posicoes['jcot_relatorio'].find({'cpfcnpjCotista': linha['investidor'] ,
+                                                                 'fundo': linha['cd_jcot']})
+
+                base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'], {"cnpj": linha['cnpj_emissor'] , "nome": linha['nomeEmissor'] })
+
+
+                for pco in base_ajustada:
+                    final_df.append(pco)
+
+            else:
+                nlinha = {
+                    "depositaria": linha['depositaria'],
+                    "cpf_cnpj": linha['investidor'].strip(),
+                    "investidor": linha['investidor'].strip(),
+                    'cnpj_emissor': str(linha['cnpj_emissor']),
+                    'nomeEmissor': linha['nomeEmissor'],
+                    "ativo": linha['cd_escritural'],
+                    "quantidadeTotal": linha['quantidadeTotalDepositada'],
+                    'cd_jcot': linha['cd_jcot'],
+                    'perfil_tributario': "NÃO CLASSIFICADO"
+                }
+                final_df.append(nlinha)
+
+        if len(final_df) != 0:
+            jcot_posicoes['posicao_consolidada'].insert_many(final_df)
+
+
     def construcao_relatorio_consolidado(self):
+        jcot_posicoes['posicao_consolidada'].delete_many({})
         fundos = FundoXP.objects.all()
-        for fundo in fundos:
-            jcot_posicoes['posicoeso2'].find({})
 
-        pass
+        with ThreadPoolExecutor() as executor:
+            executor.map(self.job_consulta_arquivo, fundos)
 
+    def gerar_relatorio(self , data):
+        consulta = jcot_posicoes['posicao_consolidada'].find({})
+        df = pd.DataFrame.from_dict(consulta)
+        df['data'] = data.strftime("%d/%m/%Y")
+        df.columns = ['id' , 'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total" , "cd_jcot" , "Perfil tributário" , "Data" ]
+        # writer = pd.ExcelWriter('output_chunked.xlsx', engine='xlsxwriter')
+        ordem_xp = [ "Data" ,  'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "Perfil tributário" ,   "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total"  ]
+        # writer = pd.ExcelWriter('output_chunked.xlsx', engine='xlsxwriter')
+        # for i in range(0, len(df), chunk_size):
+        #     df_chunk = df.iloc[i:i + chunk_size]
+        #     df_chunk[ordem_xp].to_excel(writer, sheet_name='Sheet1', startrow=i, index=False, header=(i == 0))
+        # writer.save()
 
-
-
+        return df[ordem_xp]

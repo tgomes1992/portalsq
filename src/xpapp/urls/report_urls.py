@@ -29,7 +29,7 @@ urlpatterns = [
     path("relatorio_movimentacao" , relatorio_movimentacao , name="relatorio_movimentacao_xp") ,
     path("get_arquivo_retorno" , DownloadZipView.as_view() , name="arquivo_retorno") ,
     path("liberar_lancamento/<int:id>" , liberar_lancamento , name="liberar_lancamento") ,
-    path("processjobs" ,  ProcessJobsView.as_view() , name="processar_jobs" )
+    path("processjobs/<str:data_ajustada>" ,  ProcessJobsView.as_view() , name="processar_jobs" )
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
