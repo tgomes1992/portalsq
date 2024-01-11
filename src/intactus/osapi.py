@@ -122,20 +122,29 @@ class o2Api():
 
 
 
-    def get_posicao(self, data,  codigoInstrumentoFinanceiro ):
+    def get_posicao(self, data,  codigoInstrumentoFinanceiro ,  cd_jcot ,   headers ):
 
-        headers = {
-                'Authorization': f'Bearer {self.get_token()}' ,
-                'Content-Type': 'application/json'
-        }
+        # headers = {
+        #         'Authorization': f'Bearer {self.get_token()}' ,
+        #         'Content-Type': 'application/json'
+        # }
         url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/Posicao/obterpordatainvestidorinstrumentofinanceiro?codigoInstrumentoFinanceiro={codigoInstrumentoFinanceiro}&data={data}"
         
-        request =  requests.get(url,headers=headers)
+        request = requests.get(url,headers=headers)
 
-        retorno = json.loads(request.content)['jsonRetorno']
-        df = pd.DataFrame.from_dict(json.loads(retorno))
 
-        return df
+        retorno = json.loads(request.content)['dados']
+
+
+        df = pd.DataFrame.from_dict(retorno)
+    
+
+        df['cnpj_emissor'] = df['instrumentoFinanceiro'].apply(lambda x : x['cnpjEmissor'])
+        df['nomeEmissor'] = df['instrumentoFinanceiro'].apply(lambda x : x['nomeEmissor'])
+        df['cd_escritural'] = codigoInstrumentoFinanceiro
+        df['cd_jcot'] = cd_jcot
+
+        return df.to_dict("records")
 
 
     def get_posicao_mongo(self, codigoInstrumentoFinanceiro , headers ):
@@ -174,8 +183,8 @@ class o2Api():
         for item in items:
             try:
                 print(item['descricao'])
-                df = self.get_posicao_fintools(item['data'] , item['descricao'] , item['cd_jcot'] , headers)
-                item['engine']['posicoeso2'].insert_many(df.to_dict('records'))
+                df = self.get_posicao(item['data'] , item['descricao'] , item['cd_jcot'] , headers)
+                item['engine']['posicoeso2'].insert_many(df)
             except Exception as e:
                 print (e)
 

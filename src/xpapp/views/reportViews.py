@@ -58,7 +58,7 @@ class ProcessJobsView(View):
         fundosXP = FundoXP.objects.all()
         jobs = [{'descricao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
                  "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP]
-        job_split = np.array_split(jobs, 6)
+        job_split = np.array_split(jobs, 7)
 
         with ThreadPoolExecutor(max_workers=6) as executor:
             # Use the map function to apply the process_job function to each job in parallel
@@ -94,31 +94,31 @@ class ProcessJobsView(View):
         # data = datetime(2023,12,29)
         # self.get_posicoes_o2(data)
         # self.get_posicoes_jcot(data)
-
-
-        # self.construcao_relatorio_consolidado()
-        # df = self.gerar_relatorio(data)
-        # output = BytesIO()
-        #
-        # chunk_size = 10000
-        #
-        # with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        #     for i in range(0, len(df), chunk_size):
-        #         df_chunk = df.iloc[i:i + chunk_size]
-        #         df_chunk.to_excel(writer, sheet_name='Sheet1', startrow=i, index=False, header=(i == 0))
-        #     writer.save()
-        #
-        #     # df.to_excel(writer, index=False, sheet_name='Sheet1')
-        #
-        # # Set the buffer's cursor position to the beginning
-        # output.seek(0)
-        #
-        # # Create a Django response with the Excel file
-        # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        # response['Content-Disposition'] = f'attachment; filename=xp.xlsx'
-        # response.write(output.getvalue())
-        #
-        # return response
+        
+        
+        self.construcao_relatorio_consolidado()
+        df = self.gerar_relatorio(data)
+        output = BytesIO()
+        
+        chunk_size = 10000
+        
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            for i in range(0, len(df), chunk_size):
+                df_chunk = df.iloc[i:i + chunk_size]
+                df_chunk.to_excel(writer, sheet_name='Sheet1', startrow=i, index=False, header=(i == 0))
+            writer.save()
+        
+            # df.to_excel(writer, index=False, sheet_name='Sheet1')
+        
+        # Set the buffer's cursor position to the beginning
+        output.seek(0)
+        
+        # Create a Django response with the Excel file
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename=xp.xlsx'
+        response.write(output.getvalue())
+        
+        return response
         return HttpResponse("teste")
 
     def process_job(self, job):
@@ -133,50 +133,80 @@ class ProcessJobsView(View):
             try:
                 BASE = {
                     "depositaria": 'PCO' ,
-                    "cpf_cnpj": pco['cpfcnpjCotista'].strip() ,
+                    "cpf_cnpj": str(pco['cpfcnpjCotista']).strip() ,
                     "investidor":  pco['nmCotista'].strip(),
                     'cnpj_emissor': str(emissor['cnpj']) ,
                     'nomeEmissor': emissor['nome'] ,
                     "ativo": ativo,
-                    "quantidadeTotal": pco['qtCotas'],
+                    "quantidadeTotal": float(pco['qtCotas']),
                     'cd_jcot':  pco['fundo'] ,
                     'perfil_tributario': "NÃO CLASSIFICADO"
                 }
                 formatado.append(BASE)
             except Exception as e:
                 print (e)
+            
         return formatado
+
+    def buscar_posicoes_o2(self, descricao):
+        
+        posicao_o2 = jcot_posicoes['posicoeso2'].find({"cd_escritural": descricao})
+        df = pd.DataFrame.from_dict(posicao_o2)
+
+        return df.to_dict("records")
+
+
 
     def job_consulta_arquivo(self , fundo):
         final_df = []
+        print (fundo.cd_jcot)
         print (fundo.descricao_o2)
-        posicao_o2 = jcot_posicoes['posicoeso2'].find({"cd_escritural": fundo.descricao_o2})
-        for linha in posicao_o2:
-            if linha['investidor'] == '2332886000104':
-                # todo lógica para buscar os pcos
-                pco_base = jcot_posicoes['jcot_relatorio'].find({'cpfcnpjCotista': linha['investidor'] ,
-                                                                 'fundo': linha['cd_jcot']})
-
-                base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'], {"cnpj": linha['cnpj_emissor'] , "nome": linha['nomeEmissor'] })
 
 
-                for pco in base_ajustada:
-                    final_df.append(pco)
+        posicao_o2 = self.buscar_posicoes_o2(fundo.descricao_o2)
 
-            else:
-                nlinha = {
-                    "depositaria": linha['depositaria'],
-                    "cpf_cnpj": linha['investidor'].strip(),
-                    "investidor": linha['investidor'].strip(),
-                    'cnpj_emissor': str(linha['cnpj_emissor']),
-                    'nomeEmissor': linha['nomeEmissor'],
-                    "ativo": linha['cd_escritural'],
-                    "quantidadeTotal": linha['quantidadeTotalDepositada'],
-                    'cd_jcot': linha['cd_jcot'],
-                    'perfil_tributario': "NÃO CLASSIFICADO"
-                }
-                final_df.append(nlinha)
 
+        if len(posicao_o2) != 0 : 
+            for linha in posicao_o2:
+                if linha['cpfcnpjInvestidor'] == 2332886000104:
+                    # todo lógica para buscar os pcos
+                    pco_base = jcot_posicoes['jcot_relatorio'].find({'cpfcnpjCotista': str(linha['cpfcnpjInvestidor']) ,
+                                                                    'fundo': linha['cd_jcot']})
+
+                    base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'], {"cnpj": linha['cnpj_emissor'] , "nome": linha['nomeEmissor'] })
+
+
+                    for pco in base_ajustada:
+                        final_df.append(pco)
+
+                else:
+                    try:
+                        nlinha = {
+                            "depositaria": linha['depositaria'],
+                            "cpf_cnpj": str(linha['cpfcnpjInvestidor']).strip(),
+                            "investidor": linha['nomeInvestidor'].strip(),
+                            'cnpj_emissor': str(linha['cnpj_emissor']),
+                            'nomeEmissor': linha['nomeEmissor'],
+                            "ativo": linha['cd_escritural'],
+                            "quantidadeTotal": linha['quantidadeTotalDepositada'],
+                            'cd_jcot': linha['cd_jcot'],
+                            'perfil_tributario': linha['nomePerfilTributarioInvestidor']
+                        }
+                        final_df.append(nlinha)
+                    except Exception as e :
+                        print (e)
+
+        else:
+            pco_base = jcot_posicoes['jcot_relatorio'].find({'fundo': linha['cd_jcot']})
+            base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'], {"cnpj": fundo.cnpj , "nome": fundo.nome })
+            for item in base_ajustada:
+                final_df.append(item)
+
+
+
+
+
+        print (len(final_df))
         if len(final_df) != 0:
             jcot_posicoes['posicao_consolidada'].insert_many(final_df)
 
@@ -193,12 +223,6 @@ class ProcessJobsView(View):
         df = pd.DataFrame.from_dict(consulta)
         df['data'] = data.strftime("%d/%m/%Y")
         df.columns = ['id' , 'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total" , "cd_jcot" , "Perfil tributário" , "Data" ]
-        # writer = pd.ExcelWriter('output_chunked.xlsx', engine='xlsxwriter')
-        ordem_xp = [ "Data" ,  'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "Perfil tributário" ,   "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total"  ]
-        # writer = pd.ExcelWriter('output_chunked.xlsx', engine='xlsxwriter')
-        # for i in range(0, len(df), chunk_size):
-        #     df_chunk = df.iloc[i:i + chunk_size]
-        #     df_chunk[ordem_xp].to_excel(writer, sheet_name='Sheet1', startrow=i, index=False, header=(i == 0))
-        # writer.save()
+        ordem_xp = [ "Data" ,  'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "Perfil tributário" ,   "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total" , "cd_jcot" ]
 
         return df[ordem_xp]
