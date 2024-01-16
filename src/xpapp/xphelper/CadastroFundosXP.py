@@ -13,6 +13,7 @@ class CadastroFundosXP():
         df = fundos.listFundoRequest()
         xp = "02332886000104"
         return df[df['administrador']==xp].to_dict('records')
+        # return df.to_dict('records')
 
     def definir_tipo(self, string):
         if "ABER" in string:
@@ -46,4 +47,5 @@ class CadastroFundosXP():
                 fundo.descricao_o2 = dados_o2[dados_o2['cd_jcot'] == fundo.cd_jcot].cd_escritural.values[0]
                 fundo.save()
             except:
-                fundo.delete()
+                pass
+                # fundo.delete()

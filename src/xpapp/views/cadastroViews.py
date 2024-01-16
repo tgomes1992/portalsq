@@ -13,7 +13,7 @@ def fundos_xp_atualizados(request):
     controle.atualizar_cadastros()
     controle.atualizar_dados_o2()
 
-    return redirect("controle_fundos_xp")
+    return HttpResponse("ok")
 
 
 
