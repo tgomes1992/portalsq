@@ -12,8 +12,8 @@ class CadastroFundosXP():
         fundos = ListFundosService(os.environ.get('JCOT_USER'),  os.environ.get('JCOT_PASSWORD'))
         df = fundos.listFundoRequest()
         xp = "02332886000104"
-        # return df[df['administrador']==xp].to_dict('records')
-        return df.to_dict('records')
+        return df[df['administrador']==xp].to_dict('records')
+        # return df.to_dict('records')
 
     def definir_tipo(self, string):
         if "ABER" in string:

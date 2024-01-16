@@ -130,8 +130,11 @@ class o2Api():
         # }
         url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/Posicao/obterpordatainvestidorinstrumentofinanceiro?codigoInstrumentoFinanceiro={codigoInstrumentoFinanceiro}&data={data}"
         
-        request = requests.get(url,headers=headers)
 
+ 
+
+        request = requests.get(url,headers=headers)
+        # print (request.content)
 
         retorno = json.loads(request.content)['dados']
 

@@ -8,6 +8,7 @@ from django.views import View
 from .DownloadZipView import  colection , jcot_posicoes
 from intactus import o2Api
 from JCOTSERVICE import ConsultaMovimentoPeriodoV2Service , RelPosicaoFundoCotistaService , ListFundosService
+from ..xphelper.CpfCnpjFormatter import CpfCnpjFormatter
 import os
 from ..models import FundoXP
 import numpy as np
@@ -55,12 +56,14 @@ class ProcessJobsView(View):
 
     def get_posicoes_o2(self , data):
         jcot_posicoes['posicoeso2'].delete_many({})
+
         fundosXP = FundoXP.objects.all()
         jobs = [{'descricao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
-                 "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP]
-        job_split = np.array_split(jobs, 7)
+                 "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP if fundo.descricao_o2 != " "]
+        print (jobs)
+        job_split = np.array_split(jobs, 8)
 
-        with ThreadPoolExecutor(max_workers=6) as executor:
+        with ThreadPoolExecutor(max_workers=8) as executor:
             # Use the map function to apply the process_job function to each job in parallel
             for lista in job_split:
                 executor.submit(self.api.get_posicao_list_fintools, lista)
@@ -73,14 +76,9 @@ class ProcessJobsView(View):
         JOBS_posicao = [{"codigo": item['codigo'],  "dataPosicao":  data.strftime("%Y-%m-%d")}
                 for item in df_xp.to_dict("records")]
 
-        for item in JOBS_posicao:
-            print(item)
-
-        # Assuming JOBS_posicao is a list of jobs
 
         # Process jobs
         with ThreadPoolExecutor() as executor:
-            # Use the map function to apply the process_job function to each job in parallel
             executor.map(self.process_job, JOBS_posicao)
 
 
@@ -92,8 +90,8 @@ class ProcessJobsView(View):
 
         data = datetime.strptime(data_ajustada , "%Y-%m-%d" )
         # data = datetime(2023,12,29)
-        # self.get_posicoes_o2(data)
-        # self.get_posicoes_jcot(data)
+        self.get_posicoes_o2(data)
+        self.get_posicoes_jcot(data)
         
         
         self.construcao_relatorio_consolidado()
@@ -105,21 +103,20 @@ class ProcessJobsView(View):
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             for i in range(0, len(df), chunk_size):
                 df_chunk = df.iloc[i:i + chunk_size]
-                df_chunk.to_excel(writer, sheet_name='Sheet1', startrow=i, index=False, header=(i == 0))
+                df_chunk.to_excel(writer, sheet_name='BASE_INFORMES', startrow=i, index=False, header=(i == 0))
             writer.save()
         
-            # df.to_excel(writer, index=False, sheet_name='Sheet1')
-        
+       
         # Set the buffer's cursor position to the beginning
         output.seek(0)
         
         # Create a Django response with the Excel file
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = f'attachment; filename=xp.xlsx'
+        response['Content-Disposition'] = f'attachment; filename=XPADM_{data.strftime("%Y")}{data.strftime("%m")}{data.strftime("%d")}_PASSIVOINFORMES.xlsx'
         response.write(output.getvalue())
         
         return response
-        return HttpResponse("teste")
+
 
     def process_job(self, job):
         dados = self.service_posicao.get_posicoes_json(job)
@@ -149,10 +146,8 @@ class ProcessJobsView(View):
         return formatado
 
     def buscar_posicoes_o2(self, descricao):
-        
         posicao_o2 = jcot_posicoes['posicoeso2'].find({"cd_escritural": descricao})
         df = pd.DataFrame.from_dict(posicao_o2)
-
         return df.to_dict("records")
 
 
@@ -162,19 +157,19 @@ class ProcessJobsView(View):
         print (fundo.cd_jcot)
         print (fundo.descricao_o2)
 
-
         posicao_o2 = self.buscar_posicoes_o2(fundo.descricao_o2)
 
 
         if len(posicao_o2) != 0 : 
             for linha in posicao_o2:
                 if linha['cpfcnpjInvestidor'] == 2332886000104:
-                    # todo lógica para buscar os pcos
+
                     pco_base = jcot_posicoes['jcot_relatorio'].find({'cpfcnpjCotista': str(linha['cpfcnpjInvestidor']) ,
                                                                     'fundo': linha['cd_jcot']})
 
-                    base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'], {"cnpj": linha['cnpj_emissor'] , "nome": linha['nomeEmissor'] })
-
+                    base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'],
+                                                       {"cnpj": linha['cnpj_emissor'] ,
+                                                        "nome": linha['nomeEmissor'] })
 
                     for pco in base_ajustada:
                         final_df.append(pco)
@@ -197,16 +192,11 @@ class ProcessJobsView(View):
                         print (e)
 
         else:
-            pco_base = jcot_posicoes['jcot_relatorio'].find({'fundo': linha['cd_jcot']})
-            base_ajustada = self.formatar_pcos(pco_base ,linha['cd_escritural'], {"cnpj": fundo.cnpj , "nome": fundo.nome })
+            pco_base = jcot_posicoes['jcot_relatorio'].find({'fundo': fundo.cd_jcot})
+            base_ajustada = self.formatar_pcos(pco_base ,fundo.descricao_o2, {"cnpj": fundo.cnpj , "nome": fundo.nome })
             for item in base_ajustada:
                 final_df.append(item)
 
-
-
-
-
-        print (len(final_df))
         if len(final_df) != 0:
             jcot_posicoes['posicao_consolidada'].insert_many(final_df)
 
@@ -224,5 +214,8 @@ class ProcessJobsView(View):
         df['data'] = data.strftime("%d/%m/%Y")
         df.columns = ['id' , 'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total" , "cd_jcot" , "Perfil tributário" , "Data" ]
         ordem_xp = [ "Data" ,  'Depositária' , "CPF/CNPJ Investidor" ,"Investidor" ,  "Perfil tributário" ,   "CNPJ Emissor" , "Emissor" , "Ativo" ,  "Quantidade total" , "cd_jcot" ]
+        df["CPF/CNPJ Investidor"] = df["CPF/CNPJ Investidor"].apply(lambda x: CpfCnpjFormatter.formatar(str(x)))
+        df["CNPJ Emissor"] = df["CNPJ Emissor"].apply(CpfCnpjFormatter.format_to_cnpj)
+
 
         return df[ordem_xp]
