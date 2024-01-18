@@ -20,6 +20,6 @@ class ReceitaMensal(Model):
     resumo_contrato = models.TextField()
     data_inicio = models.DateTimeField()
     data_fim = models.DateTimeField()
-    tipo_ativo = models.CharField(max_length = 25)
+    tipo_ativo = models.CharField(max_length=25)
 
 

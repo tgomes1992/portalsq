@@ -37,6 +37,7 @@ urlpatterns = [
     path("remunera" , home_remuneracao , name="remuneracao")  , 
     path("atualizar_codigos_ot" , atualizar_codigos_ot , name="get_cd_ot")  , 
     path("importar_arquivo_remunera" , importar_arquivo_remunera , name="importar_arquivo_remunera") ,
+   path("remuneracoes_ativas" , remuneracoes_ativas , name="remuneracoes_ativas") ,
 
 
     # path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,

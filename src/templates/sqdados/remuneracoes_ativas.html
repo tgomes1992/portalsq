@@ -1,0 +1,70 @@
+{% extends 'homepage.html' %}
+
+
+{% block content %}
+
+
+<form>
+  <div class="container">
+    <div class="row">
+      <div class="input-field col s12">
+        <i class="material-icons prefix">search</i>
+        <input type="text" id="search" class="validate">
+        <label for="search">Search</label>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+
+<div>
+
+  <table>
+    <tr>
+      <th>Código Operação</th>
+      <th>Periodicidade</th>
+      <th>Emissor</th>
+      <th>Data Inicio</th>
+      <th>Valor</th>
+    </tr>
+  
+    {% for remuneracao in remuneracoes %}
+    
+    <tr>
+      <td>{{remuneracao.cd_ot}}</td>
+      <td>{{remuneracao.periodicidade}}</td>
+      <td>{{remuneracao.emissor}}</td>
+      <td>{{remuneracao.data_inicio | date:"d/m/Y"}}</td>
+      <td>{{remuneracao.valor_remuneracao}}</td>
+      <td><a class='btn'> Detalhes Remuneração </a></td>
+    </tr>
+    
+    
+    {% endfor %}
+  
+  
+
+</div>
+
+<div>
+
+  <ul class="pagination">
+    {% if remuneracoes.has_previous %}
+      <li class="waves-effect"><a href="?page=1"><i class="material-icons">first_page</i></a></li>
+      <li class="waves-effect"><a href="?page={{ remuneracoes.previous_page_number }}"><i class="material-icons">chevron_left</i></a></li>
+    {% endif %}
+  
+    {% if remuneracoes.has_next %}
+      <li class="waves-effect"><a href="?page={{ remuneracoes.next_page_number }}"><i class="material-icons">chevron_right</i></a></li>
+      <li class="waves-effect"><a href="?page={{ remuneracoes.paginator.num_pages }}"><i class="material-icons">last_page</i></a></li>
+    {% endif %}
+  </ul>
+  
+
+
+</div>
+
+
+
+{% endblock %}
