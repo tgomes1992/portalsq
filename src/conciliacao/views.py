@@ -52,3 +52,28 @@ def listar_ativos_o2(request):
     }
     return render(request, 'conciliacao/ativos_o2.html' ,  dados )
 
+
+
+def get_ativos_o2_relatorio(request):
+
+    df = Ativoso2Sinc().get_ativos_relatorio()
+    output = BytesIO()
+
+    chunk_size = 10000
+
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        for i in range(0, len(df), chunk_size):
+            df_chunk = df.iloc[i:i + chunk_size]
+            df_chunk.to_excel(writer, sheet_name='ativos_o2', startrow=i, index=False, header=(i == 0))
+        writer.save()
+
+    # Set the buffer's cursor position to the beginning
+    output.seek(0)
+
+    # Create a Django response with the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response[
+        'Content-Disposition'] = f'attachment; filename=relatorio_ativos.xlsx'
+    response.write(output.getvalue())
+
+    return response

@@ -14,29 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path , include
+from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
-from listfundos.views import  *
-from eventosapp.urls import *
-from jcothelper.urls import *
-from zapemissoresApp.urls import *
-from emissoresapp.urls import *
-from .views import homepage
-from conciliacao.urls import *
+from informes_legais.views import *
+
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("listar" , listarfundos ),
-    path("", homepage ,  name = "pagina_inicial" ) ,
-    path("eventos/" , include("eventosapp.urls") ) , 
-    path("jcothelper/" , include("jcothelper.urls") ) , 
-    path("zapemissores/" , include("zapemissoresApp.urls")) , 
-    path("emissores/" , include("emissoresapp.urls")) ,
-    path("xpapp/" , include("xpapp.urls")) ,  
-    path("conciliacao/" , include("conciliacao.urls")) ,
-    path("sqdados/" , include("sqdados.urls")) ,
-    path("informes/" , include("informes_legais.urls"))
+    path("5401",  analise_5401 , name="5401") ,
+    path("efinanceira" , analise_efinanceira , name="efinanceira") ,
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

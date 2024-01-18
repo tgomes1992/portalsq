@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -13,15 +12,17 @@
 </head>
 
 <body>
-    <nav>
+
+    <nav class="blue darken-2">
         <div class="nav-wrapper">
           <a href="{% url 'pagina_inicial' %}" class="brand-logo">Portal Escrituração</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li> <a class="dropdown-trigger" data-target="dropdown_jcot_helper" href="#"> Jcot Simplificado <i class="material-icons right">arrow_drop_down</i> </a></li>
             <li> <a href="#" class="dropdown-trigger" data-target="dropdown_eventos"> Eventos <i class="material-icons right">arrow_drop_down</i>  </a></li>
-            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_xp_app">CONTROLES XP <i class="material-icons right">arrow_drop_down</i>  </a></li>
-            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_conciliacao"> <i class="material-icons right">arrow_drop_down</i>CONCILIAÇÃO</a></li>
-            <li> <a href="#"  class="dropdown-trigger" data-target="dropdown_sq_dados">SQDADOS <i class="material-icons right">arrow_drop_down</i></a></li>
+            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_xp_app">Controles XP <i class="material-icons right">arrow_drop_down</i>  </a></li>
+            <li> <a href="#" class="dropdown-trigger" data-target="dropdown_conciliacao"> <i class="material-icons right">arrow_drop_down</i>Conciliação</a></li>
+            <li> <a href="#"  class="dropdown-trigger" data-target="dropdown_sq_dados">Sqdados <i class="material-icons right">arrow_drop_down</i></a></li>
+          <li> <a href="#"  class="dropdown-trigger" data-target="dropdown_informes">Informes <i class="material-icons right">arrow_drop_down</i></a></li>
            <li> <a href="/zapemissores"> Consulta Emissores Zap </a></li>
           </ul>
         </div>
@@ -64,17 +65,15 @@
 
 
 <ul id="dropdown_conciliacao" class="dropdown-content">
-
     <li> <a href="{% url 'validar_conciliacao_diaria'%}">Batimentos Diários</a> </li>
     <li> <a href="{% url 'sinc_ativos_o2'%}">Sincronizar Ativos O2</a></li>
     <li> <a href="{% url 'lista_ativos'%}">Listar Ativos O2</a></li>
-
-
 </ul>
 
-
-
-
+<ul id="dropdown_informes" class="dropdown-content">
+    <li> <a href="{% url '5401'%}">5401</a> </li>
+    <li> <a href="{% url 'efinanceira'%}">Analise E-financeira</a></li>
+</ul>
 
 
     <div class="container">
@@ -96,5 +95,14 @@
     });
 </script>
 
+
+<style>
+
+    .btn {
+  background-color: #3498db; /* Set the background color to a shade of blue */
+}
+
+
+</style>
 
 </html>

@@ -27,6 +27,6 @@ urlpatterns = [
     path("batimentos" , batimentos_home , name="batimentos_jcot") , 
     path("list_fundos" , listfundosjcot , name="listfundos"),
     path("download" , download , name='downloadfundos') , 
-    path("posicoes_jcot" , buscar_posicoes_jcot , name="atualizar_batimentos")
+    path("posicoes_jcot" , buscar_posicoes_jcot , name="atualizar_batimentos") ,
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

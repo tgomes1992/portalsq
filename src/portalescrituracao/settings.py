@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'emissoresapp' ,
     'xpapp' , 
     "conciliacao" ,  
-    "sqdados"
+    "sqdados" ,
+    "informes_legais"
 ]
 
 MIDDLEWARE = [
