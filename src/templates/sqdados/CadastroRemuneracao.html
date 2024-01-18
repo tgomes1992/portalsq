@@ -1,0 +1,23 @@
+{% extends "homepage.html" %}
+{% load materializecss %}
+
+{% block content %}
+
+
+
+
+  <div class="container">
+    <h3>Adicionar Nova Remuneração</h3>
+    <form method="post" class="col s12">
+      {% csrf_token %}
+      {{ form | materializecss  }}
+      <button type="submit" class="btn waves-effect waves-light">Salvar</button>
+    </form>
+  </div>
+
+
+
+
+
+
+{% endblock %}

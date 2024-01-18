@@ -6,10 +6,10 @@
 <h1 class="center">Controles Remuneração</h1>
 
 <div class="center">
-    <a class="btn" href=#>Atualizar base Códigos OT </a>
-    <a class="btn" href=#>Cadastrar Nova Remuneração</a>
-    <a class="btn">Consulta Receita/Código OT </a>
+    <a class="btn" href={% url "get_cd_ot" %}>Atualizar base Códigos OT </a>
+    <a class="btn" href={% url "cadastrar_receita_mensal" %}>Cadastrar Nova Remuneração</a>
     <a class="btn" href={% url "remuneracoes_ativas" %}>Remunerações Ativas </a>
+    <a class="btn" href={% url "relatorios_remuneracao" %}>Relatórios Remuneração </a>
 </div>
 
 

@@ -6,8 +6,6 @@
         
     }
 
-
-    
     var instances = M.FormSelect.init(elems, options);
   });
 

@@ -1,0 +1,30 @@
+{% extends "homepage.html" %}
+{% load materializecss %}
+
+{% block content %}
+
+
+<div class="container">
+  <h3>Receita Relatórios</h3>
+  <form method="post" class="col s12">
+    {% csrf_token %}
+    {{ form1 | materializecss  }}
+    <button type="submit" class="btn waves-effect waves-light">Gerar</button>
+  </form>
+</div>
+
+
+<div class="container">
+  <h3>Processar Receita</h3>
+  <form method="post" class="col s12">
+    {% csrf_token %}
+    {{ form2 | materializecss  }}
+    <button type="submit" class="btn waves-effect waves-light">Processar</button>
+  </form>
+</div>
+
+
+
+
+
+{% endblock %}

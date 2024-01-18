@@ -37,7 +37,9 @@ urlpatterns = [
     path("remunera" , home_remuneracao , name="remuneracao")  , 
     path("atualizar_codigos_ot" , atualizar_codigos_ot , name="get_cd_ot")  , 
     path("importar_arquivo_remunera" , importar_arquivo_remunera , name="importar_arquivo_remunera") ,
-   path("remuneracoes_ativas" , remuneracoes_ativas , name="remuneracoes_ativas") ,
+    path("remuneracoes_ativas" , remuneracoes_ativas , name="remuneracoes_ativas") ,
+    path('cadastrar_receita_mensal', cadastrar_nova_remuneracao, name='cadastrar_receita_mensal'),
+    path('relatorios_remuneracao', relatorios_remuneracao, name='relatorios_remuneracao'),
 
 
     # path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,

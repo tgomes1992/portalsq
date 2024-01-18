@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
 load_dotenv()
 
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions' , 
+    'materializecssform' , 
     'listfundos' ,
     'eventosapp' ,
     'zapemissoresApp' ,  
@@ -164,3 +165,6 @@ STATIC_URL = 'listfundos/static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+DATETIME_INPUT_FORMATS += ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M" , "%d/%m/%Y"]
