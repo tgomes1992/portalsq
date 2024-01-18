@@ -11,8 +11,6 @@ from datetime import datetime , timedelta
 
 client =  MongoClient("mongodb://localhost:27017")
 
-    
-
 
 start_date = datetime(2022,8,23)
 
