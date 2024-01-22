@@ -39,8 +39,11 @@ urlpatterns = [
     path("importar_arquivo_remunera" , importar_arquivo_remunera , name="importar_arquivo_remunera") ,
     path("remuneracoes_ativas" , remuneracoes_ativas , name="remuneracoes_ativas") ,
     path('cadastrar_receita_mensal', cadastrar_nova_remuneracao, name='cadastrar_receita_mensal'),
-    path('relatorios_remuneracao', relatorios_remuneracao, name='relatorios_remuneracao'),
+    path('editar_remuneracao/<int:id>', AtualizarReceita.as_view(), name='editar_remuneracao'),
 
+
+    path('relatorios_remuneracao', relatorios_remuneracao, name='relatorios_remuneracao'),
+   
 
     # path("eventosAtivosCadastrados" , ativosCadastrados , name="ativoscomeventos") ,
 

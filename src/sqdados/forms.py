@@ -9,10 +9,10 @@ class ReceitaMensalForm(forms.ModelForm):
         model = ReceitaMensal
         fields = '__all__'
         widgets = {
-            'data_inicio': forms.DateInput(attrs={'class': 'datepicker' }),
+            'data_inicio': forms.DateInput(attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
             'data_fim': forms.DateInput(attrs={'class': 'datepicker'})
         }
-        input_formats = ['%d/%m/%Y', '%Y-%m-%d']
+        input_formats = ['%d/%m/%Y', '%Y-%m-%d' ,  "%m. %d , %Y"]
 
 
 class ReceitaRelatorios(forms.Form):

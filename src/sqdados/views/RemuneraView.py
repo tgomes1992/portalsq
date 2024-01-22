@@ -5,6 +5,7 @@ from ..controllers.CalculoReceitas import CalculoRemunera
 import pandas as pd
 from ..models import ReceitaMensal
 from ..forms import ReceitaMensalForm , ReceitaRelatorios , ProcessarReceita
+from django.views.generic import UpdateView
 
 # Create your views here.
 
@@ -44,7 +45,7 @@ def cadastrar_nova_remuneracao(request):
             # Save the form data to the database
             form.save()
             # Redirect to a success page or any other desired page
-            return redirect('success_page')
+            return redirect('remuneracoes_ativas')
         # If the form is not valid, re-render the form with error messages
     else:
         # If it's a GET request, create a new form
@@ -52,10 +53,23 @@ def cadastrar_nova_remuneracao(request):
 
     return render(request, 'sqdados/CadastroRemuneracao.html', {'form': form})
 
+
+
+
+class AtualizarReceita(UpdateView):
+    model = ReceitaMensal
+    form_class = ReceitaMensalForm
+    template_name = 'sqdados/remuneracao_detalhes.html'  # Customize this with your actual template name
+    success_url = '/sqdados/remuneracoes_ativas'  # Customize this with your success URL
+
+    def get_object(self, queryset=None):
+        # This method is used to retrieve the object that will be updated
+        return ReceitaMensal.objects.get(pk=self.kwargs['id'])  # Assuming you use 'pk' as the parameter in your URL pattern
+
+
 def relatorios_remuneracao(request):
 
     form1 = ReceitaRelatorios()
     form2 = ProcessarReceita()
-
 
     return render(request, 'sqdados/RelatoriosReceita.html', {'form1': form1 , 'form2':form2})

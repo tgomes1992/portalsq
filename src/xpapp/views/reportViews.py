@@ -60,7 +60,7 @@ class ProcessJobsView(View):
         fundosXP = FundoXP.objects.all()
         jobs = [{'descricao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
                  "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP if fundo.descricao_o2 != " "]
-        print (jobs)
+
         job_split = np.array_split(jobs, 8)
 
         with ThreadPoolExecutor(max_workers=8) as executor:

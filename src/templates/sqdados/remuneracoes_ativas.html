@@ -37,7 +37,7 @@
       <td>{{remuneracao.emissor}}</td>
       <td>{{remuneracao.data_inicio | date:"d/m/Y"}}</td>
       <td>{{remuneracao.valor_remuneracao}}</td>
-      <td><a class='btn'> Detalhes Remuneração </a></td>
+      <td><a class='btn' href={% url 'editar_remuneracao' remuneracao.id %}> Editar Remuneração </a></td>
     </tr>
     
     
