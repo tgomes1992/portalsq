@@ -1,4 +1,5 @@
 from django.shortcuts import render , redirect
+from django.db.models import Q
 from django.core.paginator import Paginator
 from ..controllers.RemuneraController import RemuneraController
 from ..controllers.CalculoReceitas import CalculoRemunera
@@ -19,6 +20,12 @@ def atualizar_codigos_ot(request):
     return redirect('remuneracao')
 
 
+def filtro_codigos_ot(request):
+    pass
+
+
+
+
 def importar_arquivo_remunera(request):
     if request.method == 'POST':
         arquivo = request.FILES['arquivo']
@@ -30,12 +37,27 @@ def importar_arquivo_remunera(request):
 
 
 def remuneracoes_ativas(request):
-    remuneracoes = ReceitaMensal.objects.all()
+
+    filtro = request.GET.get("filtro")
+    
+    if filtro != None:
+        remuneracoes = ReceitaMensal.objects.filter(Q(cd_ot__icontains=filtro)  | Q(periodicidade__icontains=filtro) | Q(emissor__icontains=filtro))
+    else:
+        remuneracoes = ReceitaMensal.objects.all()
+ 
+ 
+ 
     paginator = Paginator(remuneracoes , 10)
     page = request.GET.get("page")
     files_on_page = paginator.get_page(page)  
 
-    return render(request ,  "sqdados/remuneracoes_ativas.html",  {"remuneracoes": files_on_page})
+
+    context = {
+        "remuneracoes": files_on_page ,
+        }
+
+
+    return render(request ,  "sqdados/remuneracoes_ativas.html", context  )
 
 
 def cadastrar_nova_remuneracao(request):
