@@ -14,16 +14,20 @@ from ..models import FundoXP
 import numpy as np
 import pandas as pd
 from io import BytesIO
+from ..forms import RelatoriosDiariosXP
 
 
 def relatorios_diarios_xp(request):
-    return render(request,"xpapp/relatorios_diarios_xp.html" )
+
+    form  = RelatoriosDiariosXP()
+
+    return render(request,"xpapp/relatorios_diarios_xp.html" , {"form": form } )
 
 def relatorio_movimentacao(request):
     if request.method == 'POST':
         service_movimentos = ConsultaMovimentoPeriodoV2Service('roboescritura', "Senh@123" )
         fundos = FundoXP.objects.all() 
-        data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
+        data = datetime.strptime(request.POST['data'] , "%Y-%m-%d")
         JOBS = [item.gerar_movimentos(data) for item in fundos]
         extracao = []
         for item in JOBS:
@@ -60,7 +64,7 @@ class ProcessJobsView(View):
         fundosXP = FundoXP.objects.all()
         jobs = [{'descricao': fundo.descricao_o2, "data": data.strftime("%Y-%m-%d"),
                  "engine": jcot_posicoes , "cd_jcot": fundo.cd_jcot } for fundo in fundosXP if fundo.descricao_o2 != " "]
-        print (jobs)
+
         job_split = np.array_split(jobs, 8)
 
         with ThreadPoolExecutor(max_workers=8) as executor:

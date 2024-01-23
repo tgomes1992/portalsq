@@ -28,13 +28,11 @@ class CalculoRemunera():
         for remuneracao in df.to_dict('records'):
             receita = ReceitaMensal(
                     cd_ot =  remuneracao['cod_operacao'] , 
-                    periodicidade = remuneracao['periodicidade'],
                     valor_remuneracao = remuneracao['valor_base'],
                     emissor = remuneracao['razao_social'],
                     emissor_cnpj = remuneracao['cnpj_sacado'],
                     resumo_contrato = remuneracao['descricao'],
-                    data_inicio = remuneracao['data_inicio'], 
-                    data_fim = remuneracao['data_fim'],
-                    tipo_ativo = remuneracao['tipo_ativo'],
+                    data_inicio = datetime.strptime(remuneracao['cobranca_desde'], "%Y-%m"), 
+                    data_fim = datetime(2099,12,31),
             )
             receita.save()

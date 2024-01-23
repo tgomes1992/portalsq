@@ -1,5 +1,6 @@
 {% extends 'homepage.html' %}
 {% load static %}
+{% load materializecss %}
 
 {% block content %}
 
@@ -7,31 +8,7 @@
 
 <form action="#" method="post" >
   {% csrf_token %}
-  <div class="input-field col s12">
-    <select name="fundo">
-      <option value="" disabled selected>Selecione o fundo que deseja importar as movimentações</option>
-
-
-      {% for fundo in fundos %}
-
-        <option value="{{fundo.cnpj}}">{{fundo.nome}}</option>
-
-
-      {% endfor %}
-
-
-
-    
-    
-    
-    
-    </select>
-    <label>Selecione o Fundo</label>
-    <div class="input-field col s12">
-      <input type="text" class="datepicker" name='dataMovimentacoes' id="datepicker">
-      <label for="datepicker">Selecione uma data</label>
-    </div>
-  </div>
+  {{ form | materializecss }}
 
   <input type="submit" class="btn" value="Buscar Movimentações"/>
 

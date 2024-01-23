@@ -17,7 +17,7 @@ from django.db import models
 from django.db.models import DateTimeField , IntegerField
 from django.db.models import CharField, Value as V
 import os
-
+from ..forms import PeriodoEspecifico
 
 
 def importar_dagenda(request):
@@ -47,10 +47,11 @@ def importar_dagenda(request):
 
 def homeEventos(request):
     hoje = datetime.today()
+    form  = PeriodoEspecifico()
   
 
     if request.method == "POST":
-        hoje = datetime.strptime(request.POST['data'], "%d/%m/%Y")
+        hoje = datetime.strptime(request.POST['data'], "%Y-%m-%d")
 
 
     eventos = EventosDiarios.objects.annotate(month = ExtractMonth('data_liquidacao') ,
@@ -63,6 +64,7 @@ def homeEventos(request):
     dados  = {
         "dia":  hoje.strftime("%d/%m/%Y") ,
         "eventos" : eventos  ,
+        "form": form
 
     }
     return render(request , "eventos/home.html" , dados)

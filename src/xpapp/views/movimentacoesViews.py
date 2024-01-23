@@ -1,6 +1,7 @@
 from django.shortcuts import render ,get_object_or_404
 from django.http import HttpResponse , JsonResponse
 from ..models import MovimentacoesXP , FundoXP
+from ..forms import ProcessarMovimentacoes
 
 
 
@@ -36,8 +37,8 @@ def liberar_lancamento(request , id) :
 
 
 def processar_movimentacoes(request):
+    form = ProcessarMovimentacoes()
 
-    print ("a")
 
     if request.method =='POST':
         fundo = request.POST['fundo']
@@ -55,7 +56,7 @@ def processar_movimentacoes(request):
         print (fundos)
 
         context = {
-           "fundos": fundos
+           "form": form
         }
         
 

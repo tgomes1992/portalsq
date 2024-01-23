@@ -6,8 +6,6 @@
         
     }
 
-
-    
     var instances = M.FormSelect.init(elems, options);
   });
 
@@ -42,7 +40,7 @@ weekdays	 = [
     var elems = document.querySelectorAll('.datepicker');
     
     var options = {
-        "format" :	'dd/mm/yyyy' ,  
+        "format" :	'yyyy-mm-dd' ,  
 
         'i18n': {
           cancel: 'Cancelar',

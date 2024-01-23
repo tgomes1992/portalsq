@@ -1,4 +1,7 @@
 {% extends "homepage.html" %}
+{% load materializecss %}
+
+
 
 {% block content %}
     <h1>Eventos Diários - Outros Ativos</h1>
@@ -8,10 +11,7 @@
 
     <form method="post" action="">
         {% csrf_token %}
-        <div class="input-field col s12">
-            <input type="text" class="datepicker" name='data' id="datepicker">
-            <label for="datepicker">Selecione uma data</label>
-          </div>
+        {{ form | materializecss }}
         <input type="submit" class='btn' value="Periodo Especifico">
  
         <a href="{% url 'eventos_diarios' %}"  class="btn">Baixar Relatório em Excel</a>
