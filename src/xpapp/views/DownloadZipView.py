@@ -156,7 +156,7 @@ class DownloadZipView(View):
     def gerar_csv_movimentacao(self, data ):
         service_movimentos = ConsultaMovimentoPeriodoV2Service("roboescritura", "Senh@123")
         fundos = FundoXP.objects.all() 
-        data = datetime.strptime(data , "%d/%m/%Y")
+        data = datetime.strptime(data , "%Y-%m-%d")
         JOBS = [item.gerar_movimentos(data) for item in fundos]
 
         extracao = []
@@ -184,7 +184,7 @@ class DownloadZipView(View):
 
         if request.POST['tipoarquivo'] ==  'movimentacao':
             request_base = str(request.POST['data'])    
-            data = datetime.strptime(request_base , "%d/%m/%Y")
+            data = datetime.strptime(request_base , "%Y-%m-%d")
           
             df = self.gerar_csv_movimentacao(request_base)    
 
@@ -203,7 +203,7 @@ class DownloadZipView(View):
             response['Content-Disposition'] = 'attachment; filename=retornoxp.zip'
             return response
         elif request.POST['tipoarquivo'] ==  'posicao':
-            data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
+            data = datetime.strptime(request.POST['data'] , "%Y-%m-%d")
             hoje = datetime.today()
             self.extrair_posicoes_jcot(data)
             valores = ['Mnemônico Investidor' , 	'Investidor'	, 'CPF/CNPJ Investidor' , 	'Data Referência' ,  
@@ -225,7 +225,7 @@ class DownloadZipView(View):
         else:
             # request.POST['tipoarquivo'] == 'posicao_geral':
 
-            data = datetime.strptime(request.POST['data'], "%d/%m/%Y")
+            data = datetime.strptime(request.POST['data'], "%Y-%m-%d")
 
             redirect_url = reverse("processar_jobs" , kwargs={'data_ajustada': data.strftime("%Y-%m-%d")})
 

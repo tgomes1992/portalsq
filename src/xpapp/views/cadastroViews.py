@@ -7,6 +7,15 @@ from ..xphelper import CadastroFundosXP
 
 
 
+def delete_fundo(request):
+     id =  request.GET.get('id')
+     fundo = FundoXP.objects.filter(cd_jcot= id).first()
+     fundo.delete()
+     return redirect("cadastro_fundos_xp")
+
+     
+
+
 
 def fundos_xp_atualizados(request):
     controle = CadastroFundosXP()
@@ -14,8 +23,6 @@ def fundos_xp_atualizados(request):
     controle.atualizar_dados_o2()
 
     return HttpResponse("ok")
-
-
 
 
 

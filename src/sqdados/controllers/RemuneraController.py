@@ -4,7 +4,6 @@ from intactus.osapi import o2Api
 import os
 
 
-
 class RemuneraController:
 
 
@@ -40,4 +39,11 @@ class RemuneraController:
             finally:
                 pass
 
+
+    def ProcessarReceita(self):
+        pass
  
+
+
+    def RelatoriosReceita(self):
+        pass

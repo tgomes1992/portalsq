@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
-from ..views import clientes_sinc, controle_fundos_xp , pcos_em_lote , editar_fundos_xp , fundos_xp_atualizados
+from ..views import clientes_sinc, controle_fundos_xp , pcos_em_lote , editar_fundos_xp , fundos_xp_atualizados , delete_fundo
 
 
 urlpatterns = [
@@ -25,7 +25,8 @@ urlpatterns = [
     path("fundos_xp", controle_fundos_xp, name="cadastro_fundos_xp"),
     path("pcos_em_lote", pcos_em_lote, name="lote_pcos"),
     path("editar_fundos_xp", editar_fundos_xp, name="editar_fundos_xp"),
-    path("atualizar_cadastros" ,  fundos_xp_atualizados , name="atualizar_cadastro_fundos_xp")
+    path("atualizar_cadastros" ,  fundos_xp_atualizados , name="atualizar_cadastro_fundos_xp") , 
+    path("remover_fundo" , delete_fundo , name='excluir_fundos')
 
 
  ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

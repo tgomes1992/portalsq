@@ -14,16 +14,20 @@ from ..models import FundoXP
 import numpy as np
 import pandas as pd
 from io import BytesIO
+from ..forms import RelatoriosDiariosXP
 
 
 def relatorios_diarios_xp(request):
-    return render(request,"xpapp/relatorios_diarios_xp.html" )
+
+    form  = RelatoriosDiariosXP()
+
+    return render(request,"xpapp/relatorios_diarios_xp.html" , {"form": form } )
 
 def relatorio_movimentacao(request):
     if request.method == 'POST':
         service_movimentos = ConsultaMovimentoPeriodoV2Service('roboescritura', "Senh@123" )
         fundos = FundoXP.objects.all() 
-        data = datetime.strptime(request.POST['data'] , "%d/%m/%Y")
+        data = datetime.strptime(request.POST['data'] , "%Y-%m-%d")
         JOBS = [item.gerar_movimentos(data) for item in fundos]
         extracao = []
         for item in JOBS:

@@ -56,7 +56,8 @@
     <tr>
       <td>{{fundo.nome}}</td>
       <td>{{fundo.cd_jcot}}</td>
-      <td><a class="btn" href="{% url 'editar_fundos_xp'%}?id={{fundo.cd_jcot}}">Editar</a></td>
+      <td><a class="btn" href="{% url 'editar_fundos_xp'%}?id={{fundo.cd_jcot}}"><i class='material-icons'>update</i></a></td>
+      <td> <a class="btn" href="{% url 'excluir_fundos'%}?id={{fundo.cd_jcot}}"> <i class="material-icons">remove</i></a></td>
 
     </tr>
 

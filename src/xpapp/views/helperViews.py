@@ -6,16 +6,21 @@ import pandas as pd
 from ..models import FundoXP
 from JCOTSERVICE import Mancotistav2Service , ManClienteService
 from datetime import datetime
+from ..forms import ImportacaoArquivosDiarios , ProcessarMovimentacoes , PCOS_LOTE
+
 
 
 def importacao_arquivo_diario(request):
-    if request.method == "POST":
+    form = ImportacaoArquivosDiarios()
 
+    if request.method == "POST":
         ControleImportacaoArquivoDiario(request.FILES['arquivo'] , str(request.FILES['arquivo'])).get_file_data()
-    return render(request,"xpapp/importacao_xp.html")
+    
+    return render(request,"xpapp/importacao_xp.html" , {'form':form})
 
 
 def pcos_em_lote(request):
+    form = PCOS_LOTE()
     cotista_service =  Mancotistav2Service("roboescritura","Senh@123")
     cliente_service = ManClienteService("roboescritura","Senh@123")
     if request.method == "POST":
@@ -25,7 +30,7 @@ def pcos_em_lote(request):
             cotista_service.request_habilitar_pco_xp_v2(investidor['codigo'])
 
 
-    return render(request,"xpapp/importacao_lote_pco.html")
+    return render(request,"xpapp/importacao_lote_pco.html" , {'form': form})
 
 
 
@@ -38,13 +43,15 @@ def clientes_sinc(request):
 
 
 def sincronizar_lancamentos(request):
+    form = ProcessarMovimentacoes()
     fundos = [{"cnpj": fundo.cnpj  , "nome":fundo.nome } for fundo in FundoXP.objects.all()]
     context = {
-           "fundos": fundos
+           "fundos": fundos , 
+           'form': form
         }
     if request.method == "POST":
         fundo = request.POST['fundo']
-        data_movimentos = datetime.strptime( request.POST['dataMovimentacoes'] , "%d/%m/%Y").strftime("%Y-%m-%d")
+        data_movimentos = datetime.strptime( request.POST['dataMovimentacoes'] , "%Y-%m-%d").strftime("%Y-%m-%d")
         print (request.POST)
         movimentos_sinc = MovimentosSinc()  
         filename = f"lancamentos.xlsx"
