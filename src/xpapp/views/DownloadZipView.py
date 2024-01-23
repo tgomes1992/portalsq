@@ -15,6 +15,8 @@ from pymongo import MongoClient
 from urllib.parse import quote_plus
 from concurrent.futures import ThreadPoolExecutor
 from django.urls import reverse
+from sqlalchemy import create_engine , text
+import os
 
 username = 'thiago.conceicao'
 password = 'Th1@ll2023trust'
@@ -40,6 +42,8 @@ colection = jcot_posicoes['posicoes']
 
 
 class DownloadZipView(View):
+    ENGINE = create_engine(f"mysql+pymysql://{os.environ.get('API_OTESCRITURACAO_DB_USERNAME')}:{os.environ.get('API_OTESCRITURACAO_DB_PASSWORD')}@{os.environ.get('API_OTESCRITURACAO_DB_HOST')}/{os.environ.get('API_OTESCRITURACAO_DB_DATABASE')}")
+
 
     service_posicao = RelPosicaoFundoCotistaService("roboescritura", "Senh@123")
     def get_fundos_list(self):
@@ -82,19 +86,26 @@ class DownloadZipView(View):
         service_list_fundos = ListFundosService("roboescritura","Senh@123")
 
 
-        colection.delete_many({})
+        # colection.delete_many({})
         # fundos = FundoXP.objects.all() 
+
+        try:
+
+            sql_statement = '''delete from posicoes_jcot; '''
+            self.ENGINE.connect().execute(text(sql_statement))
+
+        except:
+            pass
+
+
+
+
         df = service_list_fundos.listFundoRequest()
         df_xp = df[df['administrador'] == '02332886000104']
 
         JOBS_posicao = [{"codigo": item['codigo'],  "dataPosicao":  data.strftime("%Y-%m-%d")} 
                 for item in df_xp.to_dict("records")]
             
-        # JOBS_posicao =  [item.gerar_posicao(data) for item in fundos]
-        # for job in JOBS_posicao:
-        #     dados = service_posicao.get_posicoes_json(job)
-        #     if len(dados) != 0:
-        #         colection.insert_many(dados)
 
 
         with ThreadPoolExecutor() as executor:
@@ -105,7 +116,12 @@ class DownloadZipView(View):
     def process_job(self,job):
         dados = self.service_posicao.get_posicoes_json(job)
         if len(dados) != 0:
-            colection.insert_many(dados)
+            df = pd.DataFrame.from_dict(dados)
+            df.to_sql("posicoes_jcot" , con=self.ENGINE , if_exists="append")
+
+
+
+            # colection.insert_many(dados)
 
     def classificar_tipo_investidor(self, investidor):
         if "XP " in investidor:
@@ -134,9 +150,11 @@ class DownloadZipView(View):
     def gerar_dataframe_posicao(self):
         cabecalho_posicao = ["Mnemônico Investidor","Investidor","CPF/CNPJ Investidor",
                 "Data Referência","Papel Cota","CNPJ Fundo","Quantidade Total","Valor Bruto","Cota" ,  'tipo_arquivo']
-        dados = colection.find({})
+        # dados = colection.find({})
+        # df = pd.DataFrame.from_dict(dados)
+        df = pd.read_sql("posicoes_jcot" , con=self.ENGINE.connect())
         fundos_list = self.get_fundos_list()
-        df = pd.DataFrame.from_dict(dados)
+
         df['tipo_investidor'] =  df['cd_cotista'].apply(self.classificar_tipo_investidor)
         df['tipo_fundo'] = df['fundo'].apply(lambda x :self.classificar_tipo_de_fundo(fundos_list , x))
         df['tipo_arquivo'] =  pd.concat([df['tipo_fundo'], df['tipo_investidor']], axis=1).apply(lambda x: ''.join(x), axis=1)
