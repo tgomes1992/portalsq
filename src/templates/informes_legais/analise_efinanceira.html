@@ -1,16 +1,33 @@
 {% extends 'homepage.html' %}
 {% load static %}
+{% load materializecss %}
 
 
 {% block content %}
 
 
-<h1>Análise E-Financeira</h1>
+<div class="row">
+  <h2>Importar Arquivo E-Financeira</h2>
+  <p>Ao importar o arquivo o aplicativo vai retornar um excel com dados e info´s sobre o arquivo importado</p>
+  <form action="#" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form | materializecss }}
+
+  <input type="submit" value="Importar" class="btn"/>
+
+</form>
+
+
+
+</div>
+
+
+
+
 
 
 
 <script src="{% static 'materialize_init.js' %}"></script>
-
 
 {% endblock %}
 

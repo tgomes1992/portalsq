@@ -106,8 +106,8 @@ class XML_5401:
         with open(f'{file_name}', "w") as file:
             file.write(xml_string)
 
-    def gerar_arquivo_validacao(self):
-        with pd.ExcelWriter("validacao_arquivo_14012024.xlsx") as writer:
+    def gerar_arquivo_validacao(self , path ):
+        with pd.ExcelWriter(path) as writer:
             self.get_fundos().to_excel(writer, sheet_name="fundos", index=False)
             self.get_cotas().to_excel(writer, sheet_name="cotas", index=False)
             self.get_cotistas().to_excel(writer, sheet_name="cotistas", index=False)

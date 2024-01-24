@@ -20,7 +20,13 @@ class ReceitaRelatorios(forms.Form):
         ('Receita por Ativo', 'Receita por Ativo'),
         ('Receita Mensal', 'Receita Mensal'),
         ('Remunerações Ativas', 'Remunerações Ativas'),
+        ('remuneracoes_remunera', 'Remuneração Remunera'),
+        ('remuneracoes_a_cadastrar', 'Remuneracoes a Cadastrar'),
     ]
+
+    OPTIONS.append(("", "Selecione o Relatório"))
+
+    OPTIONS.reverse()
 
     receita = forms.ChoiceField(
         choices=OPTIONS,

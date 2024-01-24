@@ -13,8 +13,6 @@ from ..forms import ImportacaoArquivosDiarios , ProcessarMovimentacoes , PCOS_LO
 def importacao_arquivo_diario(request):
     form = ImportacaoArquivosDiarios()
 
-
-
     if request.method == "POST":
         ControleImportacaoArquivoDiario(request.FILES['arquivo'] , str(request.FILES['arquivo'])).get_file_data()
     

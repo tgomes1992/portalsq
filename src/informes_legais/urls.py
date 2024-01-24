@@ -22,8 +22,8 @@ from informes_legais.views import *
 
 
 urlpatterns = [
-    path("5401",  analise_5401 , name="5401") ,
-    path("efinanceira" , analise_efinanceira , name="efinanceira") ,
+    path("5401",  View_5401.as_view() , name="5401") ,
+    path("efinanceira" , View_Efinanceira.as_view() , name="efinanceira") ,
 
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
