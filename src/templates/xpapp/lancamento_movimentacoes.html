@@ -8,6 +8,13 @@
 
 <form action="#" method="post" >
   {% csrf_token %}
+
+  <div class="input-field col s12">
+    <i class="material-icons prefix">search</i>
+    <input type="text" id="autocomplete-input" name='fundo' class="autocomplete">
+    <label for="autocomplete-input">Digite o Fundo</label>
+  </div>
+
   {{ form | materializecss }}
 
   <input type="submit" class="btn" value="Buscar Movimentações"/>
@@ -67,7 +74,64 @@
 
 {% endif %}
 
+
+
 <script src="{% static 'materialize_init.js' %}"></script>
+
+
+<script>
+
+  async function fetchData(uri) {
+    try {
+      const response = await fetch(uri);
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      return data; // Return the JSON data
+  
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error; // Re-throw the error for the caller to handle if needed
+    }
+  }
+  
+  var url = window.location.href;
+  var new_url = url.replace("movimentacoes_xp" , "get_fundos")
+  var data_add = ""
+
+
+
+  
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.autocomplete');
+
+    
+    fetchData(new_url)
+    .then(data => {
+      data_add = data
+      console.log(data)
+      var options = {
+        data: data_add ,
+      }
+  
+      var instances = M.Autocomplete.init(elems, options);
+      // You can perform further operations with the data here
+    })
+    .catch(error => {
+      // Handle errors here if needed
+      console.error('Error:', error);
+    });
+    
+
+   
+  });
+
+</script>
+
 
 
 {% endblock %}

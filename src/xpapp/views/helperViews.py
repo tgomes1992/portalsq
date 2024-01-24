@@ -13,6 +13,8 @@ from ..forms import ImportacaoArquivosDiarios , ProcessarMovimentacoes , PCOS_LO
 def importacao_arquivo_diario(request):
     form = ImportacaoArquivosDiarios()
 
+
+
     if request.method == "POST":
         ControleImportacaoArquivoDiario(request.FILES['arquivo'] , str(request.FILES['arquivo'])).get_file_data()
     
@@ -50,7 +52,8 @@ def sincronizar_lancamentos(request):
            'form': form
         }
     if request.method == "POST":
-        fundo = request.POST['fundo']
+        fundo_INPUT = request.POST['fundo']
+        fundo = FundoXP.objects.filter(nome=fundo_INPUT).first().cnpj
         data_movimentos = datetime.strptime( request.POST['dataMovimentacoes'] , "%Y-%m-%d").strftime("%Y-%m-%d")
         print (request.POST)
         movimentos_sinc = MovimentosSinc()  
@@ -68,6 +71,7 @@ def sincronizar_lancamentos(request):
                 dataframes['log'].to_excel(writer, sheet_name="LOG", index=False)
 
                 return res
+
     else:
         return render(request, "xpapp/lancamento_movimentacoes.html" ,  context)
 

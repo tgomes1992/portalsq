@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path , include
 from django.conf.urls.static import static
 from django.conf import settings
-from ..views import importacao_arquivo_diario , sincronizar_lancamentos
+from ..views import importacao_arquivo_diario , sincronizar_lancamentos , fundos_json
 
 urlpatterns = [
       path("processar_movimentacoes", sincronizar_lancamentos, name="processar_movimentacoes"),
       path("importacao_arquivo_diario", importacao_arquivo_diario, name="importar_arquivo_diario"),
       path("movimentacoes_xp", sincronizar_lancamentos, name="movimentacoes_xp"),
+      path("get_fundos" , fundos_json , name="fundos_json")
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

@@ -5,7 +5,6 @@
     var options = {
         
     }
-
     var instances = M.FormSelect.init(elems, options);
   });
 
@@ -101,4 +100,20 @@ weekdays	 = [
       
       }
     var instances = M.Datepicker.init(elems, options);
+  });
+
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.autocomplete');
+
+    var options = {
+      data: {
+        "Apple": null,
+        "Microsoft": null,
+        "Google": 'https://placehold.it/250x250'
+      }
+    }
+
+    var instances = M.Autocomplete.init(elems, options);
   });

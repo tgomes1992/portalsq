@@ -32,10 +32,10 @@ class ProcessarMovimentacoes(forms.Form):
     OPTIONS = [(fundo.cnpj , fundo.nome) for fundo in FundoXP.objects.all() ]
     OPTIONS.append(("Selecione o fundo a ser importado","Selecione o fundo a ser importado"))
     OPTIONS.reverse()
-    fundo = forms.ChoiceField(
-        choices=OPTIONS,
-        widget=forms.Select(attrs={'class': 'select'}),  # Add any additional attributes or classes here
-    )
+    # fundo = forms.ChoiceField(
+    #     choices=OPTIONS,
+    #     widget=forms.Select(attrs={'class': 'select'}),  # Add any additional attributes or classes here
+    # )
 
     dataMovimentacoes = forms.DateField(widget=forms.Select(attrs={'class': 'datepicker'}))
 

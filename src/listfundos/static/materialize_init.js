@@ -5,7 +5,6 @@
     var options = {
         
     }
-
     var instances = M.FormSelect.init(elems, options);
   });
 
@@ -102,3 +101,4 @@ weekdays	 = [
       }
     var instances = M.Datepicker.init(elems, options);
   });
+

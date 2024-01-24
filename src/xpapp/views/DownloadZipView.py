@@ -11,7 +11,6 @@ from datetime import date ,  datetime
 from ..models import FundoXP
 import csv
 from pymongo import MongoClient
-
 from urllib.parse import quote_plus
 from concurrent.futures import ThreadPoolExecutor
 from django.urls import reverse
@@ -86,17 +85,10 @@ class DownloadZipView(View):
         service_list_fundos = ListFundosService("roboescritura","Senh@123")
 
 
-        # colection.delete_many({})
-        # fundos = FundoXP.objects.all() 
+        colection.delete_many({})
+        fundos = FundoXP.objects.all() 
 
-        try:
-
-            sql_statement = '''delete from posicoes_jcot; '''
-            self.ENGINE.connect().execute(text(sql_statement))
-
-        except:
-            pass
-
+   
 
 
 
@@ -116,12 +108,12 @@ class DownloadZipView(View):
     def process_job(self,job):
         dados = self.service_posicao.get_posicoes_json(job)
         if len(dados) != 0:
-            df = pd.DataFrame.from_dict(dados)
-            df.to_sql("posicoes_jcot" , con=self.ENGINE , if_exists="append")
+            # df = pd.DataFrame.from_dict(dados)
+            # df.to_sql("posicoes_jcot" , con=self.ENGINE , if_exists="append")
 
 
 
-            # colection.insert_many(dados)
+            colection.insert_many(dados)
 
     def classificar_tipo_investidor(self, investidor):
         if "XP " in investidor:
@@ -150,9 +142,8 @@ class DownloadZipView(View):
     def gerar_dataframe_posicao(self):
         cabecalho_posicao = ["Mnemônico Investidor","Investidor","CPF/CNPJ Investidor",
                 "Data Referência","Papel Cota","CNPJ Fundo","Quantidade Total","Valor Bruto","Cota" ,  'tipo_arquivo']
-        # dados = colection.find({})
-        # df = pd.DataFrame.from_dict(dados)
-        df = pd.read_sql("posicoes_jcot" , con=self.ENGINE.connect())
+        dados = colection.find({})
+        df = pd.DataFrame.from_dict(dados)
         fundos_list = self.get_fundos_list()
 
         df['tipo_investidor'] =  df['cd_cotista'].apply(self.classificar_tipo_investidor)

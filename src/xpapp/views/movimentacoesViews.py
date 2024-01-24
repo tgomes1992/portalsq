@@ -5,6 +5,17 @@ from ..forms import ProcessarMovimentacoes
 
 
 
+
+def fundos_json(request):
+    fundos = FundoXP.objects.all()
+    fundos_json = {fundo.nome: "" for fundo in fundos}
+    return JsonResponse(fundos_json , safe=False)
+
+
+
+
+
+
 def movimentacoes_xp(request):
     movimentacoes  =  MovimentacoesXP.objects.all()
 

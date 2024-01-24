@@ -96,6 +96,8 @@ class ControleImportacaoArquivoDiario():
     def get_file_data(self):
         df = pd.read_csv(self.file ,  delimiter=";" ,  decimal=",")
 
+        print (df)
+
         #ajuste das colunas por conta do arquivo do xpce
         if 'PASSIVO' in self.filename:
             df.columns = ["ID", "NOME","PRODUTO","TIPO_MOV",
