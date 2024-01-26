@@ -4,19 +4,26 @@ from ..controllers.Quantitativoo2 import *
 from datetime import datetime
 from django.http import HttpResponse
 from io import BytesIO
+from ..forms import QuantitativoForm
+
 
 
 
 def home_quantitativo(request):
+    form  = QuantitativoForm()
+    context = {
+        "form": form
+    }
     if request.method =='POST': 
         dados_request =  request.POST
-        print (request.POST)
+
         if dados_request['tipoarquivo'] ==  "fundos":
             return  redirect('fundos_ativos' , data=datetime.strptime( request.POST['data'] ,"%Y-%m-%d").strftime("%Y-%m-%d"))
         else:
             return redirect('outros_ativos' , data=datetime.strptime( request.POST['data'] ,"%Y-%m-%d").strftime("%Y-%m-%d"))
             
-    return render(request, "sqdados/quantitativo.html")
+    
+    return render(request, "sqdados/quantitativo.html" , context)
 
 
 

@@ -38,7 +38,7 @@ class CalculoQuantitativoO2:
         fundos[(fundos['dataFimRelacionamento'] >= self.data) & (fundos['dataInicioRelacionamento'] <= self.data)]
         fundos_ativos = fundos[(fundos['dataFimRelacionamento'] >= self.data) & (fundos['dataInicioRelacionamento'] <= self.data)]
         fundos_ativos['periodo'] =  self.data.strftime("%m/%Y")
-        result =  fundos_ativos.drop(columns=['emissor' , 'codigosInstrumentosFinanceiros' ])
+        result = fundos_ativos
         result[['cnpjEmissor' , 'nomeEmissor' , "periodo"]].drop_duplicates().to_sql('fundos_ativos', con=DASHBOARD_ENGINE , if_exists="append")
         return fundos_ativos
    
@@ -57,9 +57,9 @@ class CalculoQuantitativoO2:
         ativos_renda_fixa = ['DEB' , 'AÇÃO'  , 'CRA' , 'CRI'  , 'NC'  , 'LF']
         temp_d_datas = df[(df['dataFimRelacionamento'] >= self.data) & (df['dataInicioRelacionamento'] <= self.data)]
         temp_d_datas_renda_fixa = temp_d_datas[temp_d_datas['nomeTipoInstrumentoFinanceiro'].isin(ativos_renda_fixa)]
-        temp_d_datas_renda_fixa['periodo'] =  self.data.strftime("%m/%Y")
-        result =  temp_d_datas_renda_fixa.drop(columns=['emissor' , 'codigosInstrumentosFinanceiros' ])
-        result.to_sql("ativos_geral" , con=DASHBOARD_ENGINE , if_exists='append' , index=False)
+        temp_d_datas_renda_fixa['periodo'] =  self.data.strftime("%m/%Y")        
+        result =  temp_d_datas_renda_fixa
+        # result.to_sql("ativos_geral" , con=DASHBOARD_ENGINE , if_exists='append' , index=False)
         return result
 
 

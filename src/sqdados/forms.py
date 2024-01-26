@@ -30,6 +30,22 @@ class ReceitaRelatorios(forms.Form):
 
 
 
+class QuantitativoForm(forms.Form):
+    OPTIONS = [
+        ('fundos', 'Quantitativo Fundos'),
+        ('quantitativos_rf', 'Quantitativo Renda Fixa'),
+        ('qtd_posicao', 'Quantitativo Geral'),
+    ]
+
+    tipoarquivo = forms.ChoiceField(
+        choices=OPTIONS,
+        widget=forms.Select(attrs={'class': 'select'}),  # Add any additional attributes or classes here
+    )
+
+    data = forms.DateField(widget=forms.Select(attrs={'class': 'datepicker'}))
+
+
+
 class ProcessarReceita(forms.Form):
 
 
