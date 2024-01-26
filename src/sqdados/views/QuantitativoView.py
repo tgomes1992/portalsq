@@ -12,9 +12,9 @@ def home_quantitativo(request):
         dados_request =  request.POST
         print (request.POST)
         if dados_request['tipoarquivo'] ==  "fundos":
-            return  redirect('fundos_ativos' , data=datetime.strptime( request.POST['data'] ,"%d/%m/%Y").strftime("%Y-%m-%d"))
+            return  redirect('fundos_ativos' , data=datetime.strptime( request.POST['data'] ,"%Y-%m-%d").strftime("%Y-%m-%d"))
         else:
-            return redirect('outros_ativos' , data=datetime.strptime( request.POST['data'] ,"%d/%m/%Y").strftime("%Y-%m-%d"))
+            return redirect('outros_ativos' , data=datetime.strptime( request.POST['data'] ,"%Y-%m-%d").strftime("%Y-%m-%d"))
             
     return render(request, "sqdados/quantitativo.html")
 
