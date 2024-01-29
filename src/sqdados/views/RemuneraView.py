@@ -24,8 +24,6 @@ def filtro_codigos_ot(request):
     pass
 
 
-
-
 def importar_arquivo_remunera(request):
     if request.method == 'POST':
         arquivo = request.FILES['arquivo']
