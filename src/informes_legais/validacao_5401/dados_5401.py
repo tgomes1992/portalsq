@@ -11,17 +11,20 @@ from concurrent.futures import ThreadPoolExecutor
 '''módulo que pode ser utilizado para extrair as informações do informe 5401'''
 
 
-endereco = "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/cad_fi.csv"
 
-liquidacao = requests.get(endereco)
+def get_fundo_cad_fi():
+    endereco = "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/cad_fi.csv"
 
-df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";")
-df['CNPJ_FUNDO'] = df['CNPJ_FUNDO'].apply(lambda x: x.replace(".", "")
-                                          .replace("/", "")
-                                          .replace("-", ""))
+    liquidacao = requests.get(endereco)
 
+    df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";" , encoding="ANSI")
+    df['CNPJ_FUNDO'] = df['CNPJ_FUNDO'].apply(lambda x: x.replace(".", "")
+                                             .replace("/", "")
+                                              .replace("-", ""))
 
-def get_fundos_nome(cnpj):
+    return df
+
+def get_fundos_nome( df , cnpj):
     try:
         return df[df['CNPJ_FUNDO'] == cnpj].to_dict("records")[0]['DENOM_SOCIAL']
     except:
@@ -35,6 +38,7 @@ class XML_5401:
         self.root = self.tree.getroot()
 
     def get_fundos(self):
+        cad_fi = get_fundo_cad_fi()
         fundos = []
         for item in self.root.iter("fundo"):
             fundo = {
@@ -45,7 +49,7 @@ class XML_5401:
             }
             fundos.append(fundo)
         df = pd.DataFrame.from_dict(fundos)
-        df['nome_fundo'] = df['cnpjFundo'].apply(get_fundos_nome)
+        df['nome_fundo'] = df['cnpjFundo'].apply( lambda x : get_fundos_nome( cad_fi ,  x))
         return df
 
     def get_cotistas(self):
