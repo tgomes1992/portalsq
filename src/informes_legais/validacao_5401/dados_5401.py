@@ -15,7 +15,7 @@ endereco = "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/cad_fi.csv"
 
 liquidacao = requests.get(endereco)
 
-df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";", encoding="ANSI")
+df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";")
 df['CNPJ_FUNDO'] = df['CNPJ_FUNDO'].apply(lambda x: x.replace(".", "")
                                           .replace("/", "")
                                           .replace("-", ""))
