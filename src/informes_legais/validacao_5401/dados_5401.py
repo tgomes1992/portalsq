@@ -17,7 +17,7 @@ def get_fundo_cad_fi():
 
     liquidacao = requests.get(endereco)
 
-    df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";" , encoding="ANSI")
+    df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";" , encoding="mbcs")
     df['CNPJ_FUNDO'] = df['CNPJ_FUNDO'].apply(lambda x: x.replace(".", "")
                                              .replace("/", "")
                                               .replace("-", ""))
