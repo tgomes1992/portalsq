@@ -26,6 +26,7 @@ urlpatterns = [
     path("sinc_ativos",  sinc_ativos_o2 , name="sinc_ativos_o2") ,
     path("lista_ativos",  listar_ativos_o2 , name="lista_ativos") ,
     path("validar_conciliacao_diaria",  validar_conciliacao_diaria , name="validar_conciliacao_diaria") ,
-    path("get_relatorio_excel", get_ativos_o2_relatorio, name="get_relatorios_excel")
+    path("get_relatorio_excel", get_ativos_o2_relatorio, name="get_relatorios_excel") ,
+    path("conciliacao_carteira" , get_conciliacao_por_fundo ,  name="get_conciliacao_fundos" )
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

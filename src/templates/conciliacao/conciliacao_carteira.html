@@ -1,0 +1,37 @@
+{% extends 'homepage.html' %}
+{% load static %}
+{% load materializecss %}
+
+
+{% block content %}
+
+<h1>Conciliação Geral Legados</h1>
+
+
+<div class="container">
+
+
+<form class="col s12" method="post" action="#">
+          {% csrf_token %}
+          {{ form | materializecss }}
+
+      <input type="submit" class="btn" value="Gerar Conciliação"/>
+    <a  class="btn" >Gerar Conciliação Excel</a>
+</form>
+
+</div>
+
+
+
+
+
+  
+<script src="{% static 'materialize_init.js' %}"></script>
+
+
+
+
+
+
+
+{% endblock %}

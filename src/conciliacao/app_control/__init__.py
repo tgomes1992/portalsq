@@ -3,6 +3,7 @@ from sqlalchemy import create_engine , text
 from datetime import date , datetime
 import pandas as pd
 import os
+import requests
 
 
 class Ativoso2Sinc():
@@ -13,6 +14,9 @@ class Ativoso2Sinc():
 
     api = o2Api(os.environ.get("INTACTUS_LOGIN"),
                                os.environ.get("INTACTUS_PASSWORD"))
+
+
+
 
     def get_cd_origem_instrumento_financeiro( self,base_dict , tipo):
         if base_dict['nomeOrigemCodigoInstrumentoFinanceiro'] == tipo:
@@ -46,6 +50,10 @@ class Ativoso2Sinc():
                 "cnpj": "0000000000" , 
                 "nome": "Sem Emissor Associado"
             }
+
+
+
+
         
     def get_ativos_extracao(self):       
 
@@ -103,8 +111,20 @@ class Ativoso2Sinc():
         return df[df['descricao'] ==  ativos_o2].to_dict("records")[0]
 
 
+    def get_ativos_unique_dict(self , ativos_o2):
+        df = pd.read_sql("ativos_o2" , con=self.engine.connect() )
+        return df[df['cd_escritural'] ==  ativos_o2].to_dict("records")[0]
+
+
+    def get_ativos_form(self):
+        df = pd.read_sql("ativos_o2" , con=self.engine.connect() )
+
+        retorno = [(item['cd_escritural'] ,  item['cd_escritural']) for item in df.to_dict("records")
+                   if item['cd_escritural'] != "Sem Código"]
+
+        return retorno
 
 
 
 
-    
+

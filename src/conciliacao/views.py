@@ -4,6 +4,7 @@ from .app_control import Ativoso2Sinc
 from .app_control.batimento_diario_ import BatimentoDiario
 from io import BytesIO
 import pandas as pd
+from .forms import ConciliacaoForm
 # Create your views here.
 
 
@@ -77,3 +78,22 @@ def get_ativos_o2_relatorio(request):
     response.write(output.getvalue())
 
     return response
+
+
+def get_conciliacao_por_fundo(request):
+    form = ConciliacaoForm()
+    ativos_busca = Ativoso2Sinc()
+
+
+    if request.method == "POST":
+
+        # dicionario fundo referente ao fundo que vai ser conciliado
+        fundo_conciliacao = ativos_busca.get_ativos_unique_dict(request.POST['fundos'])
+        batimento = BatimentoDiario()
+        batimento.concilia_fundos(fundo_conciliacao)
+
+    context = {
+        "form": form
+    }
+
+    return render(request,'conciliacao/conciliacao_carteira.html' ,context )

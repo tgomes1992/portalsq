@@ -149,6 +149,29 @@ class o2Api():
 
         return df.to_dict("records")
 
+    def get_posicao_r(self, data, codigoInstrumentoFinanceiro):
+
+        headers = {
+                'Authorization': f'Bearer {self.get_token()}' ,
+                'Content-Type': 'application/json'
+        }
+
+        url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/Posicao/obterpordatainvestidorinstrumentofinanceiro?codigoInstrumentoFinanceiro={codigoInstrumentoFinanceiro}&data={data}"
+
+        request = requests.get(url, headers=headers)
+        # print (request.content)
+
+        retorno = json.loads(request.content)['dados']
+
+        df = pd.DataFrame.from_dict(retorno)
+
+
+        df['cd_escritural'] = codigoInstrumentoFinanceiro
+
+
+        return df
+
+
 
     def get_posicao_mongo(self, codigoInstrumentoFinanceiro , headers ):
         url = f"https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/Posicao/obterpordatainvestidorinstrumentofinanceiro?codigoInstrumentoFinanceiro={ codigoInstrumentoFinanceiro['DescricaoSelecao'] }&data={codigoInstrumentoFinanceiro['data'] }"
@@ -240,6 +263,20 @@ class o2Api():
         except Exception as e:
             return "Sem Código"
 
+    def get_ids_amplis(self):
+        url = "http://processamento-app-jcot:5004/get_cotas"
+        dados_amplis = requests.get(url)
+        df = pd.DataFrame.from_dict(dados_amplis.json(), dtype=str)
+        return df
+
+    def get_id_amplis_df(self,df, cd):
+        try:
+            resultado = df[df['jcot'] == cd].to_dict("records")[0]['id_amplis']
+            print (resultado)
+            return resultado
+        except Exception as e:
+            print (e)
+            return ""
 
     def get_ativos(self):
         headers = {
@@ -249,18 +286,20 @@ class o2Api():
         url = "https://escriturador.oliveiratrust.com.br/intactus/escriturador/api/instrumentofinanceiro/obtertodos"    
 
 
+        df_amplis = self.get_ids_amplis()
+
         request =  requests.get(url,headers=headers)
 
         retorno = json.loads(request.content)['dados']
-
         df = pd.DataFrame.from_dict(retorno)
-        
         df['cnpjEmissor'] = df['cnpjEmissor'].apply(str)
         df['cd_jcot'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'JCOT'))
         df['cd_cetip'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'CETIP'))
         df['cd_bolsa'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'BOLSA'))
+        df['id_amplis'] = df['cd_jcot'].apply(lambda x: self.get_id_amplis_df(df_amplis, x))
         df['cd_escritural'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'ESCRITURAL'))
         nativo = df.drop(['codigosInstrumentosFinanceiros', "emissor"], axis="columns")
+
 
         return nativo
 
