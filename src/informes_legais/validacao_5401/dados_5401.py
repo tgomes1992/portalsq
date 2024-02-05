@@ -18,7 +18,7 @@ def get_fundo_cad_fi():
     liquidacao = requests.get(endereco)
 
 
-    arquivo = StringIO(liquidacao.content.decode("ansi"))
+    arquivo = StringIO(liquidacao.content.decode("iso-8859-1"))
 
 
     df = pd.read_csv(arquivo, delimiter=";" )
