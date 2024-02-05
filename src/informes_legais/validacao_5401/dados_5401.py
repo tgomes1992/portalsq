@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
 import requests
-from io import BytesIO
+from io import BytesIO ,  StringIO
 from .validador_cpf_cnpj import ValidadorCpfCnpj
 from xml.dom import minidom
 import json
@@ -17,7 +17,11 @@ def get_fundo_cad_fi():
 
     liquidacao = requests.get(endereco)
 
-    df = pd.read_csv(BytesIO(liquidacao.content), delimiter=";" , encoding="mbcs")
+
+    arquivo = StringIO(liquidacao.content.decode("ansi"))
+
+
+    df = pd.read_csv(arquivo, delimiter=";" )
     df['CNPJ_FUNDO'] = df['CNPJ_FUNDO'].apply(lambda x: x.replace(".", "")
                                              .replace("/", "")
                                               .replace("-", ""))
