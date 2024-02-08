@@ -5,7 +5,7 @@ from ..models import SecureFilePus
 class ImportacaoSecureClient():
 
     def leitura_arquivo(self,path):
-        df = pd.read_csv(path ,  sep=";" , encoding='ANSI' ,  encoding_errors="replace")
+        df = pd.read_csv(path ,  sep=";" , encoding="iso-8859-1" ,  encoding_errors="replace")
         df_ajustado = df[['TckrSymb' , 'IsseUnitPric']]
         return df_ajustado
     
