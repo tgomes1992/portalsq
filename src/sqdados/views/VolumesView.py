@@ -95,10 +95,10 @@ def importar_arquivo_securityList(request):
 
             unzip_file(os.path.join('upload', file.name))
 
-        for arquivo in os.listdir('upload/imports'):
-            secure_client_importacao = ImportacaoSecureClient()
-            secure_client_importacao.importar_arquivo(os.path.join( 'upload/imports', arquivo))
-            os.remove(os.path.join( 'upload/imports', arquivo))      
+            for arquivo in os.listdir('upload/imports'):
+                secure_client_importacao = ImportacaoSecureClient()
+                secure_client_importacao.importar_arquivo(os.path.join( 'upload/imports', arquivo))
+                os.remove(os.path.join( 'upload/imports', arquivo))
 
 
         else:
