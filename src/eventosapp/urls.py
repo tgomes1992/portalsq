@@ -33,5 +33,6 @@ urlpatterns = [
     path ("excluir_ativo_pmt", excluir_ativo ,  name="excluir_ativo" ) , 
     path ("consulta_ativo" , detalhe_ativos , name="consulta_ativo") , 
     path ("atualizar_emissores" , atualizar_emissores ,  name="atualizar_emissores") , 
-    path ("importar_dagenda" , importar_dagenda ,  name="dagenda")
+    path ("importar_dagenda" , importar_dagenda ,  name="dagenda")  ,
+    path ("excluir_base_eventos" , excluir_eventos )
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

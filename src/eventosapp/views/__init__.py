@@ -138,6 +138,13 @@ def excluir_ativo(request):
 
 
 
+def excluir_eventos(request):
+    eventos = EventosDiarios.objects.all()
+    for evento in eventos:
+        evento.delete()
+    return JsonResponse({"message": "base removida"})
+
+
 def detalhe_ativos(request):
     ativo = request.GET['ativo']
     dados_ativo = EventosDiarios.objects.filter(ativo = ativo)
