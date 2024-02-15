@@ -3,7 +3,6 @@ from django.views import View
 from django.shortcuts import render
 from ..forms import ArquivosForm
 
-
 class View_Efinanceira(View):
     template_name = "informes_legais/analise_efinanceira.html"
     form = ArquivosForm()

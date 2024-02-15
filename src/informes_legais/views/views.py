@@ -22,3 +22,4 @@ def analise_efinanceira(request):
         "form":  form,
     }
     return render(request ,"informes_legais/analise_efinanceira.html" , context)
+
