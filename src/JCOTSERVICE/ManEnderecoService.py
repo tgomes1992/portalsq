@@ -2,7 +2,7 @@ from .CotService import COTSERVICE
 import requests
 from bs4 import BeautifulSoup
 from datetime import date
-
+import pandas as pd
 
 class Cliente():
 
@@ -84,9 +84,42 @@ class ManEnderecoService(COTSERVICE):
                 "e-mails": "Sem E-mail Cadastrados"
             }
 
+    def formatar_resposta_endereco_geral(self , xml_text , cliente):
+        soup = BeautifulSoup(xml_text , 'xml')
+        enderecos = soup.find_all("ns2:endereco")
+        resultados = []
+        for endereco in enderecos:
+            ndict = {}
+            for dados in endereco:
+                ndict[dados.name.replace("ns2:" ,"")] = dados.text.strip()
+            resultados.append(ndict)
+
+        df = pd.DataFrame.from_dict(resultados)
+        try:
+            # df.to_excel(f"add/{resultados[0]['cdCliente']}.xlsx")
+            df['endereco_efinanceira'] = df['dsLogradouro'] + ", " + \
+                                         df['nmBairro'] + ", " + df['nrCep'] + ", "+  df['nmCidade']
+
+            return df.to_dict("records")[0]
+
+        except:
+            pass
+
+        return  resultados
+
+
+
+
+
+
     def request_consultar_endereco(self,codigo_cliente):
         base_request = requests.post(self.url, self.consultar_endereco(codigo_cliente))
         return self.formatar_resposta(base_request.content , codigo_cliente)
+
+
+    def request_consultar_endereco_geral(self,codigo_cliente):
+        base_request = requests.post(self.url, self.consultar_endereco(codigo_cliente))
+        return self.formatar_resposta_endereco_geral(base_request.content , codigo_cliente)
 
 
 

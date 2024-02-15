@@ -234,12 +234,26 @@ class ManClienteService(COTSERVICE):
 
     def formatar_resposta(self , xml_text):
         soup = BeautifulSoup(xml_text , 'xml')
+        nome = soup.find("ns2:nmCliente").text
+
         resultado_consulta = soup.find("ns3:code")
         return resultado_consulta.text
+
+    def get_nome(self, xml_text):
+        soup = BeautifulSoup(xml_text, 'xml')
+        try:
+            nome = soup.find("ns2:nmCliente").text
+            return nome
+        except Exception as e:
+            print (e)
 
     def request_consultar_cliente(self,codigo_cliente):
         base_request = requests.post(self.url, self.consultar_body(codigo_cliente))
         return self.formatar_resposta(base_request.content)
+
+    def request_consultar_cliente_nome(self,codigo_cliente):
+        base_request = requests.post(self.url, self.consultar_body(codigo_cliente))
+        return self.get_nome(base_request.content)
 
     def request_cadastrar_clientes(self,dados):
         base_request = requests.post(self.url, self.body_cadastrar_cliente(dados))

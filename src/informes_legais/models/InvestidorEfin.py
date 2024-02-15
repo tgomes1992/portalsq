@@ -7,4 +7,3 @@ class InvestidorEfin(models.Model):
     endereco = models.TextField(max_length=256 ,  default="")
     #pais vai ser sempre abreviação
     pais = models.TextField(max_length=5 , default="")
-    data_final = models.DateTimeField(default= datetime.today())

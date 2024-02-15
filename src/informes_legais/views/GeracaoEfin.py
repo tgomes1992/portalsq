@@ -1,8 +1,10 @@
 from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse ,  JsonResponse
-from ..ControllersEfinanceira import ExtratorMovimentacoes , ExtratorPrincipalJcot
+from ..ControllersEfinanceira import ExtratorMovimentacoes , ExtratorPrincipalJcot ,AtualizacaoInvestidores
 from ..models import ContaEfin , InvestidorEfin
+
+
 class GeracaoEfin(View):
 
 
@@ -27,6 +29,12 @@ class GeracaoEfin(View):
             investidor.save()
 
 
+    def AtualizarInvestidores(self):
+        service_atualiza_investidores = AtualizacaoInvestidores()
+
+        # service_atualiza_investidores.atualizar_enderecos()
+
+        service_atualiza_investidores.atualizar_nomes()
 
 
 
@@ -36,6 +44,8 @@ class GeracaoEfin(View):
 
         # self.extracao_efinanceira()
 
-        self.MontagemEfinanceira()
+        # self.MontagemEfinanceira()
+
+        self.AtualizarInvestidores()
 
         return JsonResponse({"message":"Extração Iniciada"})

@@ -26,9 +26,13 @@ class ExtratorMovimentacoes():
             fundoCnpj = dados['cnpj_fundo'],
             numconta = f"{item['cd_cotista']}|{item['cd_fundo']}" ,
             data_final = item['data_final']
+
         ) for item in contas]
         for item in contas_efin_a_salvar:
             item.save()
+
+
+
 
 
 
