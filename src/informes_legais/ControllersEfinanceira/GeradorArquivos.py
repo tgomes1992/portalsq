@@ -91,7 +91,7 @@ class GeradorEfinanceira():
             'debitosmsmtitu': 0 
                 }
             busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
-                                           data_final = datetime(2023,11,30) , numconta=numconta)
+                                           data_final = self.data_final , numconta=numconta)
             
             for registro in busca_conta:
                 base_conta['debitos'] +=  registro.debitos

@@ -296,7 +296,20 @@ class o2Api():
         df['id_amplis'] = df['cd_jcot'].apply(lambda x: self.get_id_amplis_df(df_amplis, x))
         df['cd_escritural'] =  df['codigosInstrumentosFinanceiros'].apply(lambda x : self.get_cd_jcot_lista(x, 'ESCRITURAL'))
         nativo = df.drop(['codigosInstrumentosFinanceiros', "emissor"], axis="columns")
-
-
         return nativo
+
+
+    def get_dados_investidor(self , investidor):
+        headers = {
+                'Authorization': f'Bearer {self.get_token()}' ,
+                'Content-Type': 'application/json'
+        }
+        url = "https://escriturador.oliveiratrust.com.br/intactus/icorp/api/pessoa/obterporcpfcnpj"
+
+        data = {
+            'cpfCnpj': investidor
+        }
+
+        dados = requests.get(url , params=data , headers=headers)
+        return dados.json()['dados']
 
