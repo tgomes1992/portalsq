@@ -1,7 +1,7 @@
 from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse ,  JsonResponse
-from ..ControllersEfinanceira import ExtratorMovimentacoes , ExtratorPrincipalJcot ,AtualizacaoInvestidores
+from ..ControllersEfinanceira import *
 from ..models import ContaEfin , InvestidorEfin
 
 
@@ -20,7 +20,7 @@ class GeracaoEfin(View):
             service_extracao.base_movimentacoes(item)
 
 
-    def MontagemEfinanceira(self):
+    def CriarContas(self):
         '''buscar dados dos investidores'''
         contas = ContaEfin.objects.values('numconta').distinct()
         cotistas = []
@@ -28,24 +28,28 @@ class GeracaoEfin(View):
             investidor = InvestidorEfin(cpfcnpj = item['numconta'].split("|")[0].strip())
             investidor.save()
 
-
     def AtualizarInvestidores(self):
         service_atualiza_investidores = AtualizacaoInvestidores()
-
-        # service_atualiza_investidores.atualizar_enderecos()
-
+        service_atualiza_investidores.atualizar_enderecos()
         service_atualiza_investidores.atualizar_nomes()
 
+    def rotinas_pre_arquivos(self):
+        '''rotina da efinanceira pre_geracao de arquivos'''
+        self.extracao_efinanceira()
+        self.CriarContas()
+        self.AtualizarInvestidores()
 
+    def MontarArquivos(self):
+
+        pass
 
     def get(self, request):
         #todo incluir depois a possibilidade de receber
         # uma lista de fundos para ser a base da extração
 
-        # self.extracao_efinanceira()
+        # self.rotinas_pre_arquivos()
 
-        # self.MontagemEfinanceira()
+        self.MontarArquivos()
 
-        self.AtualizarInvestidores()
 
         return JsonResponse({"message":"Extração Iniciada"})
