@@ -29,7 +29,8 @@ class ImportacaoArquivosDiarios(forms.Form):
 
 
 class ProcessarMovimentacoes(forms.Form):
-    OPTIONS = [(fundo.cnpj , fundo.nome) for fundo in FundoXP.objects.all() ]
+    # OPTIONS = [(fundo.cnpj , fundo.nome) for fundo in FundoXP.objects.all() ]
+    OPTIONS = []
     OPTIONS.append(("Selecione o fundo a ser importado","Selecione o fundo a ser importado"))
     OPTIONS.reverse()
     # fundo = forms.ChoiceField(

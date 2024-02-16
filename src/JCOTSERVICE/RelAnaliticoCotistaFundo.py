@@ -41,31 +41,29 @@ class RelAnaliticoCotistaFundo(COTSERVICE):
 
         root = ET.fromstring(xml_string)
 
-        cotistas = root.findall(".//{http://totvs.cot.webservices}cotista")
-
-        cd_fundo = root.find(".//{http://totvs.cot.webservices}cdFundo").text
-
-        total_cotistas = []
-        for cotista in cotistas:
-
-            base = {
-                'cd_cotista': cotista.find(".//{http://totvs.cot.webservices}cdCotista").text ,
-                'cpfCnpj': cotista.find(".//{http://totvs.cot.webservices}noCpfCnpj").text ,
-                "aplicacao_principal": cotista.find(".//{http://totvs.cot.webservices}totalAplicacaoCotista").find('.//{http://totvs.cot.webservices}vlOriginal').text ,
-                "aplicao_operacao": cotista.find(".//{http://totvs.cot.webservices}totalAplicacaoCotista").find('.//{http://totvs.cot.webservices}vlOperacao').text ,
-                "resgate_principal": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find(
-                    './/{http://totvs.cot.webservices}vlOriginal').text,
-                "resgate_operacao": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find(
-                    './/{http://totvs.cot.webservices}vlOperacao').text ,
-                "data_final": datetime.strptime(dados['data_final'] ,  "%Y-%m-%d") ,
-                "cd_fundo":  cd_fundo
-           }
-            total_cotistas.append(base)
-
-
-        pd.DataFrame.from_dict(total_cotistas).to_excel("relatorio.xlsx")
-
-        return total_cotistas
+        try:
+            cotistas = root.findall(".//{http://totvs.cot.webservices}cotista")
+            cd_fundo = root.find(".//{http://totvs.cot.webservices}cdFundo").text
+            total_cotistas = []
+            for cotista in cotistas:
+                base = {
+                    'cd_cotista': cotista.find(".//{http://totvs.cot.webservices}cdCotista").text ,
+                    'cpfCnpj': cotista.find(".//{http://totvs.cot.webservices}noCpfCnpj").text ,
+                    "aplicacao_principal": cotista.find(".//{http://totvs.cot.webservices}totalAplicacaoCotista").find('.//{http://totvs.cot.webservices}vlOriginal').text ,
+                    "aplicao_operacao": cotista.find(".//{http://totvs.cot.webservices}totalAplicacaoCotista").find('.//{http://totvs.cot.webservices}vlOperacao').text ,
+                    "resgate_principal": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find(
+                        './/{http://totvs.cot.webservices}vlOriginal').text,
+                    "resgate_operacao": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find(
+                        './/{http://totvs.cot.webservices}vlOperacao').text ,
+                    "data_final": datetime.strptime(dados['data_final'] ,  "%Y-%m-%d") ,
+                    "cd_fundo":  cd_fundo
+            }
+                total_cotistas.append(base)
+            pd.DataFrame.from_dict(total_cotistas).to_excel("relatorio.xlsx")
+            return total_cotistas
+        except Exception as e:
+            print (e)
+            pass
 
 
     def get_dados_cotistas(self, xml_string):

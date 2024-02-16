@@ -6,7 +6,8 @@ class ConciliacaoForm(forms.Form):
 
     dados = Ativoso2Sinc()
 
-    OPTIONS = dados.get_ativos_form()
+    # OPTIONS = dados.get_ativos_form()
+    OPTIONS = []
 
     fundos = forms.ChoiceField(
         choices=OPTIONS,

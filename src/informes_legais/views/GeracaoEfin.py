@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.http import HttpResponse ,  JsonResponse
 from ..ControllersEfinanceira import *
 from ..models import ContaEfin , InvestidorEfin
+from JCOTSERVICE import ListFundosService
+import os
 
 
 class GeracaoEfin(View):
@@ -10,12 +12,24 @@ class GeracaoEfin(View):
 
     def extracao_efinanceira(self):
         service_extracao = ExtratorMovimentacoes()
+        fundos = ListFundosService(os.environ.get("JCOT_USER") ,
+                                     os.environ.get("JCOT_PASSWORD")).listFundoRequest()
+        fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
+        
+        # extracao = [{
+        #     'cd_fundo':  "1944" ,
+        #     'data_inicial':  "2023-12-01",
+        #     'data_final':  "2023-12-31" ,
+        #     "cnpj_fundo": "17455369000191"
+        # }]
+
         extracao = [{
-            'cd_fundo':  "1944" ,
-            'data_inicial':  "2023-10-01",
-            'data_final':  "2023-10-31" ,
-            "cnpj_fundo": "17455369000191"
-        }]
+            'cd_fundo':  item['codigo'] ,
+            'data_inicial':  "2023-11-01",
+            'data_final':  "2023-11-30" ,
+            "cnpj_fundo": item['cnpj']
+        } for item in fundos_dtvm.to_dict("records")]
+
         for item in extracao:
             service_extracao.base_movimentacoes(item)
 
@@ -25,7 +39,9 @@ class GeracaoEfin(View):
         contas = ContaEfin.objects.values('numconta').distinct()
         cotistas = []
         for item in contas:
-            investidor = InvestidorEfin(cpfcnpj = item['numconta'].split("|")[0].strip())
+            consulta = item['numconta'].split("|")[0].strip()[0:13]
+            print (consulta)
+            investidor = InvestidorEfin(cpfcnpj = consulta )
             investidor.save()
 
     def AtualizarInvestidores(self):
@@ -40,7 +56,12 @@ class GeracaoEfin(View):
         self.AtualizarInvestidores()
 
     def MontarArquivos(self):
+        investidores = InvestidorEfin.objects.all()        
 
+        for investidor in investidores:
+            print (investidor.cpfcnpj)
+            geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , investidor.endereco , investidor.pais , datetime(2023,11,30))
+            geracao.gerar_arquivo_efin()
         pass
 
     def get(self, request):

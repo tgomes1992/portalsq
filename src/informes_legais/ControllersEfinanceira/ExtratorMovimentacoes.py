@@ -17,19 +17,25 @@ class ExtratorMovimentacoes():
     def base_movimentacoes(self, dados):
         contas = self.buscar_movimentos(dados)
 
-        contas_efin_a_salvar = [ContaEfin(
-            creditos = item['aplicacao_principal'],
-            debitos = item['resgate_operacao'],
-            creditosmsmtitu = 0,
-            debitosmsmtitu = 0,
-            vlrultidia  = 0,
-            fundoCnpj = dados['cnpj_fundo'],
-            numconta = f"{item['cd_cotista']}|{item['cd_fundo']}" ,
-            data_final = item['data_final']
+        try:
 
-        ) for item in contas]
-        for item in contas_efin_a_salvar:
-            item.save()
+            contas_efin_a_salvar = [ContaEfin(
+                creditos = item['aplicacao_principal'],
+                debitos = item['resgate_operacao'],
+                creditosmsmtitu = 0,
+                debitosmsmtitu = 0,
+                vlrultidia  = 0,
+                fundoCnpj = dados['cnpj_fundo'],
+                numconta = f"{item['cd_cotista']}|{item['cd_fundo']}" ,
+                data_final = item['data_final']
+
+            ) for item in contas]
+            for item in contas_efin_a_salvar:
+                item.save()
+        except Exception as e:
+            print (e)
+            pass
+
 
 
 

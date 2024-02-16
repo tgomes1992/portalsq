@@ -33,6 +33,7 @@ class AtualizacaoInvestidores():
 
         for investidor in investidores:
             nome = self.service_cliente.request_consultar_cliente_nome(str(investidor.cpfcnpj))
+            print (nome)
             try:
                 a_atualizar = InvestidorEfin.objects.filter(cpfcnpj=investidor.cpfcnpj).first()
                 a_atualizar.nome = nome

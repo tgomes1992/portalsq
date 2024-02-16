@@ -1,8 +1,7 @@
 from ..models import InvestidorEfin , ContaEfin
 import xml.etree.ElementTree as ET
 from datetime import datetime
-
-
+from xml.dom import minidom
 
 
 class GeradorEfinanceira():
@@ -26,7 +25,7 @@ class GeradorEfinanceira():
     def evento_mov_op_fin(self):
         elemento  = ET.Element('evtMovOpFin')
         elemento.set('ID' ,"ID500000000000591831")
-        elemento.set("xmlns=" ,"")
+        elemento.set("xmlns" ,"")
 
         return elemento
 
@@ -70,6 +69,80 @@ class GeradorEfinanceira():
         pais.text = self.pais
 
         return ideDeclarado
+    
+
+    def get_contas(self):
+   
+        numcontas = []
+        contas_xml = []
+        
+        contas = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
+                                           data_final = self.data_final)        
+        for conta in contas:
+            if conta.numconta not in numcontas:
+                numcontas.append(conta.numconta)
+
+        for numconta in numcontas:
+            base_conta = {
+            "debitos": 0 , 
+            "creditos": 0  , 
+            "Vlrultdia": 0  , 
+            "creditosmsmtitu": 0 , 
+            'debitosmsmtitu': 0 
+                }
+            busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
+                                           data_final = datetime(2023,11,30) , numconta=numconta)
+            
+            for registro in busca_conta:
+                base_conta['debitos'] +=  registro.debitos
+                base_conta['creditos'] +=  registro.creditos
+                base_conta['numconta'] = registro.numconta
+                base_conta['fundoCnpj'] = registro.fundoCnpj
+            print (base_conta)
+            
+            contas_xml.append(base_conta)             
+        return contas_xml
+    
+    def criar_conta_xml(self,conta):
+        conta_xml = ET.Element("Conta")
+        infoConta = ET.SubElement(conta_xml ,  "infoConta")
+        reportavel = ET.SubElement(infoConta ,  'Reportavel')
+        pais_reportavel  = ET.SubElement(reportavel ,  "Pais")
+        pais_reportavel.text=  "BR"
+        tpConta = ET.SubElement(infoConta ,  'tpConta')
+        tpConta.text = "3"
+        subtpconta = ET.SubElement(infoConta , 'subTpConta')
+        subtpconta.text = "301"
+        tpnumconta = ET.SubElement(infoConta ,  'tpNumConta')
+        tpnumconta.text = 'OECD605'
+        numconta = ET.SubElement(infoConta ,  'numConta')
+        numconta.text = conta['numconta'].strip().replace(" " ,  "")
+        tpRelacaoDeclarado = ET.SubElement(infoConta ,  'tpRelacaoDeclarado')
+        tpRelacaoDeclarado.text = '1'
+        fundo = ET.SubElement(infoConta ,  'Fundo')
+        cnpj_fundo = ET.SubElement(fundo ,  'CNPJ')
+        cnpj_fundo.text = conta['fundoCnpj']
+        balanco_conta = ET.SubElement(infoConta , "BalancoConta")
+        creditos = ET.SubElement(balanco_conta ,  'totCreditos')
+        creditos.text = str(round(conta['creditos'] , 2)).replace(".",",")
+        debitos = ET.SubElement(balanco_conta ,  'totDebitos')
+        debitos.text = str(round(conta['debitos'],2)).replace(".",",")
+        totCreditosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totCreditosMesmaTitularidade')
+        totCreditosMesmaTitularidade.text = "0.00".replace(".",",")
+        totDebitosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totDebitosMesmaTitularidade')
+        totDebitosMesmaTitularidade.text = "0.00".replace(".",",")
+        vlrUltDia = ET.SubElement(balanco_conta ,  'vlrUltDia')
+        vlrUltDia.text =str(conta['Vlrultdia'])
+        PgtosAcum  = ET.SubElement(infoConta ,  'PgtosAcum')
+        tpPgto = ET.SubElement(PgtosAcum ,  "tpPgto")
+        tpPgto.text = "999"
+        # todo criar query para pegar os pagamentos acumulados
+        totPgtosAcum = ET.SubElement(PgtosAcum ,  'totPgtosAcum')
+        totPgtosAcum.text = "0,00"
+
+        return conta_xml
+
+       
 
     def criar_mes_caixa(self):
         mes_caixa = ET.Element('mesCaixa')
@@ -78,7 +151,12 @@ class GeradorEfinanceira():
         mov_op_financeira = ET.SubElement( mes_caixa, 'movOpFin')
         #todo lógica para inserir as contas em xml no arquivo
 
-        contas  = ""
+        contas  =  self.get_contas()
+
+        for conta in contas :
+            conta_xml = self.criar_conta_xml(conta)
+            # print (conta_xml)
+            mov_op_financeira.append(conta_xml)
 
         return mes_caixa
 
@@ -101,8 +179,11 @@ class GeradorEfinanceira():
         root = ET.ElementTree(arquivo)
 
         # Write the XML to a file with indentation and UTF-8 encoding
-        with open(f"add/{self.filename}", "wb") as f:
-            root.write(f, encoding="utf-8", xml_declaration=True, indent=4)
+        with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
+
+            f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
+            
+            # root.write(f, encoding="utf-8", xml_declaration=True)
 
 
 
