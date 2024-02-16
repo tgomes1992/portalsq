@@ -7,6 +7,7 @@ from JCOTSERVICE import ListFundosService
 import os
 
 
+
 class GeracaoEfin(View):
 
 
@@ -125,7 +126,7 @@ class GeracaoEfin(View):
 
         for investidor in investidores:
             print (investidor.cpfcnpj)
-            geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , investidor.endereco , investidor.pais , datetime(2023,12,31))
+            geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , investidor.endereco , investidor.pais , datetime(2023,11,30))
             geracao.gerar_arquivo_efin()
         pass
 
@@ -136,6 +137,15 @@ class GeracaoEfin(View):
         # self.rotinas_pre_arquivos()
 
         self.MontarArquivos()
+
+        # dados = {
+        #     'cotista': '14665341000190' , 
+        #     'data':  '2023-12-29'
+        # }
+
+        # d = BuscaPrincipalJcot().get_dados_principal_por_cotista(dados)
+
+        # print(d)
 
 
         return JsonResponse({"message":"Extração Iniciada"})

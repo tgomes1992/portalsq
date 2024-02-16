@@ -2,6 +2,8 @@ from ..models import InvestidorEfin , ContaEfin
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from xml.dom import minidom
+from .atualizacao_de_principal import BuscaPrincipalJcot
+import pandas as pd
 
 
 class GeradorEfinanceira():
@@ -136,9 +138,23 @@ class GeradorEfinanceira():
         totCreditosMesmaTitularidade.text = "0.00".replace(".",",")
         totDebitosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totDebitosMesmaTitularidade')
         totDebitosMesmaTitularidade.text = "0.00".replace(".",",")
-        vlrUltDia = ET.SubElement(balanco_conta ,  'vlrUltDia')
-        vlrUltDia.text =str(conta['Vlrultdia'])
-        
+
+
+        if self.data_final.month == 12:
+            vlrUltDia = ET.SubElement(balanco_conta ,  'vlrUltDia')
+            dados = {
+            'cotista': conta['numconta'].split("|")[0].strip() , 
+            'data':  '2023-12-29'
+              }            
+            cd_fundo = conta['numconta'].split("|")[1].strip()
+            d = BuscaPrincipalJcot().get_dados_principal_por_cotista(dados)
+            df = pd.DataFrame.from_dict(d)
+            try:
+                vlr_principal = df[df['cd_fundo'] == cd_fundo].to_dict("records")[0]['vlAplicacao']         
+                vlrUltDia.text = str(vlr_principal)
+            except Exception as e :
+                vlrUltDia.text = str('0,00')
+            
 
         # todo criar query para pegar os pagamentos acumulados
 
