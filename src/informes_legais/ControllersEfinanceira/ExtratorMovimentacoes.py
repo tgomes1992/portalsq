@@ -21,7 +21,7 @@ class ExtratorMovimentacoes():
 
             contas_efin_a_salvar = [ContaEfin(
                 creditos = item['aplicacao_principal'],
-                debitos = item['resgate_operacao'],
+                debitos = item['resgate_principal'],
                 creditosmsmtitu = 0,
                 debitosmsmtitu = 0,
                 vlrultidia  = 0,

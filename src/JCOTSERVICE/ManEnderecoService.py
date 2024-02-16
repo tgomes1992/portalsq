@@ -95,10 +95,10 @@ class ManEnderecoService(COTSERVICE):
             resultados.append(ndict)
 
         df = pd.DataFrame.from_dict(resultados)
+
         try:
             # df.to_excel(f"add/{resultados[0]['cdCliente']}.xlsx")
-            df['endereco_efinanceira'] = df['dsLogradouro'] + ", " + \
-                                         df['nmBairro'] + ", " + df['nrCep'] + ", "+  df['nmCidade']
+            df['endereco_efinanceira'] = df['dsLogradouro'] + ", " + df['nmBairro'] + ", " + df['nrCep'].str + ", "+  df['nmCidade']
 
             return df.to_dict("records")[0]
 

@@ -16,19 +16,83 @@ class GeracaoEfin(View):
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
         fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
         
-        # extracao = [{
-        #     'cd_fundo':  "1944" ,
-        #     'data_inicial':  "2023-12-01",
-        #     'data_final':  "2023-12-31" ,
-        #     "cnpj_fundo": "17455369000191"
-        # }]
-
-        extracao = [{
-            'cd_fundo':  item['codigo'] ,
+        extracao = [
+            {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-01-01",
+            'data_final':  "2023-01-31" ,
+            "cnpj_fundo": "17455369000191"
+        } , 
+            
+        {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-02-01",
+            'data_final':  "2023-02-28" ,
+            "cnpj_fundo": "17455369000191"
+        } , 
+            {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-03-30",
+            'data_final':  "2023-03-31" ,
+            "cnpj_fundo": "17455369000191"
+        } , 
+            {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-04-01",
+            'data_final':  "2023-04-30" ,
+            "cnpj_fundo": "17455369000191"
+        },  {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-05-01",
+            'data_final':  "2023-05-31" ,
+            "cnpj_fundo": "17455369000191"
+        },
+            {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-06-01",
+            'data_final':  "2023-06-30" ,
+            "cnpj_fundo": "17455369000191"
+        } ,
+             {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-07-01",
+            'data_final':  "2023-07-31" ,
+            "cnpj_fundo": "17455369000191"
+        } ,    {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-08-01",
+            'data_final':  "2023-08-38" ,
+            "cnpj_fundo": "17455369000191"
+        },
+            {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-09-01",
+            'data_final':  "2023-09-30" ,
+            "cnpj_fundo": "17455369000191"
+        } ,     {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-10-01",
+            'data_final':  "2023-10-31" ,
+            "cnpj_fundo": "17455369000191"
+        } ,
+            {
+            'cd_fundo':  "1944" ,
             'data_inicial':  "2023-11-01",
             'data_final':  "2023-11-30" ,
-            "cnpj_fundo": item['cnpj']
-        } for item in fundos_dtvm.to_dict("records")]
+            "cnpj_fundo": "17455369000191"
+        } , {
+            'cd_fundo':  "1944" ,
+            'data_inicial':  "2023-12-01",
+            'data_final':  "2023-12-31" ,
+            "cnpj_fundo": "17455369000191"
+        }]
+
+        # extracao = [{
+        #     'cd_fundo':  item['codigo'] ,
+        #     'data_inicial':  "2023-11-01",
+        #     'data_final':  "2023-11-30" ,
+        #     "cnpj_fundo": item['cnpj']
+        # } for item in fundos_dtvm.to_dict("records")]
 
         for item in extracao:
             service_extracao.base_movimentacoes(item)
@@ -39,7 +103,7 @@ class GeracaoEfin(View):
         contas = ContaEfin.objects.values('numconta').distinct()
         cotistas = []
         for item in contas:
-            consulta = item['numconta'].split("|")[0].strip()[0:13]
+            consulta = item['numconta'].split("|")[0].strip()
             print (consulta)
             investidor = InvestidorEfin(cpfcnpj = consulta )
             investidor.save()
@@ -47,9 +111,8 @@ class GeracaoEfin(View):
     def AtualizarInvestidores(self):
         service_atualiza_investidores = AtualizacaoInvestidores()
         # service_atualiza_investidores.atualizar_enderecos()
-        service_atualiza_investidores.atualizar_enderecos_busca_o2()
-        
-        # service_atualiza_investidores.atualizar_nomes()
+        # service_atualiza_investidores.atualizar_enderecos_busca_o2()        
+        service_atualiza_investidores.atualizar_nomes()
 
     def rotinas_pre_arquivos(self):
         '''rotina da efinanceira pre_geracao de arquivos'''
@@ -70,9 +133,9 @@ class GeracaoEfin(View):
         #todo incluir depois a possibilidade de receber
         # uma lista de fundos para ser a base da extração
 
-        self.rotinas_pre_arquivos()
+        # self.rotinas_pre_arquivos()
 
-        # self.MontarArquivos()
+        self.MontarArquivos()
 
 
         return JsonResponse({"message":"Extração Iniciada"})

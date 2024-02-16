@@ -309,6 +309,7 @@ class o2Api():
         data = {
             'cpfCnpj': investidor
         }
+        print (data)
 
         dados = requests.get(url , params=data , headers=headers)
         return dados.json()['dados']

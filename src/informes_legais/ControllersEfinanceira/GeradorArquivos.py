@@ -71,6 +71,9 @@ class GeradorEfinanceira():
         return ideDeclarado
     
 
+
+    
+
     def get_contas(self):
    
         numcontas = []
@@ -103,6 +106,8 @@ class GeradorEfinanceira():
             contas_xml.append(base_conta)             
         return contas_xml
     
+    
+    
     def criar_conta_xml(self,conta):
         conta_xml = ET.Element("Conta")
         infoConta = ET.SubElement(conta_xml ,  "infoConta")
@@ -133,14 +138,38 @@ class GeradorEfinanceira():
         totDebitosMesmaTitularidade.text = "0.00".replace(".",",")
         vlrUltDia = ET.SubElement(balanco_conta ,  'vlrUltDia')
         vlrUltDia.text =str(conta['Vlrultdia'])
-        PgtosAcum  = ET.SubElement(infoConta ,  'PgtosAcum')
-        tpPgto = ET.SubElement(PgtosAcum ,  "tpPgto")
-        tpPgto.text = "999"
+        
+
         # todo criar query para pegar os pagamentos acumulados
-        totPgtosAcum = ET.SubElement(PgtosAcum ,  'totPgtosAcum')
-        totPgtosAcum.text = "0,00"
+
+        pgto_acc = self.criar_pagamentos_acumulados(conta['numconta'])
+
+        infoConta.append(pgto_acc)
+
+
 
         return conta_xml
+
+
+
+    def criar_pagamentos_acumulados(self, numconta):
+        pgtos_acc = ET.Element("PgtosAcum")
+        tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
+        tpPgto.text = "999"
+        totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')
+        
+
+        contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta=numconta)
+        
+        total_debitos = 0
+
+        for conta in contas_efin_pgtos_acc:
+            total_debitos += conta.debitos
+
+        totPgtosAcum.text = str(round(total_debitos,2)).replace(".",",")
+
+        return pgtos_acc
+
 
        
 

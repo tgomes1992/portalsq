@@ -176,7 +176,7 @@ class ManClienteService(COTSERVICE):
          <soapenv:Body>
             <tot:consultarClienteRequest>
                <tot:cliente>
-                  <tot:cdCliente>{cd_cliente}</tot:cdCliente>
+                  <tot:cdCliente>{str(cd_cliente)}</tot:cdCliente>
                   <!--Optional:-->
                   <tot:noCpf>?</tot:noCpf>
                   <!--Optional:-->
@@ -253,6 +253,8 @@ class ManClienteService(COTSERVICE):
 
     def request_consultar_cliente_nome(self,codigo_cliente):
         base_request = requests.post(self.url, self.consultar_body(codigo_cliente))
+        print(codigo_cliente)
+        print (base_request.content)
         return self.get_nome(base_request.content)
 
     def request_cadastrar_clientes(self,dados):
