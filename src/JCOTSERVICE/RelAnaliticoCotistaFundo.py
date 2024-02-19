@@ -51,10 +51,8 @@ class RelAnaliticoCotistaFundo(COTSERVICE):
                     'cpfCnpj': cotista.find(".//{http://totvs.cot.webservices}noCpfCnpj").text ,
                     "aplicacao_principal": cotista.find(".//{http://totvs.cot.webservices}totalAplicacaoCotista").find('.//{http://totvs.cot.webservices}vlOriginal').text ,
                     "aplicao_operacao": cotista.find(".//{http://totvs.cot.webservices}totalAplicacaoCotista").find('.//{http://totvs.cot.webservices}vlOperacao').text ,
-                    "resgate_principal": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find(
-                        './/{http://totvs.cot.webservices}vlOriginal').text,
-                    "resgate_operacao": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find(
-                        './/{http://totvs.cot.webservices}vlOperacao').text ,
+                    "resgate_principal": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find('.//{http://totvs.cot.webservices}vlOriginal').text,
+                    "resgate_operacao": cotista.find(".//{http://totvs.cot.webservices}totalResgatesCotista").find('.//{http://totvs.cot.webservices}vlOperacao').text ,
                     "data_final": datetime.strptime(dados['data_final'] ,  "%Y-%m-%d") ,
                     "cd_fundo":  cd_fundo
             }

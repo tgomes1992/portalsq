@@ -9,7 +9,7 @@ import pandas as pd
 class GeradorEfinanceira():
 
 
-    def __init__(self , cpfCnpj , nome , endereco , pais ,  data_final ,  tipo_fundo):
+    def __init__(self , cpfCnpj , nome , endereco , pais ,  data_final , df_fundos ):
         self.cpfCnpj = cpfCnpj
         self.nome = nome
         self.endereco = endereco
@@ -17,7 +17,8 @@ class GeradorEfinanceira():
         '''data final no formato datetime '''
         self.data_final = data_final
         self.filename = f"{self.data_final.strftime('%Y%m')}_{self.cpfCnpj}.xml"
-        self.tipo_fundo = tipo_fundo
+        self.df_fundos = df_fundos
+
 
     def criar_elemento_base(self):
         # ET.register_namespace()
@@ -74,6 +75,10 @@ class GeradorEfinanceira():
         return ideDeclarado
 
     
+    def get_tipo_fundo(self, cd_fundo):
+        return self.df_fundos[self.df_fundos['codigo'] == cd_fundo].to_dict('records')[0]['tipoFundo']
+
+
 
     def get_contas(self):
    
@@ -104,9 +109,11 @@ class GeradorEfinanceira():
                 base_conta['principal'] +=  registro.principal
                 base_conta['numconta'] = registro.numconta
                 base_conta['fundoCnpj'] = registro.fundoCnpj
-            print (base_conta)
-            
-            contas_xml.append(base_conta)             
+                base_conta['tipo_fundo'] =  self.get_tipo_fundo(str(registro.numconta).split("|")[0].strip())
+            print (base_conta)            
+            contas_xml.append(base_conta)     
+
+        # incluir lógica para validar todos os valores referentes ao preenchimento do numconta        
         return contas_xml
     
     
@@ -136,12 +143,10 @@ class GeradorEfinanceira():
 
         debitos = ET.SubElement(balanco_conta ,  'totDebitos')
 
-        if 'ABER' in self.tipo_fundo:
+        if 'ABER' in conta['tipo_fundo']:
             debitos.text = str(round(conta['principal'],2)).replace(".",",")
         else:
             debitos.text = str(round(conta['debitos'],2)).replace(".",",")
-
-
 
         totCreditosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totCreditosMesmaTitularidade')
         totCreditosMesmaTitularidade.text = "0.00".replace(".",",")
@@ -163,15 +168,11 @@ class GeradorEfinanceira():
                 vlrUltDia.text = str(vlr_principal)
             except Exception as e :
                 vlrUltDia.text = str('0,00')
-            
+
 
         # todo criar query para pegar os pagamentos acumulados
-
         pgto_acc = self.criar_pagamentos_acumulados(conta['numconta'])
-
         infoConta.append(pgto_acc)
-
-
 
         return conta_xml
 
@@ -179,7 +180,8 @@ class GeradorEfinanceira():
         pgtos_acc = ET.Element("PgtosAcum")
         tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
         tpPgto.text = "999"
-        totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')     
+        totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')   
+
         contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta=numconta)     
         total_debitos = 0
         for conta in contas_efin_pgtos_acc:
@@ -188,14 +190,12 @@ class GeradorEfinanceira():
         return pgtos_acc
        
 
-    def criar_mes_caixa(self):
+    def criar_mes_caixa(self , contas):
         mes_caixa = ET.Element('mesCaixa')
         anoMesCaixa = ET.SubElement(mes_caixa , 'anoMesCaixa')
         anoMesCaixa.text = self.data_final.strftime('%Y%m')
         mov_op_financeira = ET.SubElement( mes_caixa, 'movOpFin')
         #todo lógica para inserir as contas em xml no arquivo
-
-        contas  =  self.get_contas()
 
         for conta in contas :
             conta_xml = self.criar_conta_xml(conta)
@@ -205,28 +205,29 @@ class GeradorEfinanceira():
 
 
     def gerar_arquivo_efin(self):
-        arquivo = self.criar_elemento_base()
 
-        evtmoop = self.evento_mov_op_fin()
-        ideevento  = self.criar_ideEvento()
-        idedeclarante = self.criar_ide_declarante()
-        idedeclarado = self.criar_ide_declarado()
-        mescaixa = self.criar_mes_caixa()
+        contas  =  self.get_contas()
+        
+        # condicionar a geração a existência de contas.
+        if len(contas) > 0:
+            arquivo = self.criar_elemento_base()
+            evtmoop = self.evento_mov_op_fin()
+            ideevento  = self.criar_ideEvento()
+            idedeclarante = self.criar_ide_declarante()
+            idedeclarado = self.criar_ide_declarado()
 
-        arquivo.append(evtmoop)
-        arquivo.append(ideevento)
-        arquivo.append(idedeclarante)
-        arquivo.append(idedeclarado)
-        arquivo.append(mescaixa)
+            mescaixa = self.criar_mes_caixa(contas)
+            arquivo.append(evtmoop)
+            arquivo.append(ideevento)
+            arquivo.append(idedeclarante)
+            arquivo.append(idedeclarado)
+            arquivo.append(mescaixa)
 
-        root = ET.ElementTree(arquivo)
+            root = ET.ElementTree(arquivo)
 
-        # Write the XML to a file with indentation and UTF-8 encoding
-        with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
-
-            f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
-            
-            # root.write(f, encoding="utf-8", xml_declaration=True)
+            # Write the XML to a file with indentation and UTF-8 encoding
+            with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
+                f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
 
 
 
