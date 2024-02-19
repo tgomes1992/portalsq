@@ -9,7 +9,7 @@ import pandas as pd
 class GeradorEfinanceira():
 
 
-    def __init__(self , cpfCnpj , nome , endereco , pais ,  data_final):
+    def __init__(self , cpfCnpj , nome , endereco , pais ,  data_final ,  tipo_fundo):
         self.cpfCnpj = cpfCnpj
         self.nome = nome
         self.endereco = endereco
@@ -17,6 +17,7 @@ class GeradorEfinanceira():
         '''data final no formato datetime '''
         self.data_final = data_final
         self.filename = f"{self.data_final.strftime('%Y%m')}_{self.cpfCnpj}.xml"
+        self.tipo_fundo = tipo_fundo
 
     def criar_elemento_base(self):
         # ET.register_namespace()
@@ -71,8 +72,6 @@ class GeradorEfinanceira():
         pais.text = self.pais
 
         return ideDeclarado
-    
-
 
     
 
@@ -91,6 +90,7 @@ class GeradorEfinanceira():
             base_conta = {
             "debitos": 0 , 
             "creditos": 0  , 
+            'principal': 0 , 
             "Vlrultdia": 0  , 
             "creditosmsmtitu": 0 , 
             'debitosmsmtitu': 0 
@@ -101,13 +101,13 @@ class GeradorEfinanceira():
             for registro in busca_conta:
                 base_conta['debitos'] +=  registro.debitos
                 base_conta['creditos'] +=  registro.creditos
+                base_conta['principal'] +=  registro.principal
                 base_conta['numconta'] = registro.numconta
                 base_conta['fundoCnpj'] = registro.fundoCnpj
             print (base_conta)
             
             contas_xml.append(base_conta)             
         return contas_xml
-    
     
     
     def criar_conta_xml(self,conta):
@@ -132,8 +132,17 @@ class GeradorEfinanceira():
         balanco_conta = ET.SubElement(infoConta , "BalancoConta")
         creditos = ET.SubElement(balanco_conta ,  'totCreditos')
         creditos.text = str(round(conta['creditos'] , 2)).replace(".",",")
+
+
         debitos = ET.SubElement(balanco_conta ,  'totDebitos')
-        debitos.text = str(round(conta['debitos'],2)).replace(".",",")
+
+        if 'ABER' in self.tipo_fundo:
+            debitos.text = str(round(conta['principal'],2)).replace(".",",")
+        else:
+            debitos.text = str(round(conta['debitos'],2)).replace(".",",")
+
+
+
         totCreditosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totCreditosMesmaTitularidade')
         totCreditosMesmaTitularidade.text = "0.00".replace(".",",")
         totDebitosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totDebitosMesmaTitularidade')
@@ -166,27 +175,17 @@ class GeradorEfinanceira():
 
         return conta_xml
 
-
-
     def criar_pagamentos_acumulados(self, numconta):
         pgtos_acc = ET.Element("PgtosAcum")
         tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
         tpPgto.text = "999"
-        totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')
-        
-
-        contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta=numconta)
-        
+        totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')     
+        contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta=numconta)     
         total_debitos = 0
-
         for conta in contas_efin_pgtos_acc:
             total_debitos += conta.debitos
-
         totPgtosAcum.text = str(round(total_debitos,2)).replace(".",",")
-
         return pgtos_acc
-
-
        
 
     def criar_mes_caixa(self):
@@ -200,7 +199,6 @@ class GeradorEfinanceira():
 
         for conta in contas :
             conta_xml = self.criar_conta_xml(conta)
-            # print (conta_xml)
             mov_op_financeira.append(conta_xml)
 
         return mes_caixa

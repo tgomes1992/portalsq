@@ -1,9 +1,12 @@
 from django.db import models
 from datetime import datetime
 
+
+
 class ContaEfin(models.Model):
     creditos = models.FloatField()
     debitos = models.FloatField()
+    principal = models.FloatField(default=0)
     creditosmsmtitu = models.FloatField()
     debitosmsmtitu = models.FloatField()
     # principal no último dia do mês
