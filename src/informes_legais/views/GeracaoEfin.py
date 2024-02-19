@@ -93,10 +93,18 @@ class GeracaoEfin(View):
         service_extracao = ExtratorMovimentacoes()
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
-        fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
+        # fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
+
+        
+        fundos_dtvm = [
+            {"codigo": "1944" , "cnpj":"17455369000191" } , 
+            {"codigo": "6021" , "cnpj":"21824924000182" }  , 
+             {"codigo": "38281_SEN01" , "cnpj":"28819553000190" } 
+        ]
+
 
         extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
-                    for item in fundos_dtvm.to_dict("records")]
+                    for item in fundos_dtvm]
         
 
         for item in extracao:
@@ -104,7 +112,7 @@ class GeracaoEfin(View):
                 service_extracao.base_movimentacoes(periodo)
 
 
-    def CriarContas(self):
+    def CriarInvestidores(self):
         '''buscar dados dos investidores'''
         contas = ContaEfin.objects.values('numconta').distinct()
         cotistas = []
@@ -122,9 +130,20 @@ class GeracaoEfin(View):
 
     def rotinas_pre_arquivos(self):
         '''rotina da efinanceira pre_geracao de arquivos'''
-        # self.extracao_efinanceira()
-        self.CriarContas()
-        self.AtualizarInvestidores()
+        self.extracao_efinanceira()
+        self.CriarInvestidores()
+        # self.AtualizarInvestidores()
+
+
+    def gerar_arquivo_efin(self,data , investidor , fundos):
+        '''a data precisa ser um objeto datetime'''
+
+        geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , 
+                                investidor.endereco , investidor.pais , 
+                                data, fundos)
+        
+        geracao.gerar_arquivo_efin()
+
 
     def MontarArquivos(self):
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
@@ -136,18 +155,13 @@ class GeracaoEfin(View):
 
         for investidor in investidores:
             print (investidor.cpfcnpj)
-            geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , 
-                                         investidor.endereco , investidor.pais , 
-                                         datetime(2023,8,31) , fundos_dtvm)
-            geracao.gerar_arquivo_efin()
-            geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , 
-                                         investidor.endereco , investidor.pais , 
-                                         datetime(2023,7,31) , fundos_dtvm)
-            geracao.gerar_arquivo_efin()
-            geracao = GeradorEfinanceira(investidor.cpfcnpj , investidor.nome , 
-                                         investidor.endereco , investidor.pais , 
-                                         datetime(2023,10,31) , fundos_dtvm)
-            geracao.gerar_arquivo_efin()
+
+            # self.gerar_arquivo_efin(datetime(2023,7,31) , investidor ,  fundos_dtvm)
+            # self.gerar_arquivo_efin(datetime(2023,8,31) , investidor ,  fundos_dtvm)
+            # self.gerar_arquivo_efin(datetime(2023,9,30) , investidor ,  fundos_dtvm)
+            # self.gerar_arquivo_efin(datetime(2023,10,31) , investidor ,  fundos_dtvm)
+            # self.gerar_arquivo_efin(datetime(2023,11,30) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2023,12,31) , investidor ,  fundos_dtvm)
 
 
     def get(self, request):

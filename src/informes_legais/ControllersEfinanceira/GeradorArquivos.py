@@ -8,6 +8,16 @@ import pandas as pd
 
 class GeradorEfinanceira():
 
+    '''classe responsável por gerar os arquivos da e-financeira ,
+     # gerados com base em extrações anteriores'''
+
+    #todo criar método para fazer o ajuste dos 0´s
+    #todo criar possível validação para os encerramentos , 
+    # verificar quando não tiver valor ult.dia em no último mês do ano
+    #gerar o informe para os que não tiveram movimentação mas têm saldo ,
+    #ex. consultar a posição e se o cotista não estiver na base de 31/12 ,
+    #gerar o informe da mesma forma que os que não
+    # têm conta no mês são gerados
 
     def __init__(self , cpfCnpj , nome , endereco , pais ,  data_final , df_fundos ):
         self.cpfCnpj = cpfCnpj
@@ -56,19 +66,13 @@ class GeradorEfinanceira():
         ideDeclarado = ET.Element('ideDeclarado')
         tpNI = ET.SubElement(ideDeclarado ,  'tpNI')
         tpNI.text = "1"
-
         NIDeclarado  = ET.SubElement(ideDeclarado ,  'NIDeclarado')
         NIDeclarado.text = self.cpfCnpj
-
         NomeDeclarado = ET.SubElement(ideDeclarado , 'NomeDeclarado')
-
         NomeDeclarado.text = self.nome
-
         EnderecoLivre = ET.SubElement(ideDeclarado , 'EnderecoLivre')
         EnderecoLivre.text = self.endereco
-
         paisendereco = ET.SubElement(ideDeclarado , 'PaisEndereco')
-
         pais = ET.SubElement(paisendereco , 'Pais')
         pais.text = self.pais
 
@@ -78,6 +82,41 @@ class GeradorEfinanceira():
     def get_tipo_fundo(self, cd_fundo):
         return self.df_fundos[self.df_fundos['codigo'] == cd_fundo].to_dict('records')[0]['tipoFundo']
 
+
+    def get_contas_periodos_anteriores(self):
+   
+        numcontas = []
+        contas_xml = []
+        
+        contas = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
+                                           data_final__lte = self.data_final)        
+        for conta in contas:
+            if conta.numconta not in numcontas:
+                numcontas.append(conta.numconta)
+
+        for numconta in numcontas:
+
+            base_conta = {
+            "debitos": 0 , 
+            "creditos": 0  , 
+            'principal': 0 , 
+            "Vlrultdia": 0  , 
+            "creditosmsmtitu": 0 , 
+            'debitosmsmtitu': 0 
+                }
+            busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , data_final__lte = self.data_final)
+                        
+            for registro in busca_conta:
+                base_conta['numconta'] = registro.numconta
+                base_conta['fundoCnpj'] = registro.fundoCnpj
+                base_conta['tipo_fundo'] =  self.get_tipo_fundo(str(registro.numconta).split("|")[0].strip())
+        
+            contas_xml.append(base_conta)     
+
+        # incluir lógica para validar todos os valores referentes ao preenchimento do numconta        
+        return contas_xml
+    
+    
 
 
     def get_contas(self):
@@ -102,7 +141,7 @@ class GeradorEfinanceira():
                 }
             busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
                                            data_final = self.data_final , numconta=numconta)
-            
+                        
             for registro in busca_conta:
                 base_conta['debitos'] +=  registro.debitos
                 base_conta['creditos'] +=  registro.creditos
@@ -110,14 +149,14 @@ class GeradorEfinanceira():
                 base_conta['numconta'] = registro.numconta
                 base_conta['fundoCnpj'] = registro.fundoCnpj
                 base_conta['tipo_fundo'] =  self.get_tipo_fundo(str(registro.numconta).split("|")[0].strip())
-            print (base_conta)            
+      
             contas_xml.append(base_conta)     
 
         # incluir lógica para validar todos os valores referentes ao preenchimento do numconta        
         return contas_xml
     
     
-    def criar_conta_xml(self,conta):
+    def criar_conta_xml(self,conta , pgto_acc):
         conta_xml = ET.Element("Conta")
         infoConta = ET.SubElement(conta_xml ,  "infoConta")
         reportavel = ET.SubElement(infoConta ,  'Reportavel')
@@ -154,24 +193,29 @@ class GeradorEfinanceira():
         totDebitosMesmaTitularidade.text = "0.00".replace(".",",")
 
 
-        if self.data_final.month == 12:
+
+        if self.data_final.strftime("%m") == '12':
+            print('extraindo vlr ult')
             vlrUltDia = ET.SubElement(balanco_conta ,  'vlrUltDia')
             dados = {
-            'cotista': conta['numconta'].split("|")[0].strip() , 
+            'cotista': conta['numconta'].split("|")[1].strip() , 
             'data':  '2023-12-29'
               }            
-            cd_fundo = conta['numconta'].split("|")[1].strip()
+            cd_fundo = conta['numconta'].split("|")[0].strip()
             d = BuscaPrincipalJcot().get_dados_principal_por_cotista(dados)
             df = pd.DataFrame.from_dict(d)
+            print (df)
             try:
                 vlr_principal = df[df['cd_fundo'] == cd_fundo].to_dict("records")[0]['vlAplicacao']         
-                vlrUltDia.text = str(vlr_principal)
+                vlrUltDia.text = str(vlr_principal).replace(".",",")
             except Exception as e :
                 vlrUltDia.text = str('0,00')
 
 
         # todo criar query para pegar os pagamentos acumulados
-        pgto_acc = self.criar_pagamentos_acumulados(conta['numconta'])
+        # pgto_acc = self.criar_pagamentos_acumulados(conta['numconta'])
+        #pgto acc , agora vêm de outro lugar
+
         infoConta.append(pgto_acc)
 
         return conta_xml
@@ -198,25 +242,58 @@ class GeradorEfinanceira():
         #todo lógica para inserir as contas em xml no arquivo
 
         for conta in contas :
-            conta_xml = self.criar_conta_xml(conta)
+            pgto_acc = self.criar_pagamentos_acumulados(conta['numconta'])
+            conta_xml = self.criar_conta_xml(conta , pgto_acc)
+            mov_op_financeira.append(conta_xml)
+
+        return mes_caixa
+    
+    def criar_mes_caixa_periodos_anteriores(self , contas):
+        mes_caixa = ET.Element('mesCaixa')
+        anoMesCaixa = ET.SubElement(mes_caixa , 'anoMesCaixa')
+        anoMesCaixa.text = self.data_final.strftime('%Y%m')
+        mov_op_financeira = ET.SubElement( mes_caixa, 'movOpFin')
+        #todo lógica para inserir as contas em xml no arquivo
+
+        for conta in contas :
+            pgto_acc = self.criar_pagamentos_acumulados(conta['numconta'])
+            conta_xml = self.criar_conta_xml(conta , pgto_acc)
             mov_op_financeira.append(conta_xml)
 
         return mes_caixa
 
 
+    def validacao_pgtos(self):
+        contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta__contains= self.cpfCnpj)
+        pgtos_acc = ET.Element("PgtosAcum")
+        tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
+        tpPgto.text = "999"
+        totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')   
+
+        total_debitos = 0
+        for conta in contas_efin_pgtos_acc:
+            total_debitos += conta.debitos
+        totPgtosAcum.text = str(round(total_debitos,2)).replace(".",",")
+        return pgtos_acc
+
+
+
+
+
     def gerar_arquivo_efin(self):
 
         contas  =  self.get_contas()
+
+        arquivo = self.criar_elemento_base()
+        evtmoop = self.evento_mov_op_fin()
+        ideevento  = self.criar_ideEvento()
+        idedeclarante = self.criar_ide_declarante()
+        idedeclarado = self.criar_ide_declarado()
         
         # condicionar a geração a existência de contas.
         if len(contas) > 0:
-            arquivo = self.criar_elemento_base()
-            evtmoop = self.evento_mov_op_fin()
-            ideevento  = self.criar_ideEvento()
-            idedeclarante = self.criar_ide_declarante()
-            idedeclarado = self.criar_ide_declarado()
-
             mescaixa = self.criar_mes_caixa(contas)
+
             arquivo.append(evtmoop)
             arquivo.append(ideevento)
             arquivo.append(idedeclarante)
@@ -228,6 +305,19 @@ class GeradorEfinanceira():
             # Write the XML to a file with indentation and UTF-8 encoding
             with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
                 f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
+        
+        elif len(self.get_contas_periodos_anteriores()) >0 :
+            contas = self.get_contas_periodos_anteriores()
+            mescaixa = self.criar_mes_caixa_periodos_anteriores(contas)
+            arquivo.append(evtmoop)
+            arquivo.append(ideevento)
+            arquivo.append(idedeclarante)
+            arquivo.append(idedeclarado)
+            arquivo.append(mescaixa)
+            with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
+                f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
+
+        
 
 
 
