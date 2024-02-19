@@ -18,7 +18,7 @@ class AtualizacaoInvestidores():
 
 
     def atualizar_enderecos(self):
-        investidores = InvestidorEfin.objects.filter(nome=" ").all()
+        investidores = InvestidorEfin.objects.filter(endereco="").all()
         # investidores = InvestidorEfin.objects.all()
 
         #atualização do endereço de cada uma das pessoas
@@ -41,7 +41,7 @@ class AtualizacaoInvestidores():
 
 
     def atualizar_enderecos_busca_o2(self):
-        investidores = InvestidorEfin.objects.all()
+        investidores = InvestidorEfin.objects.filter(endereco="")
         # todo  esperar o cabral retornar o endereço e começar a buscar o endereço pela api.
 
         for investidor in investidores:
@@ -55,6 +55,7 @@ class AtualizacaoInvestidores():
                     a_atualizar.pais = add['pais'][0:2]
                     a_atualizar.save()
             except Exception as e:
+                continue
                 print(e)
 
 

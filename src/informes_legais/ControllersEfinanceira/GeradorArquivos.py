@@ -4,7 +4,7 @@ from datetime import datetime
 from xml.dom import minidom
 from .atualizacao_de_principal import BuscaPrincipalJcot
 import pandas as pd
-
+import os
 
 class GeradorEfinanceira():
 
@@ -58,14 +58,24 @@ class GeradorEfinanceira():
     def criar_ide_declarante(self):
         ideDeclarante = ET.Element('ideDeclarante')
         cnpjDeclarante = ET.SubElement(ideDeclarante, 'cnpjDeclarante')
-        cnpjDeclarante.text = "02150453000120"
+        cnpjDeclarante.text = "36113876000191"
 
         return  ideDeclarante
 
     def criar_ide_declarado(self):
         ideDeclarado = ET.Element('ideDeclarado')
+
+
         tpNI = ET.SubElement(ideDeclarado ,  'tpNI')
-        tpNI.text = "1"
+
+        if (len(self.cpfCnpj) == 11):
+
+            tpNI.text = "1"
+        
+        else:
+            tpNI.text = "2"
+
+
         NIDeclarado  = ET.SubElement(ideDeclarado ,  'NIDeclarado')
         NIDeclarado.text = self.cpfCnpj
         NomeDeclarado = ET.SubElement(ideDeclarado , 'NomeDeclarado')
@@ -223,7 +233,7 @@ class GeradorEfinanceira():
     def criar_pagamentos_acumulados(self, numconta):
         pgtos_acc = ET.Element("PgtosAcum")
         tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
-        tpPgto.text = "999"
+        tpPgto.text = "FATC503"
         totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')   
 
         contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta=numconta)     
@@ -267,7 +277,7 @@ class GeradorEfinanceira():
         contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta__contains= self.cpfCnpj)
         pgtos_acc = ET.Element("PgtosAcum")
         tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
-        tpPgto.text = "999"
+        tpPgto.text = "FATCA503"
         totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')   
 
         total_debitos = 0
@@ -277,10 +287,20 @@ class GeradorEfinanceira():
         return pgtos_acc
 
 
+    def criar_pasta_mes(self):
+        base_path = os.path.join("add" , self.data_final.strftime('%Y%m'))
+        if not os.path.exists(base_path):
+            os.mkdir(base_path)
+                              
+
 
 
 
     def gerar_arquivo_efin(self):
+
+        self.criar_pasta_mes()
+
+        base_path = os.path.join('add',self.data_final.strftime('%Y%m'), self.filename)
 
         contas  =  self.get_contas()
 
@@ -303,7 +323,7 @@ class GeradorEfinanceira():
             root = ET.ElementTree(arquivo)
 
             # Write the XML to a file with indentation and UTF-8 encoding
-            with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
+            with open(base_path, "w" ,  encoding='utf-8') as f:
                 f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
         
         elif len(self.get_contas_periodos_anteriores()) >0 :
@@ -314,7 +334,7 @@ class GeradorEfinanceira():
             arquivo.append(idedeclarante)
             arquivo.append(idedeclarado)
             arquivo.append(mescaixa)
-            with open(f"add/{self.filename}", "w" ,  encoding='utf-8') as f:
+            with open(base_path, "w" ,  encoding='utf-8') as f:
                 f.write(minidom.parseString(ET.tostring(arquivo , encoding='utf-8' , xml_declaration=True)).toprettyxml(indent=" "))
 
         
