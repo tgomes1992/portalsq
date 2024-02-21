@@ -93,23 +93,21 @@ class GeracaoEfin(View):
         service_extracao = ExtratorMovimentacoes()
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
-        fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
+        # fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
 
         
-        # fundos_dtvm = [
-        #     {"codigo": "4921_SENB01" , "cnpj":"21161619000158" } , 
-        #     {"codigo": "4921_SENA01" , "cnpj":"21161619000158" }  , 
-        #      {"codigo": "4921_SUB01" , "cnpj":"21161619000158" } 
-        # ]
+        fundos_dtvm = [
+            {"codigo": "12301_SUB01" , "cnpj":"21161619000158" } , 
+        ]
 
 
         extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
-                    for item in fundos_dtvm.to_dict("records")]
+                    for item in fundos_dtvm]
         
 
         for item in extracao:
             for periodo in item:
-                service_extracao.base_movimentacoes(periodo)
+                service_extracao.main_extrair_movimentacoes(periodo)
 
 
     def CriarInvestidores(self):
@@ -118,7 +116,6 @@ class GeracaoEfin(View):
         cotistas = []
         for item in contas:
             consulta = item['numconta'].split("|")[1].strip()
-            print (consulta)
             investidor = InvestidorEfin(cpfcnpj = consulta[0:14] )
             investidor.save()
 
@@ -132,7 +129,7 @@ class GeracaoEfin(View):
         '''rotina da efinanceira pre_geracao de arquivos'''
         self.extracao_efinanceira()
         self.CriarInvestidores()
-        # self.AtualizarInvestidores()
+        self.AtualizarInvestidores()
 
 
     def gerar_arquivo_efin(self,data , investidor , fundos):
@@ -170,7 +167,7 @@ class GeracaoEfin(View):
 
         self.rotinas_pre_arquivos()
 
-        self.MontarArquivos()
+        # self.MontarArquivos()
 
 
         return JsonResponse({"message":"Extração Iniciada"})
