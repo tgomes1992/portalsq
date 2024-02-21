@@ -1,10 +1,12 @@
-from ..models import InvestidorEfin , ContaEfin
+from ..models import InvestidorEfin , ContaEfin , ResgatesJcot
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from xml.dom import minidom
 from .atualizacao_de_principal import BuscaPrincipalJcot
 import pandas as pd
 import os
+from django.db.models.functions import ExtractMonth
+from django.db.models import Sum
 
 class GeradorEfinanceira():
 
@@ -165,8 +167,20 @@ class GeradorEfinanceira():
         # incluir lógica para validar todos os valores referentes ao preenchimento do numconta        
         return contas_xml
     
-    
+
+    def buscar_valor_debitos(self):
+        debito = 0
+        resgates = ResgatesJcot.objects.filter(data_liquidacao__month = self.data_final.month ,  cd_cotista__contains=str(self.cpfCnpj)).all()
+
+        for item in resgates:
+            debito += item.vl_original
+
+        return str(round(debito , 2))
+
+
     def criar_conta_xml(self,conta , pgto_acc):
+
+        self.buscar_valor_debitos()
         conta_xml = ET.Element("Conta")
         infoConta = ET.SubElement(conta_xml ,  "infoConta")
         reportavel = ET.SubElement(infoConta ,  'Reportavel')
@@ -188,14 +202,12 @@ class GeradorEfinanceira():
         balanco_conta = ET.SubElement(infoConta , "BalancoConta")
         creditos = ET.SubElement(balanco_conta ,  'totCreditos')
         creditos.text = str(round(conta['creditos'] , 2)).replace(".",",")
-
-
         debitos = ET.SubElement(balanco_conta ,  'totDebitos')
 
-        if 'ABER' in conta['tipo_fundo']:
-            debitos.text = str(round(conta['principal'],2)).replace(".",",")
-        else:
-            debitos.text = str(round(conta['principal'],2)).replace(".",",")
+        # debitos.text = str(round(conta['principal'],2)).replace(".",",")
+
+
+        debitos.text = self.buscar_valor_debitos().replace(".",",")
 
         totCreditosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totCreditosMesmaTitularidade')
         totCreditosMesmaTitularidade.text = "0.00".replace(".",",")

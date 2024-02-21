@@ -314,3 +314,26 @@ class o2Api():
         dados = requests.get(url , params=data , headers=headers)
         return dados.json()['dados']
 
+
+    def get_investidor_o2(self):
+                    
+        headers = {
+                'Authorization': f'Bearer {self.get_token()}' ,
+                'Content-Type': 'application/json'
+        }     
+        url  =  f'https://escriturador.oliveiratrust.com.br/intactus/icorp/api/investidor/obterporcpfcnpj?cpfCnpj={cpfcnpj}' 
+        request =  requests.get(url,headers=headers)
+        id_investidor  = request.json()['dados']['id']
+        return id_investidor
+
+
+    def get_investidores(self):
+         url = "https://escriturador.oliveiratrust.com.br/intactus/icorp/api/investidor/obtertodos"
+
+         headers = {
+                    'Authorization': f'Bearer {self.get_token()}' ,
+                    'Content-Type': 'application/json'
+                    }     
+         request =  requests.get(url,headers=headers)
+         with open("file.json" ,  "wb") as arquivo:
+              arquivo.write(request.content)

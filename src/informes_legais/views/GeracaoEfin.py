@@ -5,7 +5,7 @@ from ..ControllersEfinanceira import *
 from ..models import ContaEfin , InvestidorEfin
 from JCOTSERVICE import ListFundosService
 import os
-
+from intactus import o2Api
 
 class GeracaoEfin(View):
 
@@ -128,8 +128,8 @@ class GeracaoEfin(View):
     def rotinas_pre_arquivos(self):
         '''rotina da efinanceira pre_geracao de arquivos'''
         self.extracao_efinanceira()
-        self.CriarInvestidores()
-        self.AtualizarInvestidores()
+        # self.CriarInvestidores()
+        # self.AtualizarInvestidores()
 
 
     def gerar_arquivo_efin(self,data , investidor , fundos):
@@ -165,9 +165,9 @@ class GeracaoEfin(View):
         #todo incluir depois a possibilidade de receber
         # uma lista de fundos para ser a base da extração
 
-        self.rotinas_pre_arquivos()
+        # self.rotinas_pre_arquivos()
 
-        # self.MontarArquivos()
+        self.MontarArquivos()
 
 
         return JsonResponse({"message":"Extração Iniciada"})
