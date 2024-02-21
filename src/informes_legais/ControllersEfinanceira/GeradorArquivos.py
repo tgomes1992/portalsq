@@ -195,7 +195,7 @@ class GeradorEfinanceira():
         if 'ABER' in conta['tipo_fundo']:
             debitos.text = str(round(conta['principal'],2)).replace(".",",")
         else:
-            debitos.text = str(round(conta['debitos'],2)).replace(".",",")
+            debitos.text = str(round(conta['principal'],2)).replace(".",",")
 
         totCreditosMesmaTitularidade = ET.SubElement(balanco_conta ,  'totCreditosMesmaTitularidade')
         totCreditosMesmaTitularidade.text = "0.00".replace(".",",")

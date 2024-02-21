@@ -93,13 +93,13 @@ class GeracaoEfin(View):
         service_extracao = ExtratorMovimentacoes()
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
-        fundos_dtvm = fundos[fundos['administrador'] ==  '2150453000120']
+        fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
 
         
         # fundos_dtvm = [
-        #     {"codigo": "1944" , "cnpj":"17455369000191" } , 
-        #     {"codigo": "6021" , "cnpj":"21824924000182" }  , 
-        #      {"codigo": "38281_SEN01" , "cnpj":"28819553000190" } 
+        #     {"codigo": "4921_SENB01" , "cnpj":"21161619000158" } , 
+        #     {"codigo": "4921_SENA01" , "cnpj":"21161619000158" }  , 
+        #      {"codigo": "4921_SUB01" , "cnpj":"21161619000158" } 
         # ]
 
 
@@ -130,9 +130,9 @@ class GeracaoEfin(View):
 
     def rotinas_pre_arquivos(self):
         '''rotina da efinanceira pre_geracao de arquivos'''
-        # self.extracao_efinanceira()
-        # self.CriarInvestidores()
-        self.AtualizarInvestidores()
+        self.extracao_efinanceira()
+        self.CriarInvestidores()
+        # self.AtualizarInvestidores()
 
 
     def gerar_arquivo_efin(self,data , investidor , fundos):
@@ -149,7 +149,7 @@ class GeracaoEfin(View):
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
         
-        fundos_dtvm = fundos[fundos['administrador'] ==  '2150453000120']
+        fundos_dtvm = fundos[fundos['administrador'] ==  '36113876000191']
         
         investidores = InvestidorEfin.objects.all()        
 
@@ -168,7 +168,7 @@ class GeracaoEfin(View):
         #todo incluir depois a possibilidade de receber
         # uma lista de fundos para ser a base da extração
 
-        # self.rotinas_pre_arquivos()
+        self.rotinas_pre_arquivos()
 
         self.MontarArquivos()
 

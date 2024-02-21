@@ -12,6 +12,7 @@ output
 *.csv*
 env
 .env
+src/add
 
 # These are some examples of commonly ignored file patterns.
 # Yo should customize this list as applicable to your project.
