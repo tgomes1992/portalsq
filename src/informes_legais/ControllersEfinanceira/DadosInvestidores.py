@@ -45,8 +45,9 @@ class AtualizacaoInvestidores():
         # todo  esperar o cabral retornar o endereço e começar a buscar o endereço pela api.
 
         for investidor in investidores:
+            print(investidor)
             endereco = self.apio2.get_dados_investidor(str(investidor.cpfcnpj))
-            print (endereco)
+
             try:
                 if len(endereco) > 0 : 
                     add = endereco['enderecos'][0]

@@ -33,15 +33,15 @@ class ExtratorMovimentacoes():
     def atualizar_principal_notas_resgate(self):
         resgates = ResgatesJcot.objects.filter(vl_original=0).all()
         for resgate in resgates:
-            resgate.vl_original  =self.get_nota_principal(resgate.nota)
+            resgate.vl_original = self.get_nota_principal(resgate.nota)
             resgate.save()
 
 
     def main_extrair_movimentacoes(self ,  dados):
         dados['movimento'] = "R"
-        # self.base_movimentacoes(dados)
-        # self.extrair_resgates(dados)
-        # self.buscar_movimentos_detalhados(dados)
+        self.base_movimentacoes(dados)
+        self.extrair_resgates(dados)
+        self.buscar_movimentos_detalhados(dados)
         self.atualizar_principal_notas_resgate()
      
 
@@ -53,14 +53,18 @@ class ExtratorMovimentacoes():
                 debitos = item['resgate_operacao'],
                 principal = item['resgate_principal'],
                 creditosmsmtitu = 0,
-                debitosmsmtitu = 0,
-                vlrultidia  = 0,
+                debitosmsmtitu= 0,
+                vlrultidia = 0,
                 fundoCnpj = dados['cnpj_fundo'],
                 numconta = f"{item['cd_fundo']}|{item['cd_cotista']}",
                 data_final = item['data_final']
             ) for item in contas]
             for item in contas_efin_a_salvar:
-                item.save()
+                if not ContaEfin.objects.filter(creditos = item.creditos , data_final = item.data_final ,
+                                                debitos = item.debitos , fundoCnpj = item.fundoCnpj ,
+                                                numconta = item.numconta
+                                                ):
+                    item.save()
         except Exception as e:
             print (e)
             pass
