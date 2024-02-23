@@ -26,8 +26,13 @@ class ExtratorMovimentacoes():
 
 
     def get_nota_principal(self,nota):
-        nota = MovimentoDetalhado.objects.filter(notaOperacao = nota).first()
-        return nota.vlOriginal
+        principal = 0
+        notas = MovimentoDetalhado.objects.filter(notaOperacao = nota).all()
+
+        for item in notas:
+            principal +=  item.vlOriginal
+
+        return principal
 
 
     def atualizar_principal_notas_resgate(self):
@@ -39,6 +44,7 @@ class ExtratorMovimentacoes():
 
     def main_extrair_movimentacoes(self ,  dados):
         dados['movimento'] = "R"
+        print (dados)
         self.base_movimentacoes(dados)
         self.extrair_resgates(dados)
         self.buscar_movimentos_detalhados(dados)
@@ -85,7 +91,7 @@ class ExtratorMovimentacoes():
             ) for item in resgates]
 
             for item in resgates_a_salvar:
-                print (item)
+                # print (item)
                 item.save()
         except Exception as e:
             print (e)

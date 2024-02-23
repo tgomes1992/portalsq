@@ -157,5 +157,4 @@ class RelAnaliticoCotistaFundo(COTSERVICE):
     def get_movimentos_detalhados(self, dados):
         base_request = requests.post(self.url, self.body_buscar_relatorio(dados))
         movimentos_detalhados = self.formatar_datas(base_request.content.decode('utf-8') )
-        print (movimentos_detalhados)
         return movimentos_detalhados

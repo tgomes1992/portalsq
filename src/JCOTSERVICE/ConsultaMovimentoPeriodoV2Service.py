@@ -129,7 +129,6 @@ class ConsultaMovimentoPeriodoV2Service(COTSERVICE):
     def get_movimento_periodo_request(self , dados):
         base_request = requests.post(self.url, self.movimento_body_periodo(dados))
         movimentos = self.formatar_resposta_periodo(base_request.content.decode('utf-8'))
-        print (len(movimentos))
         return movimentos
 
     def montar_retorno_xp(self, lista_de_fundos):

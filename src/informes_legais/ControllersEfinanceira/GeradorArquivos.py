@@ -248,10 +248,11 @@ class GeradorEfinanceira():
         tpPgto.text = "FATC503"
         totPgtosAcum = ET.SubElement(pgtos_acc ,  'totPgtosAcum')   
 
-        contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta=numconta)     
+        contas_efin_pgtos_acc = ResgatesJcot.objects.filter(data_liquidacao__lte=self.data_final , cd_cotista__contains=str(self.cpfCnpj))     
         total_debitos = 0
         for conta in contas_efin_pgtos_acc:
-            total_debitos += conta.debitos
+            print (conta)
+            total_debitos += conta.vl_bruto
         totPgtosAcum.text = str(round(total_debitos,2)).replace(".",",")
         return pgtos_acc
        

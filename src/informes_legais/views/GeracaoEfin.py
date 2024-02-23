@@ -6,6 +6,8 @@ from ..models import ContaEfin , InvestidorEfin
 from JCOTSERVICE import ListFundosService
 import os
 from intactus import o2Api
+from concurrent.futures import ThreadPoolExecutor
+
 
 class GeracaoEfin(View):
 
@@ -93,7 +95,8 @@ class GeracaoEfin(View):
         service_extracao = ExtratorMovimentacoes()
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
-        fundos_dtvm = fundos[fundos['administrador'] == '36113876000191']
+        cnpjs = ['21161619000158', '43616501000100']
+        fundos_dtvm = fundos[fundos['cnpj'].isin(cnpjs)]
 
 
         extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
@@ -112,7 +115,7 @@ class GeracaoEfin(View):
         for item in contas:
             consulta = item['numconta'].split("|")[1].strip()
             investidor = InvestidorEfin(cpfcnpj = consulta[0:14] )
-            if not investidor.objects.filter(cpfcnpj =consulta[0:14] ):
+            if not InvestidorEfin.objects.filter(cpfcnpj =consulta[0:14] ):
                 investidor.save()
 
     def AtualizarInvestidores(self):
@@ -141,7 +144,23 @@ class GeracaoEfin(View):
         self.AtualizarInvestidores()
 
 
-    def MontarArquivos(self):
+
+    def gerar_semestre(self, investidor , fundos_dtvm):
+        try:
+            print (investidor.nome)
+            self.gerar_arquivo_efin(datetime(2023,7,31) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2023,8,31) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2023,9,30) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2023,10,31) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2023,11,30) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2023,12,31) , investidor ,  fundos_dtvm)
+        except Exception as e:
+            print (e)
+
+
+
+
+    def MontarArquivos(self ):
         fundos = ListFundosService(os.environ.get("JCOT_USER"),
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
         
@@ -149,15 +168,14 @@ class GeracaoEfin(View):
         
         investidores = InvestidorEfin.objects.all()        
 
-        for investidor in investidores:
-            print(investidor.cpfcnpj)
 
-            self.gerar_arquivo_efin(datetime(2023,7,31) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,8,31) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,9,30) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,10,31) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,11,30) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,12,31) , investidor ,  fundos_dtvm)
+        with ThreadPoolExecutor(max_workers=7) as executor:
+            for investidor in investidores:
+                executor.submit(self.gerar_semestre ,investidor , fundos_dtvm)
+
+
+
+
 
 
 

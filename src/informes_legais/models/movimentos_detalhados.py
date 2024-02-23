@@ -2,7 +2,8 @@ from django.db import models
 from datetime import datetime
 
 class MovimentoDetalhado(models.Model):
-    notaOperacao = models.CharField(max_length=100 , primary_key=True)
+    id = models.IntegerField(default=0, primary_key=True)
+    notaOperacao = models.CharField(max_length=100)
     notaAplicacao = models.CharField(max_length=100)
     dsFormaLiquidacao = models.CharField(max_length=100)
     tpLiquidacao = models.CharField(max_length=100)
