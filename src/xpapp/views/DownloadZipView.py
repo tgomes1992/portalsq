@@ -32,8 +32,9 @@ escaped_host = quote_plus(host)
 uri = f"mongodb://{escaped_username}:{escaped_password}@[{escaped_host}]:{port}"
 
 # Connect to MongoDB
-client = MongoClient(uri)
+# client = MongoClient(uri)
 
+client = MongoClient("mongodb://localhost:27017/")
 
 jcot_posicoes = client['jcot_posicoes']
 colection = jcot_posicoes['posicoes']

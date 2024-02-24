@@ -96,7 +96,7 @@ class GeracaoEfin(View):
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
         cnpjs = ['21161619000158', '43616501000100']
-        fundos_dtvm = fundos[fundos['cnpj'].isin(cnpjs)]
+        fundos_dtvm = fundos[fundos['administrador'] == '36113876000191']
 
 
         extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
@@ -121,7 +121,7 @@ class GeracaoEfin(View):
     def AtualizarInvestidores(self):
         service_atualiza_investidores = AtualizacaoInvestidores()
         # service_atualiza_investidores.atualizar_enderecos()
-        # service_atualiza_investidores.atualizar_enderecos_busca_o2()
+        service_atualiza_investidores.atualizar_enderecos_busca_o2()
         service_atualiza_investidores.atualizar_nomes()
 
 
