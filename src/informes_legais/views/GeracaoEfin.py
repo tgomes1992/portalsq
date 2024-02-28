@@ -95,8 +95,8 @@ class GeracaoEfin(View):
         service_extracao = ExtratorMovimentacoes()
         fundos = ListFundosService(os.environ.get("JCOT_USER") ,
                                      os.environ.get("JCOT_PASSWORD")).listFundoRequest()
-        cnpjs = ['21161619000158', '43616501000100']
-        fundos_dtvm = fundos[fundos['administrador'] == '36113876000191']
+        cnpjs = ['17455369000191']
+        fundos_dtvm = fundos[fundos['cnpj'].isin(cnpjs)]
 
 
         extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
