@@ -6,7 +6,8 @@ from .atualizacao_de_principal import BuscaPrincipalJcot
 import pandas as pd
 import os
 from django.db.models.functions import ExtractMonth
-from django.db.models import Sum
+from django.db.models import Sum , Q
+
 
 class GeradorEfinanceira():
 
@@ -170,7 +171,7 @@ class GeradorEfinanceira():
 
     def buscar_valor_debitos(self):
         debito = 0
-        resgates = ResgatesJcot.objects.filter(data_liquidacao__month = self.data_final.month ,  cd_cotista__contains=str(self.cpfCnpj)).all()
+        resgates = ResgatesJcot.objects.filter(data_liquidacao__month = self.data_final.month ,  cd_cotista__contains=str(self.cpfCnpj) ).exclude(cd_tipo="RI").all()
 
         for item in resgates:
             debito += item.vl_original

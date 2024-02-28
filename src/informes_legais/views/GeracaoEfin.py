@@ -93,20 +93,21 @@ class GeracaoEfin(View):
 
     def extracao_efinanceira(self):
         service_extracao = ExtratorMovimentacoes()
-        fundos = ListFundosService(os.environ.get("JCOT_USER") ,
-                                     os.environ.get("JCOT_PASSWORD")).listFundoRequest()
-        cnpjs = ['17455369000191']
-        fundos_dtvm = fundos[fundos['cnpj'].isin(cnpjs)]
+        # fundos = ListFundosService(os.environ.get("JCOT_USER") ,
+        #                              os.environ.get("JCOT_PASSWORD")).listFundoRequest()
+        # cnpjs = ['17455369000191']
+        # fundos_dtvm = fundos[fundos['cnpj'].isin(cnpjs)]
 
 
-        extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
-                    for item in fundos_dtvm.to_dict("records")]
+        # extracao = [self.get_2023_year(item['codigo'] , item['cnpj']) 
+        #             for item in fundos_dtvm.to_dict("records")]
         
 
-        for item in extracao:
-            for periodo in item:
-                service_extracao.main_extrair_movimentacoes(periodo)
+        # for item in extracao:
+        #     for periodo in item:
+        #         service_extracao.main_extrair_movimentacoes(periodo)
 
+        service_extracao.atualizar_principal_notas_resgate()
 
     def CriarInvestidores(self):
         '''buscar dados dos investidores'''
@@ -115,13 +116,13 @@ class GeracaoEfin(View):
         for item in contas:
             consulta = item['numconta'].split("|")[1].strip()
             investidor = InvestidorEfin(cpfcnpj = consulta[0:14] )
-            if not InvestidorEfin.objects.filter(cpfcnpj =consulta[0:14] ):
+            if not InvestidorEfin.objects.filter(cpfcnpj = consulta[0:14] ):
                 investidor.save()
 
     def AtualizarInvestidores(self):
         service_atualiza_investidores = AtualizacaoInvestidores()
-        # service_atualiza_investidores.atualizar_enderecos()
-        service_atualiza_investidores.atualizar_enderecos_busca_o2()
+        service_atualiza_investidores.atualizar_enderecos()
+        # service_atualiza_investidores.atualizar_enderecos_busca_o2()
         service_atualiza_investidores.atualizar_nomes()
 
 
@@ -140,8 +141,8 @@ class GeracaoEfin(View):
     def rotinas_pre_arquivos(self):
         '''rotina da efinanceira pre_geracao de arquivos'''
         self.extracao_efinanceira()
-        self.CriarInvestidores()
-        self.AtualizarInvestidores()
+        # self.CriarInvestidores()
+        # self.AtualizarInvestidores()
 
 
 

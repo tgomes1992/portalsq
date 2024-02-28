@@ -4,6 +4,7 @@ from ..models import BaseMovimentacoes  , ContaEfin , ResgatesJcot , MovimentoDe
 from JCOTSERVICE import RelAnaliticoCotistaFundo , ConsultaMovimentoPeriodoV2Service
 import os
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 
 class ExtratorMovimentacoes():
@@ -37,6 +38,7 @@ class ExtratorMovimentacoes():
 
     def atualizar_principal_notas_resgate(self):
         resgates = ResgatesJcot.objects.filter(vl_original=0).all()
+        print (len(resgates))
         for resgate in resgates:
             resgate.vl_original = self.get_nota_principal(resgate.nota)
             resgate.save()
@@ -45,10 +47,14 @@ class ExtratorMovimentacoes():
     def main_extrair_movimentacoes(self ,  dados):
         dados['movimento'] = "R"
         print (dados)
-        self.base_movimentacoes(dados)
-        self.extrair_resgates(dados)
-        self.buscar_movimentos_detalhados(dados)
-        self.atualizar_principal_notas_resgate()
+
+
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            executor.submit(self.base_movimentacoes,dados)
+            executor.submit(self.extrair_resgates,dados)
+            executor.submit(self.buscar_movimentos_detalhados,dados)
+
+        # self.atualizar_principal_notas_resgate()
      
 
     def base_movimentacoes(self, dados):
