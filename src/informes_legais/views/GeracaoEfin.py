@@ -11,7 +11,19 @@ from concurrent.futures import ThreadPoolExecutor
 
 class GeracaoEfin(View):
 
-        
+    def get_2024_year(self , cd_fundo ,  cnpj):
+
+        extracao = [
+            {
+                'cd_fundo': cd_fundo,
+                'data_inicial': "2024-01-01",
+                'data_final': "2024-01-31",
+                "cnpj_fundo": cnpj,
+            }
+        ]
+
+        return extracao
+
     def get_2023_year(self , cd_fundo, cnpj):
         
         extracao = [
@@ -99,7 +111,7 @@ class GeracaoEfin(View):
         fundos_dtvm = fundos[fundos['cnpj'].isin(cnpjs)]
 
 
-        extracao = [self.get_2023_year(item['codigo'] , item['cnpj'])
+        extracao = [self.get_2024_year(item['codigo'] , item['cnpj'])
                     for item in fundos_dtvm.to_dict("records")]
         
 
@@ -149,12 +161,8 @@ class GeracaoEfin(View):
     def gerar_semestre(self, investidor , fundos_dtvm):
         try:
             print (investidor.nome)
-            self.gerar_arquivo_efin(datetime(2023,7,31) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,8,31) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,9,30) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,10,31) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,11,30) , investidor ,  fundos_dtvm)
-            self.gerar_arquivo_efin(datetime(2023,12,31) , investidor ,  fundos_dtvm)
+            self.gerar_arquivo_efin(datetime(2024,1,31) , investidor ,  fundos_dtvm)
+
         except Exception as e:
             print (e)
 
@@ -173,11 +181,6 @@ class GeracaoEfin(View):
         with ThreadPoolExecutor(max_workers=7) as executor:
             for investidor in investidores:
                 executor.submit(self.gerar_semestre ,investidor , fundos_dtvm)
-
-
-
-
-
 
 
     def get(self, request):
