@@ -123,18 +123,33 @@ class GeracaoEfin(View):
 
     def CriarInvestidores(self):
         '''buscar dados dos investidores'''
+        a_criar = []
+
+        aplicacoes = AplicacoesJcot.objects.values("cd_cotista").distinct()
+
+        resgates = ResgatesJcot.objects.values("cd_cotista").distinct()
+
         contas = ContaEfin.objects.values('numconta').distinct()
-        cotistas = []
-        for item in contas:
-            consulta = item['numconta'].split("|")[1].strip()
-            investidor = InvestidorEfin(cpfcnpj = consulta[0:14] )
-            if not InvestidorEfin.objects.filter(cpfcnpj = consulta[0:14] ):
+
+
+        for item in aplicacoes:
+            a_criar.append(item)
+
+        for item in resgates:
+            if item not in a_criar:
+                a_criar.append(item)
+
+
+        for item in a_criar:
+            # consulta = item['numconta'].split("|")[1].strip()
+            investidor = InvestidorEfin(cpfcnpj = str(item)[0:14] )
+            if not InvestidorEfin.objects.filter(cpfcnpj = str(item)[0:14] ):
                 investidor.save()
 
     def AtualizarInvestidores(self):
         service_atualiza_investidores = AtualizacaoInvestidores()
-        service_atualiza_investidores.atualizar_enderecos()
-        service_atualiza_investidores.atualizar_enderecos_busca_o2()
+        # service_atualiza_investidores.atualizar_enderecos()
+        # service_atualiza_investidores.atualizar_enderecos_busca_o2()
         service_atualiza_investidores.atualizar_nomes()
 
 
@@ -153,7 +168,7 @@ class GeracaoEfin(View):
     def rotinas_pre_arquivos(self):
         '''rotina da efinanceira pre_geracao de arquivos'''
         self.extracao_efinanceira()
-        # self.CriarInvestidores()
+        self.CriarInvestidores()
         # self.AtualizarInvestidores()
 
 

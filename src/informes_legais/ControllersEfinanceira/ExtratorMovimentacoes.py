@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from ..models import BaseMovimentacoes  , ContaEfin , ResgatesJcot , MovimentoDetalhado
+from ..models import BaseMovimentacoes  , ContaEfin , ResgatesJcot , MovimentoDetalhado , AplicacoesJcot
 from JCOTSERVICE import RelAnaliticoCotistaFundo , ConsultaMovimentoPeriodoV2Service
 import os
 from datetime import datetime
@@ -53,6 +53,7 @@ class ExtratorMovimentacoes():
             executor.submit(self.base_movimentacoes,dados)
             executor.submit(self.extrair_resgates,dados)
             executor.submit(self.buscar_movimentos_detalhados,dados)
+            executor.submit(self.extrair_aplicacoes, dados)
 
         # self.atualizar_principal_notas_resgate()
      
@@ -69,10 +70,10 @@ class ExtratorMovimentacoes():
                 vlrultidia = 0,
                 fundoCnpj = dados['cnpj_fundo'],
                 numconta = f"{item['cd_fundo']}|{item['cd_cotista']}",
-                data_final = item['data_final']
+                datafinal = item['data_final']
             ) for item in contas]
             for item in contas_efin_a_salvar:
-                if not ContaEfin.objects.filter(creditos = item.creditos , data_final = item.data_final ,
+                if not ContaEfin.objects.filter(creditos = item.creditos , datafinal = item.datafinal ,
                                                 debitos = item.debitos , fundoCnpj = item.fundoCnpj ,
                                                 numconta = item.numconta
                                                 ):
@@ -103,13 +104,28 @@ class ExtratorMovimentacoes():
             print (e)
             pass
 
-    # def atualizar_principal(self,dados):
-    #     movimentos = ResgatesJcot.objects.all()
+    def extrair_aplicacoes(self, dados):
+            dados['movimento'] =  "A"
+            resgates = self.service_buscar_resgates.get_movimento_periodo_request(dados)
+            try:
+                resgates_a_salvar = [AplicacoesJcot(
+                    data_movimento=item['dtMov'],
+                    data_liquidacao=item['dtLiqFinanceira'],
+                    nota=item['nota'],
+                    cd_tipo=item['cdTipoMov'],
+                    cd_cotista=item['cotista'],
+                    cd_fundo=item['cdFundo'],
+                    vl_original=0,
+                    vl_liquido=item['vlLiquido'],
+                    vl_bruto=item['vlBruto']
+                ) for item in resgates]
 
-
-
-    #     pass        
-
+                for item in resgates_a_salvar:
+                    # print (item)
+                    item.save()
+            except Exception as e:
+                print(e)
+                pass
 
 
 

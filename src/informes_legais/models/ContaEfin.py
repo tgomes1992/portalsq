@@ -13,5 +13,5 @@ class ContaEfin(models.Model):
     vlrultidia = models.FloatField()
     fundoCnpj = models.CharField(max_length=14)
     numconta = models.TextField(max_length=14)
-    data_final = models.DateTimeField(default=datetime.now())
+    datafinal = models.DateTimeField(default=datetime.now())
 

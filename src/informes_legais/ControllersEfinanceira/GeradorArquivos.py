@@ -1,4 +1,4 @@
-from ..models import InvestidorEfin , ContaEfin , ResgatesJcot
+from ..models import InvestidorEfin , ContaEfin , ResgatesJcot ,  AplicacoesJcot
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from xml.dom import minidom
@@ -102,7 +102,7 @@ class GeradorEfinanceira():
         contas_xml = []
         
         contas = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
-                                           data_final__lte = self.data_final)        
+                                           datafinal__lte = self.data_final)
         for conta in contas:
             if conta.numconta not in numcontas:
                 numcontas.append(conta.numconta)
@@ -117,7 +117,7 @@ class GeradorEfinanceira():
             "creditosmsmtitu": 0 , 
             'debitosmsmtitu': 0 
                 }
-            busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , data_final__lte = self.data_final)
+            busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , datafinal__lte = self.data_final)
                         
             for registro in busca_conta:
                 base_conta['numconta'] = registro.numconta
@@ -138,7 +138,7 @@ class GeradorEfinanceira():
         contas_xml = []
         
         contas = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
-                                           data_final = self.data_final)        
+                                           datafinal = self.data_final)
         for conta in contas:
             if conta.numconta not in numcontas:
                 numcontas.append(conta.numconta)
@@ -153,7 +153,7 @@ class GeradorEfinanceira():
             'debitosmsmtitu': 0 
                 }
             busca_conta = ContaEfin.objects.filter(numconta__contains =  self.cpfCnpj , 
-                                           data_final = self.data_final , numconta=numconta)
+                                           datafinal = self.data_final , numconta=numconta)
                         
             for registro in busca_conta:
                 base_conta['debitos'] +=  registro.debitos
@@ -179,6 +179,17 @@ class GeradorEfinanceira():
         return str(round(debito , 2))
 
 
+    def buscar_valor_creditos(self):
+        creditos = 0
+        aplicacoes = AplicacoesJcot.objects.filter(data_liquidacao__month = self.data_final.month ,  cd_cotista__contains=str(self.cpfCnpj) ).all()
+
+        for item in aplicacoes:
+            creditos += item.vl_bruto
+
+        return str(round(creditos , 2)).replace(".",",")
+
+
+
     def criar_conta_xml(self,conta , pgto_acc):
 
         self.buscar_valor_debitos()
@@ -202,7 +213,7 @@ class GeradorEfinanceira():
         cnpj_fundo.text = conta['fundoCnpj']
         balanco_conta = ET.SubElement(infoConta , "BalancoConta")
         creditos = ET.SubElement(balanco_conta ,  'totCreditos')
-        creditos.text = str(round(conta['creditos'] , 2)).replace(".",",")
+        creditos.text = self.buscar_valor_creditos()
         debitos = ET.SubElement(balanco_conta ,  'totDebitos')
 
         # debitos.text = str(round(conta['principal'],2)).replace(".",",")
@@ -288,7 +299,7 @@ class GeradorEfinanceira():
 
 
     def validacao_pgtos(self):
-        contas_efin_pgtos_acc = ContaEfin.objects.filter(data_final__lte=self.data_final , numconta__contains= self.cpfCnpj)
+        contas_efin_pgtos_acc = ContaEfin.objects.filter(datafinal__lte=self.data_final , numconta__contains= self.cpfCnpj)
         pgtos_acc = ET.Element("PgtosAcum")
         tpPgto = ET.SubElement(pgtos_acc ,  "tpPgto")
         tpPgto.text = "FATCA503"
