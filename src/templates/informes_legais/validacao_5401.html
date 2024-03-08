@@ -1,0 +1,29 @@
+{% extends 'homepage.html' %}
+{% load static %}
+{% load materializecss %}
+
+
+{% block content %}
+
+
+<div class="row">
+  <h2>Importar Arquivo 5401</h2>
+  <p>Ao importar o arquivo o aplicativo vai retornar um excel com dados e info´s sobre o arquivo importado</p>
+  <form action="#" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form | materializecss }}
+
+  <input type="submit" value="Importar" class="btn"/>
+
+</form>
+
+
+</div>
+
+
+<script src="{% static 'materialize_init.js' %}"></script>
+
+{% endblock %}
+
+
+
